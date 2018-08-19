@@ -1,0 +1,16 @@
+en:
+  activerecord:
+    models:
+      production_cost_center:
+        one: Production of Service
+        other: Production of Services
+    attributes:
+      production_cost_center:
+        year: Year
+        month: Month
+        value: Value
+        production_units: Production Units
+        entity_id: Entity
+        cost_center_id: Cost Center
+        created_at: Created at
+        updated_at: Updated at

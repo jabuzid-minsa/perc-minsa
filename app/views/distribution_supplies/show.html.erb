@@ -1,0 +1,34 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Year:</strong>
+  <%= @distribution_supply.year %>
+</p>
+
+<p>
+  <strong>Month:</strong>
+  <%= @distribution_supply.month %>
+</p>
+
+<p>
+  <strong>Value:</strong>
+  <%= @distribution_supply.value %>
+</p>
+
+<p>
+  <strong>Supply:</strong>
+  <%= @distribution_supply.supply %>
+</p>
+
+<p>
+  <strong>Cost center:</strong>
+  <%= @distribution_supply.cost_center %>
+</p>
+
+<p>
+  <strong>Entity:</strong>
+  <%= @distribution_supply.entity %>
+</p>
+
+<%= link_to 'Edit', edit_distribution_supply_path(@distribution_supply) %> |
+<%= link_to 'Back', distribution_supplies_path %>

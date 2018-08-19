@@ -1,0 +1,18 @@
+es:
+  activerecord:
+    models:
+      payroll:
+        one: Empleado
+        other: Empleados
+    attributes:
+      payroll:
+        dni: Identificación
+        name: Nombre
+        salary: Salario Base
+        bonuses: Bonificaciones
+        benefits: Beneficios Laborales
+        labor_law_id: Categoría de Empleado
+        entity_id: Entidad
+        created_at: Fecha Creación
+        updated_at: Ultima Actualización
+  explanation_dni: (Documento Unico de Identidad)

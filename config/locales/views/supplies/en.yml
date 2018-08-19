@@ -1,0 +1,18 @@
+en:
+  activerecord:
+    models:
+      supply:
+        one: Supply/Expense
+        other: Supplies/Expenses
+    attributes:
+      supply:
+        code: Code
+        description: Description
+        definition: Definition
+        supply_id: Main Supply
+        geography_id: Country
+        language_id: Idiom
+        supplies_category_id: Supply Category
+        state: State
+        created_at: Created at
+        updated_at: Updated at

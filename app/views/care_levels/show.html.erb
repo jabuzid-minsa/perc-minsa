@@ -1,0 +1,29 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Code:</strong>
+  <%= @care_level.code %>
+</p>
+
+<p>
+  <strong>Description:</strong>
+  <%= @care_level.description %>
+</p>
+
+<p>
+  <strong>Geography:</strong>
+  <%= @care_level.geography %>
+</p>
+
+<p>
+  <strong>Language:</strong>
+  <%= @care_level.language %>
+</p>
+
+<p>
+  <strong>State:</strong>
+  <%= @care_level.state %>
+</p>
+
+<%= link_to 'Edit', edit_care_level_path(@care_level) %> |
+<%= link_to 'Back', care_levels_path %>

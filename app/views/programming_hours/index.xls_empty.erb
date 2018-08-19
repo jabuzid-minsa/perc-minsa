@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+          xmlns:o="urn:schemas-microsoft-com:office:office"
+          xmlns:x="urn:schemas-microsoft-com:office:excel"
+          xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+          xmlns:html="http://www.w3.org/TR/REC-html40">
+  <Worksheet ss:Name="<%= ProgrammingHour.model_name.human %>">
+    <Table>
+      <Row>
+        <% ProgrammingHour.allowed_columns_for_human.each do |header| %>
+            <Cell><Data ss:Type="String"><%= header %></Data></Cell>
+        <% end %>
+        <% @cost_centers.each do |cost_center| %>
+            <Cell><Data ss:Type="String"><%= "#{cost_center.id}-#{cost_center.description}" %></Data></Cell>
+        <% end %>
+      </Row>
+      <% if Entity.find(session[:entity_id]).payroll_type == 'consolidated' %>
+          <% Payroll.for_entity(session[:entity_id]).date(session[:year], session[:month]).each do |payroll| %>
+              <% SalaryComponent.where(geography_id: session[:country_id]).each do |salary_component| %>
+                  <Row>
+                    <Cell><Data ss:Type="String"><%= "#{payroll.id}__#{payroll.dni}__#{payroll.labor_law.staff.description}" %></Data></Cell>
+                    <Cell><Data ss:Type="String">1</Data></Cell>
+                    <Cell><Data ss:Type="String"><%= payroll.salary %></Data></Cell>
+                    <Cell><Data ss:Type="String"><%= "#{salary_component.id}-#{salary_component.description}" %></Data></Cell>
+                  </Row>
+              <% end %>
+          <% end %>
+      <% else %>
+          <% Payroll.for_entity(session[:entity_id]).date(session[:year], session[:month]).each do |payroll| %>
+              <% SalaryComponent.where(geography_id: session[:country_id]).each do |salary_component| %>
+                  <Row>
+                    <Cell><Data ss:Type="String"><%= "#{payroll.id}__#{payroll.dni}__#{payroll.name}" %></Data></Cell>
+                    <Cell><Data ss:Type="String">1</Data></Cell>
+                    <Cell><Data ss:Type="String"><%= payroll.salary %></Data></Cell>
+                    <Cell><Data ss:Type="String"><%= "#{salary_component.id}-#{salary_component.description}" %></Data></Cell>
+                  </Row>
+              <% end %>
+          <% end %>
+      <% end %>
+    </Table>
+  </Worksheet>
+</Workbook>

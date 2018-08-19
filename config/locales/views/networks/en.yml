@@ -1,0 +1,16 @@
+en:
+  activerecord:
+    models:
+      network:
+        one: Network
+        other: Networks
+    attributes:
+      network:
+        code: Code
+        description: Description
+        geography_id: Location
+        state: State
+        created_at: Created at
+        updated_at: Updated at
+  change_network: Network changed successfully
+  located_in: Location in

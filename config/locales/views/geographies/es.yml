@@ -1,0 +1,21 @@
+es:
+  change_country: País cambiado exitosamente
+  code_attributes: Código %{attr}
+  activerecord:
+    models:
+      geography:
+        one: División Geografica
+        other: Divisiones Geograficas
+    attributes:
+      geography:
+        numerical_code: Código Númerico
+        first_level: País
+        second_level: Región
+        third_level: Departamento
+        fourth_level: Municipio
+        fifth_level: Barrio
+        description: Descripción
+        depth_detail: Nivel de detalle
+        state: Estado
+        created_at: Fecha Creación
+        updated_at: Ultima Actualización

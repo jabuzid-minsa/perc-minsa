@@ -1,0 +1,256 @@
+<div class="ibox float-e-margins">
+	<div class="ibox-title">
+		<h5><%= t('app.analysis_tables.one.third_panel.title') %></h5>
+		<div class="ibox-tools">
+			<a class="collapse-link">
+				<i class="fa fa-chevron-up"></i>
+			</a>
+		</div>
+	</div>
+	<div class="ibox-content">
+		<!-- Graph for Details -->
+		<div class="row">
+			<div class="col-md-12">
+				<canvas id="detail_stacked" width="100%" height="" style="display: none;"></canvas>
+				<div id="graph_detail_stocked"></div>
+			</div>
+		</div>
+		<!-- Detail -->
+		<div class="row">
+			<div class="col-sm-12">
+				<button id="btn_calculate_percentages" class="btn btn-white btn-bitbucket">
+					<i class="fa fa-exchange"></i>
+				</button>
+				<%= link_to analysis_graphs_detail_report_cost_production_center_path, class: 'btn btn-primary', target: '_blank' do %>
+						<i class="fa fa-list-alt"></i> <%= t('app.analysis_tables.one.third_panel.button_detail') %>
+				<% end %>
+			</div>
+		</div>
+		<table class="table table-bordered dataTable no-footer fixed_table" id="concepts_by_cost_centers" cellspacing="0" data-columntotals='1' data-title_download='Analisis Centros de Costo'>
+			<thead>
+				<tr>
+					<td></td>
+					<% @cost_centers.each do |cost_center| %>
+							<td data-cost-center="<%= cost_center.description %>" data-function="<%= cost_center.function %>" data-costcenter="<%= cost_center.id %>">
+								<label for=""><%= cost_center.description %></label>
+							</td>
+					<% end %>
+				</tr>
+			</thead>
+			<tbody>
+				<tr id="human_resource_concept">
+					<td>
+						<label for=""><%= t('app.analysis_tables.common.human_resource') %></label>
+					</td>
+					<% @cost_centers.each do |cost_center| %>
+							<% total_sum = 0 %>
+							<td class="text-right">
+								<% total_sum = get_value_for_hash_human_resources(@human_resource, cost_center.id) %>
+								<label class="decimal_numbers_2 value">
+									<%= total_sum %>
+								</label>
+							</td>
+					<% end %>
+				</tr>
+				<tr id="overhead_concept">
+					<td>
+						<label for=""><%= t('app.analysis_tables.common.overheads') %></label>
+					</td>
+					<% @cost_centers.each do |cost_center| %>
+							<% total_sum = 0 %>
+							<td class="text-right">
+								<% total_sum = get_value_for_hash_overheads_supplies(@overheads, cost_center.id) %>
+								<label class="decimal_numbers_2 value">
+									<%= total_sum %>
+								</label>
+							</td>
+					<% end %>
+				</tr>
+				<tr id="supply_concept">
+					<td>
+						<label for=""><%= t('app.analysis_tables.common.supplies') %></label>
+					</td>
+					<% @cost_centers.each do |cost_center| %>
+							<% total_sum = 0 %>
+							<td class="text-right">
+								<% total_sum = get_value_for_hash_overheads_supplies(@supplies, cost_center.id) %>
+								<label class="decimal_numbers_2 value">
+									<%= total_sum %>
+								</label>
+							</td>
+					<% end %>
+				</tr>
+				<tr id='total_concept'>
+					<td>
+						<label for=""><%= t('app.analysis_tables.common.total') %></label>
+					</td>
+					<% @cost_centers.each do |cost_center| %>
+							<td class="text-right" data-function="<%= cost_center.function %>" data-codecc="<%= cost_center.code %>" data-costcenter="<%= cost_center.id %>" data-parent="<%= cost_center.cost_center.code %>"></td>
+					<% end %>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<% content_for :javascript do %>
+	<script type="text/javascript">
+		var concepts_table = $('#concepts_by_cost_centers'),
+				hr_concept = $('#concepts_by_cost_centers #human_resource_concept'),
+				ov_concept = $('#concepts_by_cost_centers #overhead_concept'),
+				sp_concept = $('#concepts_by_cost_centers #supply_concept'),
+				tt_concept = $('#concepts_by_cost_centers #total_concept');
+		/** ---------------------- Functions ---------------------- **/
+		// Calculating totals by cost center
+		function calculate_concept_totals(){
+			var total_cost_center;
+			hr_concept.find('td').each(function(index, value) {
+				total_cost_center = 0;
+				if (index > 0) {
+					
+					total_cost_center += clean_number_mask(hr_concept.find('td:eq('+index+') label').html());
+					total_cost_center += clean_number_mask(ov_concept.find('td:eq('+index+') label').html());
+					total_cost_center += clean_number_mask(sp_concept.find('td:eq('+index+') label').html());
+
+					tt_concept.find('td:eq('+index+')').html("<label class='decimal_numbers_2'>"+ (parseFloat(total_cost_center)).toFixed(2) +"</label>");
+				}
+			});
+		}
+		//
+		function calculate_percentages_concepts() {
+			var total_cost_center, hr_value, ov_value, sp_value;
+			if (hr_concept.data('value') == 'currency' || hr_concept.data('value') == undefined) {
+				hr_concept.find('td').each(function(index, value) {
+					if (index > 0) {
+						total_cost_center = clean_number_mask(tt_concept.find('td:eq('+index+') label').html());
+
+						hr_value = clean_number_mask(hr_concept.find('td:eq('+index+') label').html());
+						hr_concept.find('td:eq('+index+') label').data('amount', hr_value);
+						hr_concept.find('td:eq('+index+') label').html(((hr_value/total_cost_center)*100).toFixed(2)+'%');
+
+						ov_value = clean_number_mask(ov_concept.find('td:eq('+index+') label').html());
+						ov_concept.find('td:eq('+index+') label').data('amount', ov_value);
+						ov_concept.find('td:eq('+index+') label').html(((ov_value/total_cost_center)*100).toFixed(2)+'%');
+
+						sp_value = clean_number_mask(sp_concept.find('td:eq('+index+') label').html());
+						sp_concept.find('td:eq('+index+') label').data('amount', sp_value);
+						sp_concept.find('td:eq('+index+') label').html(((sp_value/total_cost_center)*100).toFixed(2)+'%');
+					}
+				});
+				hr_concept.data('value', 'percentage');
+			} else {
+				hr_concept.find('td').each(function(index, value) {
+					if (index > 0) {
+						hr_value = hr_concept.find('td:eq('+index+') label').data('amount');
+						hr_concept.find('td:eq('+index+') label').html(hr_value);
+
+						ov_value = ov_concept.find('td:eq('+index+') label').data('amount');
+						ov_concept.find('td:eq('+index+') label').html(ov_value);
+
+						sp_value = sp_concept.find('td:eq('+index+') label').data('amount');
+						sp_concept.find('td:eq('+index+') label').html(sp_value);
+					}
+				});
+				hr_concept.data('value', 'currency');
+				$('.decimal_numbers_2').number( true, 0 );
+			}
+			created_from_chart_table_details({
+				graphic_element: '#graph_detail_stocked',
+				data_table: '#concepts_by_cost_centers',
+				label: 'label.value',
+				colors: {
+					"<%= t('app.analysis_tables.common.human_resource') %>": '#E83060',
+					"<%= t('app.analysis_tables.common.overheads') %>": '#FFE321',
+					"<%= t('app.analysis_tables.common.supplies') %>": '#3FCFDA'
+				},
+				groups: [["<%= t('app.analysis_tables.common.human_resource') %>","<%= t('app.analysis_tables.common.overheads') %>","<%= t('app.analysis_tables.common.supplies') %>"]]
+			});
+		}
+		/** ---------------------- Graph Functions ---------------------- **/
+		// Create Graph for the concepts table
+		function created_from_chart_table_details(options) {
+			var graphic_element = options.graphic_element,
+					data_table = options.data_table,
+					graph;
+			graph = c3.generate({
+				point: options.point,
+				bindto: graphic_element,
+				data:{
+					x : 'x',
+					columns: c3Custom_get_data($(data_table)),
+					colors: options.colors || {},
+					type: options.type || 'bar',
+					groups: options.groups || [],
+					labels: {
+						format: {
+							y: d3.format("$,")
+						}
+					}
+				},
+				zoom: {
+					enabled: true
+				},
+				tooltip: {
+					format: {
+						value: function(value) {
+							return d3.format(",.2f")(value)
+						}
+					}
+				},
+				axis: {
+					y : {
+						tick: {
+							format: d3.format(",.2f")
+						}
+					},
+					x: {
+						type: 'category',
+						tick: {
+							rotate: 90,
+							multiline: true,
+							width: 140
+						},
+						height: 200
+					}
+				}
+			});
+
+			if ($('#concepts_by_cost_centers thead tr td').length > 21) {
+				graph.zoom([1, 10]);
+			}
+		}
+		// Get headers from table concepts
+		function c3Custom_get_data($table, $label) {
+			var array_final = [],
+					temp_array = [],
+					label = $label || 'label';
+			//Head data
+			temp_array = c3Custom_get_headers($table);
+			array_final.push(temp_array);
+			//Body data
+			$table.find("tbody").find("tr:not(:last-child)").each(function (index, value) {
+				temp_array = [];
+				$(value).find("td").each(function (index_td, value_td) {
+
+					if (index_td == 0) {
+						temp_array.push(String($(value_td).find('label').html()).trim());
+					} else {
+						temp_array.push(clean_number_mask($(value_td).find(label).html()));
+					}
+				});
+				array_final.push(temp_array);
+			});
+			return array_final;        
+		}
+		// Get data from table concepts
+		function c3Custom_get_headers($table){
+			var temp_array = ['x'];
+			$table.find('thead tr td').each(function (index, value) {
+				if (index > 0) {
+					temp_array.push(String($(value).find("label").html()).trim());
+				}
+			});
+			return temp_array;
+		}
+	</script>
+<% end %>

@@ -1,0 +1,16 @@
+en:
+  activerecord:
+    models:
+      care_level:
+        one: Care Level
+        other: Care Levels
+    attributes:
+      care_level:
+        code: Code
+        description: Description
+        definition: Definition
+        geography_id: Country
+        language_id: Idiom
+        state: State
+        created_at: Created at
+        updated_at: Updated at

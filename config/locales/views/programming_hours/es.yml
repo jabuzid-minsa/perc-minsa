@@ -1,0 +1,20 @@
+es:
+  activerecord:
+    models:
+      programming_hour:
+        one: Programación Hora
+        other: Programación de Horas
+    attributes:
+      programming_hour:
+        year: Año
+        month: Mes
+        total: Total Empleados
+        paid: Total Pagado
+        hours: Horas
+        entity_id: Entidad
+        cost_center_id: Centro de Costo
+        payroll_id: Empleado
+        salary_component_id: Componente Salarial
+        created_at: Fecha Creación
+        updated_at: Ultima Actualización
+  limit_hours: El componente _component_ se le asigno un valor maximo de _max_value_, la sumatoria actual es de _total_

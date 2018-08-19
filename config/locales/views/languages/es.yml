@@ -1,0 +1,13 @@
+es:
+  activerecord:
+    models:
+      language:
+        one: Idioma
+        other: Idiomas
+    attributes:
+      language:
+        abbreviation: Abreviación
+        name: Nombre
+        state: Estado
+        created_at: Fecha Creación
+        updated_at: Ultima Actualización

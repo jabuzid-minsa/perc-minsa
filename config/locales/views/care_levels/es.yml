@@ -1,0 +1,16 @@
+es:
+  activerecord:
+    models:
+      care_level:
+        one: Nivel de Complejidad
+        other: Niveles de Complejidad
+    attributes:
+      care_level:
+        code: Código
+        description: Descripción
+        definition: Definición
+        geography_id: País
+        language_id: Idioma
+        state: Estado
+        created_at: Fecha Creación
+        updated_at: Ultima Actualización

@@ -1,0 +1,76 @@
+<div class="ibox float-e-margins">
+	<div class="ibox-title">
+		<h5><%= t('app.analysis_tables.one.fourth_panel.title') %></h5>
+		<div class="ibox-tools">
+			<a class="collapse-link">
+				<i class="fa fa-chevron-up"></i>
+			</a>
+		</div>
+	</div>
+	<div class="ibox-content">
+		<table class="table table-bordered dataTable no-footer fixed_table" id="weighted_cost" cellspacing="0" data-title_download='Analisis Peso Porcentual'>
+			<thead>
+				<tr>
+				</tr>
+			</thead>
+			<tbody>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<% content_for :javascript do %>
+	<script type="text/javascript">
+		var weighted_cost_table = $('#weighted_cost'),
+				concepts_table = $('#concepts_by_cost_centers');
+		/** ---------------------- Functions ---------------------- **/
+		// 
+		function copy_cost_centers_concepts_table() {
+			var string_elements = '';
+			concepts_table.find('thead tr td').each(function() {
+				string_elements += '<td>'+$(this).html()+'</td>';
+			});
+
+			weighted_cost_table.find('thead tr').html(string_elements);
+		}
+		//
+		function copy_data_concepts_table() {
+			var hr_concept, ov_concept, sp_concept, tt_concept, total_hr, total_ov, total_sp, total_entity, current_hr_value, 
+					current_ov_value, current_sp_value, current_tt_value, string_hr = '', string_ov = '', string_sp = '', string_tt = '';
+			
+			total_hr = clean_number_mask($('#consolidated_table tr[data-summary="human_resource"] .currency label').html());
+			total_ov = clean_number_mask($('#consolidated_table tr[data-summary="overheads"] .currency label').html());
+			total_sp = clean_number_mask($('#consolidated_table tr[data-summary="supplies"] .currency label').html());
+			total_entity = clean_number_mask($('#consolidated_table tr[data-summary="total_entity"] #total_entity label').html());
+			
+			hr_concept = $('#concepts_by_cost_centers #human_resource_concept');
+			ov_concept = $('#concepts_by_cost_centers #overhead_concept');
+			sp_concept = $('#concepts_by_cost_centers #supply_concept');
+			tt_concept = $('#concepts_by_cost_centers #total_concept');
+
+			hr_concept.find('td').each(function(index, value) {
+				if (index > 0) {
+					current_hr_value = clean_number_mask(hr_concept.find('td:eq('+index+') label').html());
+					current_ov_value = clean_number_mask(ov_concept.find('td:eq('+index+') label').html());
+					current_sp_value = clean_number_mask(sp_concept.find('td:eq('+index+') label').html());
+					current_tt_value = clean_number_mask(tt_concept.find('td:eq('+index+') label').html());
+
+					string_hr += '<td class="text-right"><label>'+ ((current_hr_value/total_hr)*100).toFixed(2) +'%</label></td>';
+					string_ov += '<td class="text-right"><label>'+ ((current_ov_value/total_ov)*100).toFixed(2) +'%</label></td>';
+					string_sp += '<td class="text-right"><label>'+ ((current_sp_value/total_sp)*100).toFixed(2) +'%</label></td>';
+					string_tt += '<td class="text-right"><label>'+ ((current_tt_value/total_entity)*100).toFixed(2) +'%</label></td>';
+				} else {
+					string_hr += '<td>'+ hr_concept.find('td:eq('+index+')').html().trim() +'</td>';
+					string_ov += '<td>'+ ov_concept.find('td:eq('+index+')').html().trim() +'</td>';
+					string_sp += '<td>'+ sp_concept.find('td:eq('+index+')').html().trim() +'</td>';
+					string_tt += '<td>'+ tt_concept.find('td:eq('+index+')').html().trim() +'</td>';
+				}
+			});
+
+			weighted_cost_table.find('tbody').append('<tr>'+string_hr+'</tr>');
+			weighted_cost_table.find('tbody').append('<tr>'+string_ov+'</tr>');
+			weighted_cost_table.find('tbody').append('<tr>'+string_sp+'</tr>');
+			weighted_cost_table.find('tbody').append('<tr>'+string_tt+'</tr>');
+		}
+	</script>
+<% end %>

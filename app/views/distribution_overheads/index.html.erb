@@ -1,0 +1,195 @@
+<% content_for :stylesheet do %>
+		<%= stylesheet_link_tag 'datatable', media: 'screen', 'data-turbolinks-track' => true %>
+<% end %>
+
+<% content_for :breadcrumb_title do %><%= DistributionOverhead.model_name.human %><% end %>
+<% content_for :breadcrumb_list do %>
+		<li class="active"><strong><%= t('app.texts.creating', element: DistributionOverhead.model_name.human(:count => 2)) %></strong></li>
+<% end %>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+	<div class="row">
+		<div class="col-lg-12">
+			<div class="ibox float-e-margins">
+				<div class="ibox-title">
+					<h5><%= t('app.texts.create', element: DistributionOverhead.model_name.human(:count => 2)) %></h5>
+					<div class="ibox-tools">
+						<a class="collapse-link">
+							<i class="fa fa-chevron-up"></i>
+						</a>
+					</div>
+				</div>
+				<div class="ibox-content">
+					<div class="row">
+						<div class="col-md-5">
+						  <div class="form-group">
+							<%= link_to "Excel", distribution_overheads_path(format: "xls") %> |
+							<%= link_to "Formato Excel", distribution_overheads_path(format: "xls_empty") %>
+						  </div>
+						</div>
+						<div class="col-md-6">
+						  <%= form_tag import_distribution_overheads_path, multipart: true, class: 'form-inline' do %>
+							  <div class="checkbox m-r-xs">
+                    <input type="checkbox" id='empty_format' name='empty_format'>
+                    <label for="empty_format">
+                      Vaciar Antes
+                    </label>
+                  </div>
+                  <div class="form-group">
+                    <%= file_field_tag :file %>
+                  </div>
+							  <div class="form-group">
+									<%= submit_tag "Importar", class: 'btn btn-default' %>
+							  </div>
+						  <% end %>
+						</div>
+					</div>
+					<table class="table table-bordered dataTable no-footer" id="fixed_table" cellspacing="0">
+						<thead>
+							<tr>
+								<td><%= DistributionOverhead.human_attribute_name(:supply_id) %></td>
+								<% @supplies.each do |supply| %>
+										<td data-service="<%= supply.id %>"><%= supply.description %></td>
+								<% end %>
+							</tr>
+							<tr id="row_type_distributions">
+								<td><%= DistributionOverhead.human_attribute_name(:type_distribution_id) %></td>
+								<% @supplies.each do |supply| %>
+										<td><%= select("type_distribution", "type_distribution", @type_distributions.collect {|p| [ p.description.capitalize, p.id ] },
+																	 {selected: acces_attribute_distribution_overheads(@distribution_overheads.find_by(supply_id: supply.id), 'type_distribution_id', true) },
+																	 {class: 'type_distribution', data: {supply: supply.id}}) %></td>
+								<% end %>
+							</tr>
+							<tr id="row_general_values">
+								<td><%= DistributionOverhead.human_attribute_name(:general_value) %></td>
+								<% @supplies.each_with_index do |supply, index_sp| %>
+										<% if index_sp == 0 %>
+												<% tabindex = index_sp + 1 %>
+										<% else %>
+												<% tabindex = 1 + (index_sp * @total_cost_center) %>
+										<% end %>
+										<td><%= text_field_tag 'general_value', nil, :tabindex => tabindex, class: 'size-100 decimal_numbers_2 general_value', id: 'general_value',
+																					 data: {supply: supply.id},
+																					 value: acces_attribute_distribution_overheads(@distribution_overheads.find_by(supply_id: supply.id), 'general_value', true) %>
+										</td>
+								<% end %>
+							</tr>
+						</thead>
+						<tbody>
+						<% @cost_centers.each_with_index do |cost_center, index_cc| %>
+								<tr class="<%= 'bg-light-blue' if index_cc % 2 == 0 %>">
+									<td><%= cost_center.description %></td>
+									<% @supplies.each_with_index do |supply, index_sp| %>
+											<% if index_sp == 0 %>
+													<% tabindex = index_cc + 2 %>
+											<% else %>
+													<% tabindex = (index_cc + 2) + (index_sp * @total_cost_center) %>
+											<% end %>
+											<td><%= text_field_tag 'distribution_overheads', nil, :tabindex => tabindex, class: 'size-100 decimal_numbers_2 ajax_values',
+																						 data: {cost_center: cost_center.id, supply: supply.id},
+																						 value: acces_attribute_distribution_overheads(@distribution_overheads.find_by(cost_center_id: cost_center.id, supply_id: supply.id), 'value') %></td>
+									<% end %>
+								</tr>
+						<% end %>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<% content_for :javascript do %>
+		<%= javascript_include_tag 'datatable', 'data-turbolinks-track' => true %>
+
+		<script type="text/javascript">
+			$(function() {
+				var ajax_parameters = {
+							year: <%= session[:year] %>,
+							month: <%= session[:month] %>,
+							type_distribution: 0,
+							general_value: 0,
+							cost_center: 0,
+							supply: 0,
+							value: 0
+						},
+						table = $('#fixed_table').DataTable({
+							bInfo: 					false,
+							searching: 			false,
+							bSort: 					false,
+							scrollY:        "500px",
+							scrollX:        true,
+							scrollCollapse: true,
+							paging:         false,
+							fixedColumns:   {
+								leftColumns: 1
+							}
+						}),
+						urls = {
+							save: '<%= save_distribution_overheads_path %>',
+							update_type_distribution: '<%= update_type_distributions_path %>',
+							update_general_value: '<%= update_general_values_path %>'
+						},
+						current_value = 0;
+
+				$('.ajax_values').focusin(function () {
+					current_value = $(this).val();
+				});
+
+				$('.ajax_values').focusout(function () {
+					var supply_id = $(this).data('supply'),
+							val_type_distribution = $("#row_type_distributions").find("select[data-supply='"+supply_id+"']").val(),
+							val_general_value = $("#row_general_values").find("input[data-supply='"+supply_id+"']").val();
+					if (current_value != $(this).val()) {
+						ajax_parameters.type_distribution = val_type_distribution;
+						ajax_parameters.general_value = val_general_value;
+						ajax_parameters.cost_center = $(this).data('cost-center');
+						ajax_parameters.supply = supply_id;
+						ajax_parameters.value = $(this).val();
+						console.log(ajax_parameters);
+						ajax_request(urls.save, ajax_parameters);
+					}
+				});
+
+				$(".type_distribution").change(function () {
+					var supply_id = $(this).data('supply');
+					ajax_parameters.type_distribution = $(this).val();
+					ajax_parameters.supply = supply_id;
+
+					ajax_request(urls.update_type_distribution, ajax_parameters);
+				});
+
+				$('.general_value').focusin(function () {
+					current_value = $(this).val();
+				});
+				$(".general_value").focusout(function () {
+					var supply_id = $(this).data('supply');
+					if (current_value != $(this).val()) {
+						ajax_parameters.general_value = $(this).val();
+						ajax_parameters.supply = supply_id;
+
+						ajax_request(urls.update_general_value, ajax_parameters);
+					}
+				});
+			}); // Final function Jquery
+
+			function ajax_request(url, parameters) {
+				$.ajax({
+					url: url,
+					type: "GET",
+					dataType: "json",
+					data: parameters,
+					contentType: "script",
+					success: function(data) {
+						//
+					},
+					error: function(xhr,exception,status) {
+						console.log('entra al error');
+						console.log(xhr);
+						console.log(exception);
+						console.log(status);
+					}
+				});
+			}
+		</script>
+<% end %>

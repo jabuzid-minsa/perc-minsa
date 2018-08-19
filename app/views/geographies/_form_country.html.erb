@@ -1,0 +1,64 @@
+<%= form_for(@geography, html: { class: 'p-w-md' }) do |f| %>
+    <% if @geography.errors.any? %>
+        <div id="alert alert-danger" class="bg-danger">
+          <ul>
+            <% @geography.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+    <% end %>
+
+    <div class="row">
+      <div class="col-md-6">
+        <div class="form-group">
+          <%= f.label :numerical_code %>
+          <%= f.number_field :numerical_code, in: 1..2147483647, class: 'form-control', autofocus: true %>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for=""><%= t('code_attributes', attr: Geography.human_attribute_name(:first_level)) %></label>
+          <%= f.text_field :first_level, class: 'form-control', id: 'code_country' %>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6">
+        <div class="form-group">
+          <%= f.label :depth_detail %>
+          <%= f.number_field :depth_detail, in: 1..5, class: 'form-control' %>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <%= f.label :description %>
+          <%= f.text_field :description, class: 'form-control' %>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6">
+        <div class="form-group">
+          <%= f.label :state %>
+          <%= check_state(f) %>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="row">
+      <div class="col-md-6">
+        <div class="form-group text-right">
+          <%= link_to t('app.buttons.back'), geographies_path, class: 'btn btn-outline btn-success' %>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <%= f.submit class: 'btn btn-primary' %>
+        </div>
+      </div>
+    </div>
+<% end %>

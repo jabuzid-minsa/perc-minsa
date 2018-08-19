@@ -1,0 +1,16 @@
+es:
+  activerecord:
+    models:
+      distribution_supply:
+        one: Distribución Suministro
+        other: Distribución Suministros
+    attributes:
+      distribution_supply:
+        year: Año
+        month: Mes
+        value: Valor
+        entity_id: Entidad
+        cost_center_id: Centro de Costo
+        supply_id: Insumo
+        created_at: Fecha Creación
+        updated_at: Ultima Actualización

@@ -1,0 +1,178 @@
+<% content_for :stylesheet do %>
+    <%= stylesheet_link_tag 'datatable', media: 'screen', 'data-turbolinks-track' => true %>
+<% end %>
+
+<% content_for :breadcrumb_title do %><%= ProductionCostCenter.model_name.human %><% end %>
+<% content_for :breadcrumb_list do %>
+    <li class="active"><strong><%= t('app.texts.creating', element: ProductionCostCenter.model_name.human(:count => 2)) %></strong></li>
+<% end %>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-title">
+          <h5><%= t('app.texts.create', element: ProductionCostCenter.model_name.human(:count => 2)) %></h5>
+          <div class="ibox-tools">
+            <a class="collapse-link">
+              <i class="fa fa-chevron-up"></i>
+            </a>
+          </div>
+        </div>
+        <div class="ibox-content">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <%= link_to "Excel", production_cost_centers_path(format: "xls") %> |
+                <%= link_to "Formato Excel", production_cost_centers_path(format: "xls_empty") %>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <%= form_tag import_production_cost_centers_path, multipart: true, class: 'form-inline' do %>
+                  <div class="checkbox m-r-xs">
+                    <input type="checkbox" id='empty_format' name='empty_format'>
+                    <label for="empty_format">
+                      Vaciar Antes
+                    </label>
+                  </div>
+                  <div class="form-group">
+                    <%= file_field_tag :file %>
+                  </div>
+                  <div class="form-group">
+                    <%= submit_tag "Importar", class: 'btn btn-default' %>
+                  </div>
+              <% end %>
+            </div>
+          </div>
+          <table class="table table-bordered dataTable no-footer" id="fixed_table" cellspacing="0">
+            <thead>
+            <tr>
+              <td><%= CostCenter.human_attribute_name(:code) %></td>
+              <td><%= CostCenter.model_name.human %></td>
+              <td><%= ProductionCostCenter.human_attribute_name(:value) %></td>
+            </tr>
+            </thead>
+            <tbody>
+            <% @cost_centers.each_with_index do |cost_center, index_cc| %>
+                <% if cost_center.primary_production_unit.present? %>
+                    <tr class="<%= 'bg-light-blue' if index_cc % 2 == 0 %>">
+                      <td><%= "#{cost_center.code}" %></td>
+                      <td><%= "#{cost_center.description} | #{cost_center.primary_production_unit.description}" %></td>
+                      <td><%= text_field_tag 'distribution_cost', nil, step: 2, class: 'form-control size-100 decimal_numbers_2 ajax_values',
+                                             data: {cost_center: cost_center.id, production_units: 1},
+                                             value: acces_attribute_distribution_cost(@production_cost_centers.find_by(cost_center_id: cost_center.id, production_units: 1), 'value') %></td>
+                    </tr>
+                <% end %>
+                <% if cost_center.secondary_production_unit.present? %>
+                    <tr class="<%= 'bg-light-blue' if index_cc % 2 == 0 %>">
+                      <td><%= "#{cost_center.code}" %></td>
+                      <td><%= "#{cost_center.description} | #{cost_center.secondary_production_unit.description}" %></td>
+                      <td><%= text_field_tag 'distribution_cost', nil, step: 2, class: 'form-control size-100 decimal_numbers_2 ajax_values',
+                                             data: {cost_center: cost_center.id, production_units: 2},
+                                             value: acces_attribute_distribution_cost(@production_cost_centers.find_by(cost_center_id: cost_center.id, production_units: 2), 'value') %></td>
+                    </tr>
+                <% end %>
+                <% if cost_center.tertiary_production_unit.present? %>
+                    <tr class="<%= 'bg-light-blue' if index_cc % 2 == 0 %>">
+                      <td><%= "#{cost_center.code}" %></td>
+                      <td><%= "#{cost_center.description} | #{cost_center.tertiary_production_unit.description}" %></td>
+                      <td><%= text_field_tag 'distribution_cost', nil, step: 2, class: 'form-control size-100 decimal_numbers_2 ajax_values',
+                                             data: {cost_center: cost_center.id, production_units: 3},
+                                             value: acces_attribute_distribution_cost(@production_cost_centers.find_by(cost_center_id: cost_center.id, production_units: 3), 'value') %></td>
+                    </tr>
+                <% end %>
+                <% if cost_center.quaternary_production_unit.present? %>
+                    <tr class="<%= 'bg-light-blue' if index_cc % 2 == 0 %>">
+                      <td><%= "#{cost_center.code}" %></td>
+                      <td><%= "#{cost_center.description} | #{cost_center.quaternary_production_unit.description}" %></td>
+                      <td><%= text_field_tag 'distribution_cost', nil, step: 2, class: 'form-control size-100 decimal_numbers_2 ajax_values',
+                                             data: {cost_center: cost_center.id, production_units: 4},
+                                             value: acces_attribute_distribution_cost(@production_cost_centers.find_by(cost_center_id: cost_center.id, production_units: 4), 'value') %></td>
+                    </tr>
+                <% end %>
+                <% if cost_center.quinary_production_unit.present? %>
+                    <tr class="<%= 'bg-light-blue' if index_cc % 2 == 0 %>">
+                      <td><%= "#{cost_center.code}" %></td>
+                      <td><%= "#{cost_center.description} | #{cost_center.quinary_production_unit.description}" %></td>
+                      <td><%= text_field_tag 'distribution_cost', nil, step: 2, class: 'form-control size-100 decimal_numbers_2 ajax_values',
+                                             data: {cost_center: cost_center.id, production_units: 5},
+                                             value: acces_attribute_distribution_cost(@production_cost_centers.find_by(cost_center_id: cost_center.id, production_units: 5), 'value') %></td>
+                    </tr>
+                <% end %>
+                <% if cost_center.cost_center.present? and ['01000', '01100', '01200', '01300', '01400', '01500', '01600', '02000','05000', '05100', '05200', '05300'].include?(cost_center.cost_center.code) %>
+                    <tr class="<%= 'bg-light-blue' if index_cc % 2 == 0 %>">
+                      <td><%= "#{cost_center.code}" %></td>
+                      <td><%= "#{cost_center.description} | N. Camas" %></td>
+                      <td><%= text_field_tag 'distribution_cost', nil, step: 2, class: 'form-control size-100 decimal_numbers_2 ajax_values',
+                                             data: {cost_center: cost_center.id, production_units: 6},
+                                             value: acces_attribute_distribution_cost(@production_cost_centers.find_by(cost_center_id: cost_center.id, production_units: 6), 'value') %></td>
+                    </tr>
+                <% end %>
+            <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% content_for :javascript do %>
+    <%= javascript_include_tag 'datatable', 'data-turbolinks-track' => true %>
+
+    <script type="text/javascript">
+      $(function() {
+        var ajax_parameters = {
+              year: <%= session[:year] %>,
+              month: <%= session[:month] %>,
+              cost_center: 0,
+              production_units: 0,
+              value: 0
+            },
+            table = $('#fixed_table').DataTable({
+              bInfo: 					false,
+              searching: 			false,
+              bSort: 					false,
+              scrollY:        "500px",
+              scrollX:        true,
+              scrollCollapse: true,
+              paging:         false
+            }),
+            current_value = 0;
+
+        $('.ajax_values').focusin(function () {
+          current_value = $(this).val();
+        });
+
+        $('.ajax_values').focusout(function () {
+          if (current_value != $(this).val()) {
+            ajax_parameters.cost_center = $(this).data('cost-center');
+            ajax_parameters.production_units = $(this).data('production-units');
+            ajax_parameters.value = $(this).val();
+            console.log(ajax_parameters);
+            ajax_request(ajax_parameters);
+          }
+        });
+
+      });
+
+      function ajax_request(parameters) {
+        $.ajax({
+          url: '<%= save_production_cost_centers_path %>',
+          type: "GET",
+          dataType: "json",
+          data: parameters,
+          contentType: "script",
+          success: function(data) {
+            //
+          },
+          error: function(xhr,exception,status) {
+            console.log('entra al error');
+            console.log(xhr);
+            console.log(exception);
+            console.log(status);
+          }
+        });
+      }
+    </script>
+<% end %>

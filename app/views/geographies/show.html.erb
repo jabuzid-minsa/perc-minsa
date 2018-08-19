@@ -1,0 +1,44 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>First level:</strong>
+  <%= @geography.first_level %>
+</p>
+
+<p>
+  <strong>Second level:</strong>
+  <%= @geography.second_level %>
+</p>
+
+<p>
+  <strong>Third level:</strong>
+  <%= @geography.third_level %>
+</p>
+
+<p>
+  <strong>Fourth level:</strong>
+  <%= @geography.fourth_level %>
+</p>
+
+<p>
+  <strong>Fifth level:</strong>
+  <%= @geography.fifth_level %>
+</p>
+
+<p>
+  <strong>Description:</strong>
+  <%= @geography.description %>
+</p>
+
+<p>
+  <strong>Depth detail:</strong>
+  <%= @geography.depth_detail %>
+</p>
+
+<p>
+  <strong>State:</strong>
+  <%= @geography.state %>
+</p>
+
+<%= link_to 'Edit', edit_geography_path(@geography) %> |
+<%= link_to 'Back', geographies_path %>

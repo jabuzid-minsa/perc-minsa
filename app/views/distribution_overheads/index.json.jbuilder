@@ -1,0 +1,1 @@
+json.array! @distribution_overheads, partial: 'distribution_overheads/distribution_overhead', as: :distribution_overhead

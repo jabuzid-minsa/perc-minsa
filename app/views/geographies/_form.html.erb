@@ -1,0 +1,25 @@
+<% content_for :stylesheet do %>
+    <%# Stylesheet for check type IOS %>
+    <%= stylesheet_link_tag 'checkios', media: 'screen', 'data-turbolinks-track' => true %>
+<% end %>
+
+<div class="row">
+  <% if current_user.is_valid_geography? or current_user.is_valid_session_country?(session[:country_id]) %>
+      <%= render 'form_divisions' %>
+  <% else %>
+      <%= render 'form_country' %>
+  <% end %>
+</div>
+
+<% content_for :javascript do %>
+    <% if not(current_user.is_valid_geography? or current_user.is_valid_session_country?(session[:country_id])) %>
+      <%# Stylesheet for check type IOS %>
+      <%= javascript_include_tag 'checkios', 'data-turbolinks-track' => true %>
+      <script type="text/javascript">
+        $(function() {
+          var elem = document.querySelector('.js-switch'),
+              switchery = new Switchery(elem, { color: '#64BD63', secondaryColor: '#F53028', jackColor: '#FFF', jackSecondaryColor: '#FFF' });
+        });
+      </script>
+    <% end %>
+<% end %>

@@ -1,0 +1,16 @@
+en:
+  activerecord:
+    models:
+      distribution_cost:
+        one: Distributed Production
+        other: Distributed Productions
+    attributes:
+      distribution_cost:
+        year: Year
+        month: Month
+        value: Value
+        entity_id: Entity
+        cost_center_id: Cost Center
+        supported_cost_center_id: Supported Cost Center
+        created_at: Created at
+        updated_at: Updated at

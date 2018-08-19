@@ -1,0 +1,115 @@
+<% content_for :stylesheet do %>
+    <%# Stylesheet for check type IOS %>
+    <%= stylesheet_link_tag 'checkios', media: 'screen', 'data-turbolinks-track' => true %>
+<% end %>
+
+<div class="row">
+  <%= form_for(@staff, html: { class: 'p-w-md' }) do |f| %>
+      <% if @staff.errors.any? %>
+          <div class="alert alert-danger" role="alert">
+            <h2>
+              <%= pluralize(@staff.errors.count, t('general_errors.texts.error.one'), t('general_errors.texts.error.other')) %>,
+              <%= t('general_errors.form_erros') %>
+            </h2>
+            <ul>
+              <% @staff.errors.full_messages.each do |message| %>
+                  <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+      <% end %>
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label :geography_id %>
+            <%= f.hidden_field :geography_id, :value => get_attribute_geography(@staff) %>
+            <%= f.hidden_field :language_id, :value => get_current_idiom %>
+            <input type="text" class="form-control" value="<%= get_attribute_geography(@staff, 'description') %>", disabled />
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label :staff_id %>
+            <%= f.select :staff_id, Staff.groupers.active.collect { |p| [p.description, p.id] },
+                         {include_blank: Staff.human_attribute_name(:staff_id)},
+                         {class: 'form-control select2', id: 'parent'} %>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label :code %>
+            <%= f.text_field :code, class: 'form-control', autofocus: true %>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label :description %>
+            <%= f.text_field :description, class: 'form-control' %>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label :definition %>
+            <%= f.text_area :definition, rows: 5, class: 'form-control' %>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label :state %>
+            <%= check_state(f) %>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 text-right">
+          <%= link_to t('app.buttons.back'), staffs_path, class: 'btn btn-outline btn-success' %>
+        </div>
+        <div class="col-md-6 text-left">
+          <%= f.submit class: 'btn btn-primary' %>
+        </div>
+      </div>
+  <% end %>
+</div>
+
+<% content_for :javascript do %>
+    <%# Stylesheet for check type IOS %>
+    <%= javascript_include_tag 'checkios', 'data-turbolinks-track' => true %>
+    <script type="text/javascript">
+      $(function() {
+        var elem = document.querySelector('.js-switch'),
+            switchery = new Switchery(elem, { color: '#64BD63', secondaryColor: '#F53028', jackColor: '#FFF', jackSecondaryColor: '#FFF' });
+
+        $("#parent").change(function () {
+          var data = { staff: $("#parent option:selected").val() };
+          ajax_request(data, '#staff_code')
+        });
+      }); // END $(function)
+
+      function ajax_request(parameters, element) {
+        $.ajax({
+          url: '<%= staffs_next_code_path %>',
+          type: "GET",
+          dataType: "json",
+          data: parameters,
+          contentType: "script",
+          success: function(data) {
+            $(element).val(data);
+          },
+          error: function(xhr,exception,status) {
+            console.log('entra al error');
+            console.log(xhr);
+            console.log(exception);
+            console.log(status);
+          }
+        });
+      }
+    </script>
+<% end %>

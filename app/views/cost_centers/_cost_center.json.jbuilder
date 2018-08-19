@@ -1,0 +1,2 @@
+json.extract! cost_center, :id, :code, :description, :function, :cost_center_id, :geography_id, :language_id, :staff_id, :supply_id, :cost_distribution_id, :state, :created_at, :updated_at
+json.url cost_center_url(cost_center, format: :json)

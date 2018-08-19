@@ -1,0 +1,154 @@
+<div class="ibox float-e-margins">
+	<div class="ibox-title">
+		<h5><%= t('app.analysis_tables.multiple_months.one.additional_panel.title') %></h5>
+		<div class="ibox-tools">
+			<a class="collapse-link">
+				<i class="fa fa-chevron-up"></i>
+			</a>
+		</div>
+	</div>
+	<div class="ibox-content">
+		<!-- Graph for Details -->
+		<div class="row">
+			<div class="col-md-12">
+				<canvas id="gconcepts_by_date" width="100%" height="" style="display: none;"></canvas>
+				<div id="graph_concepts_by_date"></div>
+			</div>
+		</div>
+		<table class="table table-bordered dataTable no-footer fixed_table" id="concepts_by_date" cellspacing="0" data-columntotals='1' data-title_download='Analisis Centros de Costo'>
+			<thead>
+				<tr>
+					<td></td>					
+					<% (0..@months_total).each do |number| %>
+						<% current_date = @starting_date + number.months %>
+						<td>
+							<label for=""><%= "#{current_date.month}/#{current_date.year}" %></label>
+						</td>
+					<% end %>
+				</tr>
+			</thead>
+			<tbody>
+				<tr id="date_human_resource_concept">
+					<td>
+						<label for=""><%= t('app.analysis_tables.common.human_resource') %></label>
+					</td>
+					<% (0..@months_total).each do |number| %>
+						<% current_date = @starting_date + number.months %>
+						<td class="text-right">
+							<label class="decimal_numbers_2 value">
+								<%= @human_resource.select {|d| d['year'] == current_date.year && d['month'] == current_date.month }.inject(0) {|sum, hash| sum + hash['value']} %>
+							</label>
+						</td>
+					<% end %>
+				</tr>
+				<tr id="date_overhead_concept">
+					<td>
+						<label for=""><%= t('app.analysis_tables.common.overheads') %></label>
+					</td>
+					<% (0..@months_total).each do |number| %>
+						<% current_date = @starting_date + number.months %>
+							<td class="text-right">
+								<label class="decimal_numbers_2 value">
+									<%= @overheads.select {|d| d['year'] == current_date.year && d['month'] == current_date.month }.inject(0) {|sum, hash| sum + hash['value']} %>
+								</label>
+							</td>
+					<% end %>
+				</tr>
+				<tr id="date_supply_concept">
+					<td>
+						<label for=""><%= t('app.analysis_tables.common.supplies') %></label>
+					</td>
+					<% (0..@months_total).each do |number| %>
+						<% current_date = @starting_date + number.months %>
+							<td class="text-right">
+								<label class="decimal_numbers_2 value">
+									<%= @supplies.select {|d| d['year'] == current_date.year && d['month'] == current_date.month }.inject(0) {|sum, hash| sum + hash['value']} %>
+								</label>
+							</td>
+					<% end %>
+				</tr>
+				<tr id='date_total_concept'>
+					<td>
+						<label for=""><%= t('app.analysis_tables.common.total') %></label>
+					</td>
+					<% (0..@months_total).each do |number| %>
+							<td class="text-right"></td>
+					<% end %>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<% content_for :javascript do %>
+	<script type="text/javascript">
+		var date_concepts_table = $('#concepts_by_date'),
+				date_hr_concept = $('#concepts_by_date #date_human_resource_concept'),
+				date_ov_concept = $('#concepts_by_date #date_overhead_concept'),
+				date_sp_concept = $('#concepts_by_date #date_supply_concept'),
+				date_tt_concept = $('#concepts_by_date #date_total_concept');
+		/** ---------------------- Functions ---------------------- **/
+		// Calculating totals by cost center
+		function calculate_totals_by_date(){
+			var total_cost_center;
+			date_hr_concept.find('td').each(function(index, value) {
+				total_cost_center = 0;
+				if (index > 0) {
+					
+					total_cost_center += clean_number_mask(date_hr_concept.find('td:eq('+index+') label').html());
+					total_cost_center += clean_number_mask(date_ov_concept.find('td:eq('+index+') label').html());
+					total_cost_center += clean_number_mask(date_sp_concept.find('td:eq('+index+') label').html());
+
+					date_tt_concept.find('td:eq('+index+')').html("<label class='decimal_numbers_2'>"+ (parseFloat(total_cost_center)).toFixed(2) +"</label>");
+				}
+			});
+		}
+		/** ---------------------- Graph Functions ---------------------- **/
+		// Create Graph for the concepts table
+		function create_graph_by_date(options) {
+			var graphic_element = options.graphic_element,
+					data_table = options.data_table,
+					graph;
+			graph = c3.generate({
+				point: options.point,
+				bindto: graphic_element,
+				data:{
+					x : 'x',
+					columns: c3Custom_get_data($(data_table)),
+					colors: options.colors || {},
+					type: options.type || 'line',
+					groups: options.groups || [],
+					labels: {
+						format: {
+							y: d3.format("$,")
+						}
+					}
+				},
+				zoom: {
+					enabled: true
+				},
+				tooltip: {
+					format: {
+						value: function(value) {
+							return d3.format(",.2f")(value)
+						}
+					}
+				},
+				axis: {
+					y : {
+						tick: {
+							format: d3.format(",.2f")
+						}
+					},
+					x: {
+						type: 'category'
+					}
+				}
+			});
+
+			if ($('#concepts_by_date thead tr td').length > 21) {
+				graph.zoom([1, 10]);
+			}
+		}
+	</script>
+<% end %>

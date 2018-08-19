@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+          xmlns:o="urn:schemas-microsoft-com:office:office"
+          xmlns:x="urn:schemas-microsoft-com:office:excel"
+          xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+          xmlns:html="http://www.w3.org/TR/REC-html40">
+  <Worksheet ss:Name="<%= Payroll.model_name.human %>">
+    <Table>
+      <Row>
+        <Cell><Data ss:Type="String"><%= Payroll.human_attribute_name('dni') %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= Payroll.human_attribute_name('name') %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= Payroll.human_attribute_name('salary') %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= Payroll.human_attribute_name('labor_law_id') %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= LaborLaw.human_attribute_name('labor_standard_id') %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= Payroll.human_attribute_name('bonuses') %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= Payroll.human_attribute_name('benefits') %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= LaborLaw.human_attribute_name('contract_type_id') %></Data></Cell>
+      </Row>
+      <% @payrolls.each do |payroll| %>
+          <Row>
+            <Cell><Data ss:Type="String"><%= payroll.dni %></Data></Cell>
+            <Cell><Data ss:Type="String"><%= payroll.name %></Data></Cell>
+            <Cell><Data ss:Type="Number"><%= payroll.salary %></Data></Cell>
+            <Cell><Data ss:Type="String"><%= payroll.labor_law.staff.code %></Data></Cell>
+            <Cell><Data ss:Type="String"><%= payroll.labor_law.labor_standard.code %></Data></Cell>
+            <Cell><Data ss:Type="Number"><%= payroll.bonuses %></Data></Cell>
+            <Cell><Data ss:Type="Number"><%= payroll.benefits %></Data></Cell>
+            <Cell><Data ss:Type="String"><%= payroll.labor_law.contract_type_id %></Data></Cell>
+          </Row>
+      <% end %>
+    </Table>
+  </Worksheet>
+</Workbook>

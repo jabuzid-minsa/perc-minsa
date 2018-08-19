@@ -1,0 +1,21 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  year: 1
+  month: 1
+  total: 1
+  paid: 9.99
+  hours: 9.99
+  entity_id: 
+  cost_center_id: 
+  payroll_id: 
+
+two:
+  year: 1
+  month: 1
+  total: 1
+  paid: 9.99
+  hours: 9.99
+  entity_id: 
+  cost_center_id: 
+  payroll_id: 

@@ -1,0 +1,1 @@
+json.partial! "distribution_areas/distribution_area", distribution_area: @distribution_area

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="<%= I18n.locale %>">
+  <head>
+    <title><%= t('app.name') %></title>
+    <%= yield :stylesheet %>
+    <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track' => true %>
+    <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+    <script type="text/javascript">
+      $(function() {
+
+        var ajax_settings = {};
+
+        $('.integer_numbers').number( true, 0 );
+        $('.decimal_numbers_1').number( true, 1 );
+        $('.decimal_numbers_2').each(function (idnex, value) { $(this).number($(this).text(),2); });
+        //$('.decimal_numbers_2').number( true, 2 );
+
+        <% if user_signed_in? and can? :change_country, Geography %>
+          // Actions on element with id change_country to send the change of country
+          $("#change_country_navbar").change(function () {
+            ajax_settings = {
+              url: '<%= change_country_ajax_path %>',
+              data: {country_id: $("#change_country_navbar option:selected").val()},
+              beforeSend: asynchronous.div_loading('<%= t('app.texts.loading') %>'),
+              reload: true,
+              href: '/parametrization/geographies'
+            };
+            asynchronous.exec_ajax(ajax_settings);
+          });
+        <% end %>
+        <% if user_signed_in? and can? :change_network, Network and (current_user.is_valid_geography? or current_user.is_valid_session_country?(session[:country_id])) %>
+        // Actions on element with id change_country to send the change of country
+        $("#change_network_navbar").change(function () {
+          ajax_settings = {
+            url: '<%= change_network_ajax_path %>',
+            data: {network_id: $("#change_network_navbar option:selected").val()},
+            success: function(data) {
+              percToastr.showToast({
+                shortCutFunction: 'success',
+                msg: data
+              });
+            }
+          };
+          asynchronous.exec_ajax(ajax_settings);
+        });
+        <% end %>
+        <% if user_signed_in? and can? :change_entity, Entity and (current_user.is_valid_geography? or current_user.is_valid_session_country?(session[:country_id])) %>
+          // Actions on element with id change_country to send the change of country
+          $("#change_entity_navbar").change(function () {
+            ajax_settings = {
+              url: '<%= change_entity_ajax_path %>',
+              data: {entity_id: $("#change_entity_navbar option:selected").val()},
+              success: function(data) {
+                percToastr.showToast({
+                  shortCutFunction: 'success',
+                  msg: data
+                });
+              }
+            };
+            asynchronous.exec_ajax(ajax_settings);
+          });
+        <% end %>
+        <% if user_signed_in? and can? :change_date, User and (current_user.is_valid_geography? or current_user.is_valid_session_country?(session[:country_id])) %>
+        // Actions on element with id change_country to send the change of country
+        $("#send_global_data").click(function () {
+          ajax_settings = {
+            url: '<%= change_of_date_for_costs_ajax_path %>',
+            data: {
+              year: $("#work_date_costs_navbar").val().split('-')[1],
+              month: $("#work_date_costs_navbar").val().split('-')[0]
+            },
+            beforeSend: asynchronous.div_loading('<%= t('app.texts.loading') %>'),
+            reload: true
+          };
+          asynchronous.exec_ajax(ajax_settings);
+        });
+        <% end %>
+
+        percToastr.val_backend_messages();
+
+        $(".select2").select2({ allowClear: true });
+
+        datepicker_settings.datepicker_config('#datepicker_month .input-group.date');
+
+        $('#check_dates_entity').click(function() {
+          var html = '';
+          $.ajax({
+            url: '/cost_tool/payrolls/validate_dates_for_entity',
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'script',
+            beforeSend: function() {
+              $('#modal-check_dates .info-modal-check-dates').html('<center><h3>Cargando...</h3></center>');
+            },
+            success: function (info_response) {
+              $(info_response).each(function(index, value) {
+                html += '<div class="col-sm-2 b-r"><button class="btn btn-default btn-change-date">'+value.month+'-'+value.year+'</button></div>';
+              });
+              $('#modal-check_dates .info-modal-check-dates').html(html);
+            },
+            error: function (xhr, exception, status) {                
+              $('#modal-check_dates .info-modal-check-dates').html('Error, no se puedieron traer los datos, intentelo nuevamente.');
+            },
+          });
+        });
+
+        $('#modal-check_dates').on('click', '.btn-change-date', function() {
+          $('#work_date_costs_navbar').val($(this).html());
+        })
+      });
+    </script>
+    <%# Meta tags %>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <%= csrf_meta_tags %>
+  </head>
+  <body class="<%= user_signed_in? ? 'fixed-sidebar skin-1 pace-done' : 'gray-bg pace-done' %>">
+    <%# Section for notifications with toastr plugin %>
+    <span class="notice" style="display: none;"><%= notice %></span>
+    <span class="alert" style="display: none;"><%= alert %></span>
+
+    <div id="wrapper" class="<%= params[:controller] %>.<%= params[:action] %>">
+      <% if user_signed_in? %>
+          <%# Render navigation  %>
+          <%= render 'layouts/navigation' %>
+          <div id="page-wrapper" class="gray-bg <%= @extra_class %>">
+            <!-- Page wrapper -->
+            <%= render 'layouts/topnavbar' %>
+
+            <%# Breadcrumb section %>
+            <div class="row wrapper border-bottom white-bg page-heading">
+              <div class="col-lg-12">
+                <h2><%= yield :breadcrumb_title %></h2>
+                <ol class="breadcrumb">
+                  <%= yield :breadcrumb_list %>
+                </ol>
+              </div>
+            </div>
+
+            <!-- Main view  -->
+            <%= yield %>
+
+            <!-- Footer -->
+            <%= render 'layouts/footer' %>
+          </div>
+          <div id="modal-check_dates" class="modal fade" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-body">
+                  <div class="row info-modal-check-dates">
+                    <div class="col-sm-2 b-r">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+      <% else %>
+          <%= yield %>
+      <% end %>
+    </div>
+
+    <%# Include style per-controller - vendor plugins %>
+    <%= yield :javascript %>
+  </body>
+</html>

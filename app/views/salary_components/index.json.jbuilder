@@ -1,0 +1,1 @@
+json.array! @salary_components, partial: 'salary_components/salary_component', as: :salary_component

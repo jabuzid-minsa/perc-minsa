@@ -1,0 +1,178 @@
+<% content_for :stylesheet do %>
+    <%= stylesheet_link_tag 'datatable', media: 'screen', 'data-turbolinks-track' => true %>
+    <%= stylesheet_link_tag 'c3charts', media: 'screen', 'data-turbolinks-track' => true %>
+<% end %>
+
+<% content_for :breadcrumb_title do %><%= t('app.sections.analysis_and_graphs') %><% end %>
+<% content_for :breadcrumb_list do %>
+    <li><%= link_to t('app.analysis_graphs.management.number_one.title'), analysis_graphs_management_number_one_path %></li>
+    <li class="active"><strong><%= t('app.analysis_graphs.details.efficiency') %></strong></li>
+<% end %>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-title">
+          <h5><%= t('app.analysis_graphs.details.efficiency') %></h5>
+          <div class="ibox-tools">
+            <a class="collapse-link">
+              <i class="fa fa-chevron-up"></i>
+            </a>
+          </div>
+        </div>
+        <div class="ibox-content">
+          <%= form_tag(analysis_graphs_detail_efficiency_find_data_url, method: 'post', remote: true, 'data-type' => :json, id: 'filter_info') do  %>
+              <div class="row">
+                <div class="col-md-4">
+                  <select name="filter_data[production_unit]" id="filter_data_production_unit" class="form-control m-b select2 select2-hidden-accessible" tabindex="-1" aria-hidden="true">
+                    <option value=""></option>
+                    <option value="1">Produccion Primaria</option>
+                    <option value="2">Produccion Secundaria</option>
+                    <option value="3">Produccion Terciaria</option>
+                    <option value="4">Produccion Cuaternaria</option>
+                    <option value="5">Produccion Quinaria</option>
+                  </select>
+                </div>
+                <div class="col-md-8">
+                  <%= button_tag(type: 'submit', class: 'minimalize-styl-2 btn btn-primary no-margins filter_data', style: 'max-height: 28px;') do %>
+                      <i class='fa fa-search'></i>
+                  <% end %>
+                </div>
+              </div>
+          <% end %>
+          <div class="row">
+            <div class="col-md-12">
+              <table class="table table-bordered dataTable no-footer fixed_table table_colors" cellspacing="0" id="information_table">
+                <thead>
+                  <tr>
+                    <td><label for="">Servicio</label></td>
+                    <td><label for="">Unidad de Produccion</label></td>
+                  </tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% content_for :javascript do %>
+    <%= javascript_include_tag 'datatable', 'data-turbolinks-track' => true %>
+
+    <script type="text/javascript" charset="utf-8">
+      $(function () {
+        var table = '';
+        $('button.filter_data').click(function () {
+          reset_data_table(table);
+          $('.test').html('<div class="text-center">' +
+              '<h1 class="text-white">Cargando...</h1>' +
+              '</div>' +
+              '<div class="sk-spinner sk-spinner-three-bounce">' +
+              '<div class="sk-bounce1"></div>' +
+              '<div class="sk-bounce2"></div>' +
+              '<div class="sk-bounce3"></div>' +
+              '</div>');
+        });
+
+        $("form#filter_info").on('ajax:success', function(event, data, status, xhr) {
+          var sarta = '',
+              auxiliary_sarta = '',
+              production_cost_center = 0,
+              distribution = 0;
+
+          // Creacion de Cabeceras
+          $.each(data.cost_centers, function(i, v) {
+            sarta += '<td data-cost-center="'+v.id+'"><label>'+v.description+'</label></td>';
+          });
+          $('#information_table thead tr').append(sarta);
+
+          // Adicion de nombres correspondientes a la unidad de produccion manejada
+          sarta = '<tr><td></td><td></td>';
+          $.each(data.cost_centers, function(i, v) {
+            sarta += '<td><label>'+((v.name_production_unit == null) ? 'Sin Asignar' : v.name_production_unit)+'</label></td>';
+          });
+          sarta += '</tr>';
+          $('#information_table tbody').append(sarta);
+
+          // Adicion del total producido por los centros de costo
+          sarta = '<tr><td></td><td></td>';
+          $.each(data.cost_centers, function(i, v) {
+            production_cost_center = data.total_data.filter( function(data){return data.cost_center_id == v.id } )[0];
+            production_cost_center = (typeof(production_cost_center) == 'undefined') ? 0 : convert_to_float(production_cost_center.value);
+            sarta += '<td class="text-right"><label class="decimal_number_2">'+production_cost_center+'</label></td>';
+          });
+          sarta += '</tr>';
+          $('#information_table tbody').append(sarta);
+
+          // Adicion de los centros que apoyan y sus valores con calculos
+          console.log(data.distribution_costs);
+          $.each(data.cost_centers, function(i, v) {
+            sarta = '<tr><td><label for="">'+v.description+'</label></td><td><label for="">'+((v.name_production_unit == null) ? 'Sin Asignar' : v.name_production_unit)+'</label></td>';
+            auxiliary_sarta = '<tr><td><label for="">'+v.description+'</label></td><td><label for="">'+((v.name_production_unit == null) ? 'Sin Asignar' : v.name_production_unit)+' x UP</label></td>';
+            $.each($('#information_table thead tr td'), function(j, val) {
+              if (j > 1) {
+                production_cost_center = data.total_data.filter( function(data){return data.cost_center_id == $(val).data('cost-center') } )[0];
+                production_cost_center = (typeof(production_cost_center) == 'undefined') ? 0 : convert_to_float(production_cost_center.value);
+                distribution = data.distribution_costs.filter( function(data){return data.cost_center_id == v.id && data.supported_cost_center_id == convert_to_float($(val).data('cost-center')) } )[0];
+                distribution = (typeof(distribution) == 'undefined') ? 0 : convert_to_float(distribution.value);
+                sarta += '<td class="text-right"><label class="decimal_number_2">'+convert_to_float(distribution)+'</label></td>';
+                auxiliary_sarta += '<td class="text-right"><label class="decimal_number_2">'+valid_nan_to_zero(distribution,production_cost_center)+'</label></td>';
+              }
+            });
+            sarta += '</tr>';
+            auxiliary_sarta += '</tr>';
+            $('#information_table tbody').append(sarta);
+            $('#information_table tbody').append(auxiliary_sarta);
+          });
+
+          table = $('#information_table').DataTable({
+            bInfo: 					false,
+            searching: 			false,
+            bSort: 					false,
+            scrollY:        "500px",
+            scrollX:        true,
+            scrollCollapse: true,
+            paging:         false,
+            fixedColumns:   {
+              leftColumns: 2
+            },
+            dom: 'Bfrtip',
+            buttons: [
+              {
+                extend: 'excelHtml5',
+                title: 'Data export'
+              }
+            ]
+          });
+        });
+      });
+
+      function reset_data_table(table) {
+        if (table != '') {
+          table.destroy();
+        }
+        $('#information_table thead').html('<tr>' +
+          '<td><label for="">Servicio</label></td>' +
+          '<td><label for="">Unidad de Produccion</label></td></tr>');
+        $('#information_table tbody').html('');
+      }
+
+      function convert_to_float(string) {
+        var clear_string = String(string).replace(',','');
+        return parseFloat(clear_string).toFixed(2);
+      }
+
+      function valid_nan_to_zero(val, total) {
+        var result = 0;
+        if (total != 0) {
+          result = val/total;
+        }
+        return (isNaN(result)) ? 0 : convert_to_float(result);
+      }
+    </script>
+<% end %>

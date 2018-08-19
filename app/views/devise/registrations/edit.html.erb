@@ -1,0 +1,128 @@
+<% content_for :stylesheet do %>
+    <%# Stylesheet for image tag %>
+    <%= stylesheet_link_tag 'jasny/jasny-bootstrap.min.css', media: 'screen', 'data-turbolinks-track' => true %>
+    <%# Stylesheet  %>
+    <%= stylesheet_link_tag 'select2/select2.min.css', media: 'screen', 'data-turbolinks-track' => true %>
+    <%# Stylesheet for check type IOS %>
+    <%= stylesheet_link_tag 'checkios', media: 'screen', 'data-turbolinks-track' => true %>
+<% end %>
+
+<% content_for :breadcrumb_title do %><%= User.model_name.human %><% end %>
+<% content_for :breadcrumb_list do %>
+    <li class="active"><strong><%= t('app.user_account.edition') %></strong></li>
+<% end %>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-title">
+          <h5><%= t('app.user_account.edit') %></h5>
+        </div>
+        <div class="ibox-content">
+          <div class="row">
+            <%= form_for(resource, as: resource_name, url: registration_path(resource_name),
+                         html: { method: :put, multipart: true, class: 'p-w-md' }) do |f| %>
+                <% if devise_error_messages!.present? %>
+                    <div class="alert alert-danger" role="alert">
+                      <%= devise_error_messages! %>
+                    </div>
+                <% end %>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <%= f.label :email %>
+                      <%= f.email_field :email, autofocus: true, class: 'form-control' %>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <%= f.label :password %>
+                      <% if @minimum_password_length %>
+                          <em>(<%= "#{@minimum_password_length} #{t('app.range_values.minimum_caracters')}" %> )</em>
+                      <% end %>
+                      <%= f.password_field :password, autocomplete: "off", class: 'form-control' %>
+                      <div class="form-group" style="display: none;">
+                        <%= f.label :password_confirmation %>
+                        <%= f.password_field :password_confirmation, autocomplete: "off", class: 'form-control' %>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <%= f.label :current_password %>
+                      <%= f.password_field :current_password, autocomplete: "off", class: 'form-control' %>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <%= f.label :full_name %>
+                      <%= f.text_field :full_name, class: 'form-control', placeholder: 'Nombre(s)' %>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <%= f.label :avatar %>
+                      <div class="fileinput fileinput-new input-group" data-provides="fileinput">
+                        <div class="form-control" data-trigger="fileinput">
+                          <i class="glyphicon glyphicon-file fileinput-exists"></i>
+                          <span class="fileinput-filename"></span>
+                        </div>
+                        <span class="input-group-addon btn btn-default btn-file">
+                          <span class="fileinput-new"><%= t('app.tags.file_tag.select_file') %></span>
+                          <span class="fileinput-exists"><%= t('app.tags.file_tag.change_file') %></span>
+                          <%= f.file_field :avatar %>
+                        </span>
+                        <a href="#" class="input-group-addon btn btn-default fileinput-exists" data-dismiss="fileinput">
+                          <%= t('app.tags.file_tag.remove_file') %>
+                        </a>
+                      </div>
+
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <%= f.label :state %>
+                      <%= check_state(f) %>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 text-right">
+                    <%= link_to t('app.buttons.back'), :back, class: 'btn btn-outline btn-success' %>
+                  </div>
+                  <div class="col-md-6 text-left">
+                    <%= f.submit class: 'btn btn-primary' %>
+                  </div>
+                </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% content_for :javascript do %>
+    <%# Stylesheet for check type IOS %>
+    <%= javascript_include_tag 'jasny/jasny-bootstrap.min.js', 'data-turbolinks-track' => true %>
+    <%# Stylesheet for check type IOS %>
+    <%= javascript_include_tag 'select2/select2.full.min.js', 'data-turbolinks-track' => true %>
+    <%# Stylesheet for check type IOS %>
+    <%= javascript_include_tag 'checkios', 'data-turbolinks-track' => true %>
+    <script type="text/javascript">
+      $(function() {
+
+        $("#user_password").on("change paste keyup", function () {
+          $("#user_password_confirmation").val($("#user_password").val());
+        });
+
+        var elem = document.querySelector('.js-switch'),
+            switchery = new Switchery(elem, { color: '#64BD63', secondaryColor: '#F53028', jackColor: '#FFF', jackSecondaryColor: '#FFF' });
+      });
+    </script>
+<% end %>

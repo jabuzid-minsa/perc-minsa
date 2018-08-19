@@ -1,0 +1,29 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Year:</strong>
+  <%= @distribution_area.year %>
+</p>
+
+<p>
+  <strong>Month:</strong>
+  <%= @distribution_area.month %>
+</p>
+
+<p>
+  <strong>Meters:</strong>
+  <%= @distribution_area.meters %>
+</p>
+
+<p>
+  <strong>Entity:</strong>
+  <%= @distribution_area.entity %>
+</p>
+
+<p>
+  <strong>Cost center:</strong>
+  <%= @distribution_area.cost_center %>
+</p>
+
+<%= link_to 'Edit', edit_distribution_area_path(@distribution_area) %> |
+<%= link_to 'Back', distribution_areas_path %>

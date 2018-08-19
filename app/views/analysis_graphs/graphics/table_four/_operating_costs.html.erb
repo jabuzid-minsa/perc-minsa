@@ -1,0 +1,266 @@
+<div class="ibox float-e-margins">
+	<div class="ibox-title">
+		<h5><%= t('app.analysis_graphs.details.cost_production_center') %></h5>
+		<div class="ibox-tools">
+			<a class="collapse-link">
+				<i class="fa fa-chevron-up"></i>
+			</a>
+		</div>
+	</div>
+	<div class="ibox-content">
+		<div class="row">
+			<div class="col-md-12">
+				<table class="table table-bordered dataTable no-footer fixed_table" cellspacing="0" id="summary_table">
+					<thead>
+						<tr>
+							<td></td>
+							<% @cost_centers.each do |cost_center| %>
+									<td data-cost-center="<%= cost_center.id %>" data-function="<%= cost_center.function %>">
+										<label for=""><%= cost_center.description %></label>
+									</td>
+							<% end %>
+						</tr>
+					</thead>
+					<tbody>
+						<tr data-summary='human_resource' class="header_human_resource">
+							<td>
+								<label for=""><%= t('app.analysis_tables.common.human_resource') %></label>
+							</td>
+							<% @cost_centers.each do |cost_center| %>
+									<td class="text-right" data-cost-center="<%= cost_center.id %>" data-function="<%= cost_center.function %>">
+										<label class="decimal_numbers_2 value">
+											<%= get_attribute_for_hash_human_resources(@human_resource, cost_center.id, 'salary') + get_attribute_for_hash_human_resources(@human_resource, cost_center.id, 'bonuses') + get_attribute_for_hash_human_resources(@human_resource, cost_center.id, 'benefits') %>
+										</label>
+									</td>
+							<% end %>
+						</tr>
+						<% ['salary' , 'bonuses', 'benefits'].each do |element| %>
+								<tr class="row_human_resource">
+									<td>
+										<label for="">
+											<% if element == 'salary' %>
+												<%= t('app.analysis_tables.common.salaries') %>
+											<% elsif element == 'bonuses' %>
+												<%= t('app.analysis_tables.common.bonuses') %>
+											<% else %>
+												<%= t('app.analysis_tables.common.benefits') %>
+											<% end %>
+										</label>
+									</td>
+									<% @cost_centers.each do |cost_center| %>
+											<td class="text-right">
+												<% data = get_attribute_for_hash_human_resources(@human_resource, cost_center.id, element) %>
+												<label class="decimal_numbers_2 value <%= data == 0 ? 'highlight_zero' : '' %>">
+													<%= data %>
+												</label>
+											</td>
+									<% end %>
+								</tr>
+						<% end %>
+						<tr data-summary='overhead' class="header_overheads">
+							<td>
+								<label for=""><%= t('app.analysis_tables.common.overheads') %></label>
+							</td>
+							<% @cost_centers.each do |cost_center| %>
+									<td class="text-right">
+										<label class="decimal_numbers_2 value">
+											<%= get_value_for_hash_overheads_supplies(@overheads, cost_center.id) %>
+										</label>
+									</td>
+							<% end %>
+						</tr>
+						<% @supplies_overheads.each do |supply| %>
+							<tr class="row_overheads" data-supply="<%= supply.id %>">
+								<td>
+									<label for=""><%= supply.description %></label>
+								</td>
+								<% @cost_centers.each do |cost_center| %>
+										<td class="text-right">
+											<% data = get_value_for_hash_overheads_supplies(@overheads, cost_center.id, supply.id) %>
+											<label class="decimal_numbers_2 value <%= data == 0 ? 'highlight_zero' : '' %>">
+												<%= data %>
+											</label>
+										</td>
+								<% end %>
+							</tr>
+						<% end %>
+						<tr data-summary='supply' class="header_supplies">
+							<td>
+								<label for=""><%= t('app.analysis_tables.common.supplies') %></label>
+							</td>
+							<% @cost_centers.each do |cost_center| %>
+									<td class="text-right">
+										<label class="decimal_numbers_2 value">
+											<%= get_value_for_hash_overheads_supplies(@data_supplies, cost_center.id) %>
+										</label>
+									</td>
+							<% end %>
+						</tr>
+						<% @supplies.each do |supply| %>
+							<tr class="row_supplies" data-supply="<%= supply.id %>">
+								<td>
+									<label for=""><%= supply.description %></label>
+								</td>
+								<% @cost_centers.each do |cost_center| %>
+										<td class="text-right">
+											<% data = get_value_for_hash_overheads_supplies(@data_supplies, cost_center.id, supply.id) %>
+											<label class="decimal_numbers_2 value <%= data == 0 ? 'highlight_zero' : '' %>">
+												<%= data %>
+											</label>
+										</td>
+								<% end %>
+							</tr>
+						<% end %>
+						<tr data-summary='total'>
+							<td><label><%= t('app.analysis_tables.common.total') %></label></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-4">
+				<%= select_tag('supplies_evaluated', options_from_collection_for_select(Supply.joins(:entities).where(:entities_supplies => { entity_id: session[:entity_id] } ).order('supplies.supplies_category_id, supplies.description'), 'id', 'description'),
+									 {class: 'form-control m-b select2'}) %>
+			</div>
+			<div class="col-md-8">
+				<%= button_tag(type: 'button', class: 'minimalize-styl-2 btn btn-primary no-margins evaluated-data', style: 'max-height: 28px;', 'data-target': '#supplies_evaluated_table', 'data-select': '#supplies_evaluated', 'data-info': '#summary_table') do %>
+					<i class='fa fa-search'></i>
+				<% end %>
+				
+				<%= button_tag(type: 'button', class: 'minimalize-styl-2 btn btn-primary no-margins reset-data', style: 'max-height: 28px; margin-left: 10px !important;', 'data-target': '#supplies_evaluated_table', 'data-select': '#supplies_evaluated', 'data-info': '#summary_table') do %>
+					<i class='fa fa-refresh'></i>
+				<% end %>
+			</div>
+		</div>
+		<hr class="hr-line-solid"/>
+		<table class="table table-bordered dataTable no-footer" id="supplies_evaluated_table" cellspacing="0">
+			<thead>
+				<tr>
+					<th><label for=""><%= t('app.analysis_tables.common.supplies_overheads') %></label></th>
+					<% @cost_centers.each do |cost_center| %>
+							<th data-cost-center="<%= cost_center.id %>" data-function="<%= cost_center.function %>">
+								<label for=""><%= cost_center.description %></label>
+							</th>
+					<% end %>
+				</tr>
+			</thead>
+			<tbody>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<% content_for :javascript do %>
+	<script type="text/javascript">
+		/** ---------------------- Variables ---------------------- **/
+		var supplies_table = $('#supplies_evaluated_table'), supplies_datatable = '', costcenter_datatable = '';
+		/** ---------------------- Functions ---------------------- **/
+		// Clean mask of number
+		function clean_number_mask(number) {
+			return parseFloat(String(number).replace(/,/g, ""));
+		}
+		// Create Table
+		function create_special_datatable(table_id) {
+			var table = $(table_id).DataTable({
+				bInfo: 					false,
+				searching: 			false,
+				bSort: 					false,
+				scrollY:        "500px",
+				scrollX:        true,
+				scrollCollapse: true,
+				paging:         false,
+				fixedColumns:   {
+					leftColumns: 1
+				},
+				dom: 'Bfrtip',
+				buttons: [
+					{
+						extend: 'excelHtml5',
+						title: 'Data export'
+					}
+				]
+			});
+
+			if (table_id == '#supplies_evaluated_table') {
+				supplies_datatable = table;
+			}else {
+				costcenter_datatable = table;
+			}
+		}
+		// Destroy DataTable
+		function reset_data_table(table_id) {
+			if (table_id == '#supplies_evaluated_table') {
+				if (supplies_datatable != '') {
+					supplies_datatable.destroy();
+				}
+			}else {
+				if (costcenter_datatable != '') {
+					costcenter_datatable.destroy();
+				}
+			}
+		}
+		// Empty DataTable
+		function empty_datatable(table_id) {
+			reset_data_table(table_id);
+			$(table_id).find('tbody').empty();
+			create_special_datatable(table_id);
+		}
+		// Evaluate Supply Selected
+		function evaluate_supply(table_id, select_id, table_info) {
+			var supply = $('select'+select_id).val(),
+					total_supply = clean_number_mask($(table_info).find('tbody tr[data-supply="'+supply+'"] td:last-child label').html()),
+					html_value = '<tr>',
+					html_perce = '<tr>';
+
+			$(table_info).find('tbody tr[data-supply="'+supply+'"] td:not(:last-child)').each(function (index, value) {
+				if (index == 0) {
+					html_value += '<td>'+$(value).html()+'</td>';
+					html_perce += '<td></td>';
+				} else {
+					html_value += '<td>'+$(value).html()+'</td>';
+					html_perce += '<td><label class="text-right">'+((clean_number_mask($(value).find('label').html())/total_supply)*100).toFixed(2)+'%<label></td>';
+				}
+			});
+
+			html_value += '</tr>';
+			html_perce += '</tr>';
+
+			reset_data_table(table_id);
+			$(table_id).find('tbody').append(html_value);
+			$(table_id).find('tbody').append(html_perce);
+
+			create_special_datatable(table_id);
+		}
+		// Evaluate Indirect Costs Selected
+		function evaluate_indirect_costs(table_id, select_id, table_info) {
+			var center = $('select'+select_id).val(),
+					total_center = 0,
+					html_value = '<tr>',
+					html_perce = '<tr>';
+
+			$(table_info).find('tbody tr[data-center="'+center+'"] td:not(:first-child)').each(function (index, value) {
+				total_center += clean_number_mask($(value).find('label').html());
+			})
+
+			$(table_info).find('tbody tr[data-center="'+center+'"] td').each(function (index, value) {
+				if (index == 0) {
+					html_value += '<td>'+$(value).html()+'</td>';
+					html_perce += '<td></td>';
+				} else {
+					html_value += '<td>'+$(value).html()+'</td>';
+					html_perce += '<td><label class="text-right">'+((clean_number_mask($(value).find('label').html())/total_center)*100).toFixed(2)+'%<label></td>';
+				}
+			});
+
+			html_value += '</tr>';
+			html_perce += '</tr>';
+
+			reset_data_table(table_id);
+			$(table_id).find('tbody').append(html_value);
+			$(table_id).find('tbody').append(html_perce);
+
+			create_special_datatable(table_id);
+		}
+	</script>
+<% end %>

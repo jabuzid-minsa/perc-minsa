@@ -1,0 +1,64 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Year:</strong>
+  <%= @labor_law.year %>
+</p>
+
+<p>
+  <strong>Month:</strong>
+  <%= @labor_law.month %>
+</p>
+
+<p>
+  <strong>Hours max:</strong>
+  <%= @labor_law.hours_max %>
+</p>
+
+<p>
+  <strong>Extra hours:</strong>
+  <%= @labor_law.extra_hours %>
+</p>
+
+<p>
+  <strong>Max extra hours:</strong>
+  <%= @labor_law.max_extra_hours %>
+</p>
+
+<p>
+  <strong>Festive hours:</strong>
+  <%= @labor_law.festive_hours %>
+</p>
+
+<p>
+  <strong>Max festive hours:</strong>
+  <%= @labor_law.max_festive_hours %>
+</p>
+
+<p>
+  <strong>Min wage:</strong>
+  <%= @labor_law.min_wage %>
+</p>
+
+<p>
+  <strong>Staff:</strong>
+  <%= @labor_law.staff %>
+</p>
+
+<p>
+  <strong>Labor standard:</strong>
+  <%= @labor_law.labor_standard %>
+</p>
+
+<p>
+  <strong>Contract type:</strong>
+  <%= @labor_law.contract_type %>
+</p>
+
+<p>
+  <strong>Entity:</strong>
+  <%= @labor_law.entity %>
+</p>
+
+<%= link_to 'Edit', edit_labor_law_path(@labor_law) %> |
+<%= link_to 'Back', labor_laws_path %>

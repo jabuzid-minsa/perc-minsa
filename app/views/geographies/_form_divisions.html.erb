@@ -1,0 +1,337 @@
+<%= form_for(@geography) do |f| %>
+    <% if @geography.errors.any? %>
+        <div id="alert alert-danger" class="bg-danger">
+          <ul>
+            <% @geography.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+    <% end %>
+
+    <div class="col-md-12">
+      <%= f.hidden_field :first_level, :value => @country.first_level %>
+      <h2><small><%= Geography.human_attribute_name('first_level') %>,&nbsp;</small><%= @country.description %></h2>
+    </div>
+    <!-- levels -->
+    <div class="row margin-top-10">
+      <!-- second level -->
+      <div class="col-md-12">
+        <div class="row padding-side-15">
+          <div class="col-md-4">
+            <%= select_tag "second_level",
+                           options_for_select(Geography.regions.active.where(first_level: @country.first_level).collect{
+                               |u| [u.description, u.id, {"data-code" => u.second_level}] }),
+                           class: 'form-control select2 geography_level', id: 'second_level',
+                           include_blank: t('app.texts.create', element: Geography.human_attribute_name('second_level')) %>
+          </div>
+          <div class="col-md-8 form-inline" id="form_create_second_level">
+            <%= text_field_tag 'code_second_level', nil, class: 'form-control field_level code_level',
+                               placeholder: t('code_attributes', attr: Geography.human_attribute_name('second_level')), data: {level: 'second_level'} %>
+            &nbsp;-&nbsp;
+            <%= text_field_tag 'description_second_level', nil, class: 'form-control field_level ',
+                               placeholder: Geography.human_attribute_name('description') %>
+            <button type="button" class="ladda-button ladda-button-demo btn btn-primary create_level" id="create_second_level" data-level="second_level" data-style="zoom-in">
+              <%= t('app.buttons.create') %>
+            </button>
+          </div>
+        </div>
+      </div>
+      <!-- third level -->
+      <% if @country.depth_detail >= 3 %>
+          <div class="col-md-12 margin-top-10">
+            <div class="row padding-side-15">
+              <div class="col-md-4">
+                <%= select_tag "third_level",
+                               options_from_collection_for_select(Geography.departments.active.where(first_level: @country.first_level),
+                                                                  "third_level", "description", @country.third_level),
+                               class: 'form-control select2 geography_level', id: 'third_level',
+                               include_blank: t('app.texts.create', element: Geography.human_attribute_name('third_level')) %>
+              </div>
+              <div class="col-md-8 form-inline" id="form_create_third_level">
+                <%= text_field_tag 'code_third_level', nil, class: 'form-control field_level code_level',
+                                   placeholder: t('code_attributes', attr: Geography.human_attribute_name('third_level')), data: {level: 'third_level'} %>
+                &nbsp;-&nbsp;
+                <%= text_field_tag 'description_third_level', nil, class: 'form-control field_level',
+                                   placeholder: Geography.human_attribute_name('description') %>
+                <button type="button" class="ladda-button ladda-button-demo btn btn-primary create_level" id="create_third_level" data-level="third_level" data-style="zoom-in">
+                  <%= t('app.buttons.create') %>
+                </button>
+              </div>
+            </div>
+          </div>
+      <% end %>
+      <!-- fourth level -->
+      <% if @country.depth_detail >= 4 %>
+          <div class="col-md-12 margin-top-10">
+            <div class="row padding-side-15">
+              <div class="col-md-4">
+                <%= select_tag "fourth_level",
+                               options_from_collection_for_select(Geography.municipalities.active.where(first_level: @country.first_level),
+                                                                  "fourth_level", "description", @country.fourth_level),
+                               class: 'form-control select2 geography_level', id: 'fourth_level',
+                               include_blank: t('app.texts.create', element: Geography.human_attribute_name('fourth_level')) %>
+              </div>
+              <div class="col-md-8 form-inline" id="form_create_fourth_level">
+                <%= text_field_tag 'code_fourth_level', nil, class: 'form-control field_level code_level',
+                                   placeholder: t('code_attributes', attr: Geography.human_attribute_name('fourth_level')), data: {level: 'fourth_level'} %>
+                &nbsp;-&nbsp;
+                <%= text_field_tag 'description_fourth_level', nil, class: 'form-control field_level',
+                                   placeholder: Geography.human_attribute_name('description') %>
+                <button type="button" class="ladda-button ladda-button-demo btn btn-primary create_level" id="create_fourth_level" data-level="fourth_level" data-style="zoom-in">
+                  <%= t('app.buttons.create') %>
+                </button>
+              </div>
+            </div>
+          </div>
+      <% end %>
+      <!-- fifth level -->
+      <% if @country.depth_detail >= 5 %>
+          <div class="col-md-12 margin-top-10">
+            <div class="row padding-side-15">
+              <div class="col-md-4">
+                <%= select_tag "fifth_level",
+                               options_from_collection_for_select(Geography.towns.active.where(first_level: @country.first_level),
+                                                                  "fifth_level", "description", @country.fifth_level),
+                               class: 'form-control select2 geography_level', id: 'fifth_level',
+                               include_blank: t('app.texts.create', element: Geography.human_attribute_name('fifth_level')) %>
+              </div>
+              <div class="col-md-8 form-inline" id="form_create_fifth_level">
+                <%= text_field_tag 'code_fifth_level', nil, class: 'form-control field_level code_level',
+                                   placeholder: t('code_attributes', attr: Geography.human_attribute_name('fifth_level')), data: {level: 'fifth_level'} %>
+                &nbsp;-&nbsp;
+                <%= text_field_tag 'description_fifth_level', nil, class: 'form-control field_level',
+                                   placeholder: Geography.human_attribute_name('description') %>
+                <button type="button" class="ladda-button ladda-button-demo btn btn-primary create_level" id="create_fifth_level" data-level="fifth_level" data-style="zoom-in">
+                  <%= t('app.buttons.create') %>
+                </button>
+              </div>
+            </div>
+          </div>
+      <% end %>
+    </div>
+<% end %>
+
+<% content_for :javascript do %>
+    <%= javascript_include_tag 'moduls/ajax.validations', 'data-turbolinks-track' => true %>
+    <script type="text/javascript" charset="utf-8">
+      $(function () {
+        var array_levels = <%= get_array_levels(@country.depth_detail).to_json.html_safe %>,
+            name_levels = <%= get_name_levels(@country.depth_detail).to_json.html_safe %>,
+            levels = {'second_level': 'second_level', 'third_level': 'third_level', 'fourth_level': 'fourth_level', 'fifth_level': 'fifth_level'},
+            data_validate_code = {
+              url: "<%= validate_geography_unique_code_path %>",
+              parameters: {
+                numerical_code: <%= @country.numerical_code %>,
+                second_level: 0,
+                third_level: 0,
+                fourth_level: 0,
+                fifth_level: 0
+              },
+              message: "<%= t('general_errors.texts.code_taken') %>"
+            };
+
+        $(".code_level").blur(function () {
+          data_validate_code.parameters.second_level = validate_value_code($(".code_level[data-level='second_level']").val(), $("#second_level option:selected").data("code"));
+          data_validate_code.parameters.third_level = validate_value_code($(".code_level[data-level='third_level']").val(), $("#third_level option:selected").data("code"));
+          data_validate_code.parameters.fourth_level = validate_value_code($(".code_level[data-level='fourth_level']").val(), $("#fourth_level option:selected").data("code"));
+          data_validate_code.parameters.fifth_level = validate_value_code($(".code_level[data-level='fifth_level']").val(), $("#fifth_level option:selected").data("code"));
+
+          if ($(this).val() != "") {
+            validation_ajax_code.validate_code(data_validate_code, $(this));
+          }
+        });
+
+        $("select#second_level").parents("div.col-md-12").nextAll().hide();
+
+        $("select.geography_level").change(function () {
+          var level = valid_level(levels, array_levels, array_levels[array_levels.indexOf($(this).attr("id"))+1]),
+              url = '/parametrization/geographies/'+level,
+              data = create_select_object($(this).attr("id")),
+              id_level = "";
+          $("input.field_level").val("");
+          hide_show_selects($(this));
+          if ($(this).attr == 'fifth_level') {
+            id_level = array_levels[array_levels.indexOf($(this).attr("id"))];
+          } else {
+            id_level = array_levels[array_levels.indexOf($(this).attr("id"))+1];
+            if (level != '' && level != null) {
+              ajax_select_elements(url, data, $("#" + id_level), id_level, name_levels[id_level]);
+            }
+          }
+        });
+
+        $("button.create_level").click(function() {
+          var level = valid_level(levels, array_levels, $(this).data("level")),
+              url = '/parametrization/geographies/create_level/'+level,
+              data = create_data_object($(this).data("level"));
+          if (level != '' && level != null) {
+            ajax_create_level(url, data, $("select#"+$(this).data("level")), $(this).data("level"), $(this).ladda());
+          }
+        });
+      });
+
+      function validate_value_code(value, select_val){
+        var val = value;
+        if (select_val != "" && typeof select_val != 'undefined') {
+          val = select_val;
+        }
+        else if (val == "" || typeof val == "undefined") {
+          val = "0";
+        }
+        return val;
+      }
+
+      function hide_show_selects(select) {
+        if (select.val() == "") {
+          select.parent().next().show();
+          select.parents("div.col-md-12").nextAll().hide();
+          select.parents("div.col-md-12").nextAll().find(".col-md-8.form-inline").show();
+          select.parents("div.col-md-12").nextAll().find("select.select2").val("");
+          select.parents("div.col-md-12").nextAll().find("select.select2").select2({val: ""});
+        } else {
+          select.parent().next().hide();
+          select.parents("div.col-md-12").next().show();
+          select.parents("div.col-md-12").next().nextAll().hide();
+          select.parents("div.col-md-12").nextAll().find("select.select2").val("");
+          select.parents("div.col-md-12").nextAll().find("select.select2").select2({val: ""});
+          select.parents("div.col-md-12").nextAll().find(".col-md-8.form-inline").show();
+        }
+      }
+
+      function valid_level(levels, array_levels, level) {
+        var final_val = "";
+        if (array_levels.indexOf(level) >= 0) {
+          final_val = levels[level];
+        }
+        return final_val;
+      }
+
+      function create_select_object(level) {
+        var data = {},
+            country = "<%= @country.first_level %>";
+        switch (level) {
+          case "second_level":
+            data = {
+              first_level: country,
+              second_level: parseInt($("select#second_level option:selected").data("code"))
+            };
+            break;
+          case "third_level":
+            data = {
+              first_level: country,
+              second_level: parseInt($("select#second_level option:selected").data("code")),
+              third_level: parseInt($("select#third_level option:selected").data("code"))
+            };
+            break;
+          case "fourth_level":
+            data = {
+              first_level: country,
+              second_level: parseInt($("select#second_level option:selected").data("code")),
+              third_level: parseInt($("select#third_level option:selected").data("code")),
+              fourth_level: parseInt($("select#fourth_level option:selected").data("code"))
+            };
+            break;
+        }
+        return data;
+      }
+
+      function create_data_object(level) {
+        var data = {},
+            country = "<%= @country.first_level %>",
+            numerical_code = <%= @country.numerical_code %>;
+        switch (level) {
+          case "second_level":
+            data = {
+              numerical_code: numerical_code,
+              first_level: country,
+              code: parseInt($("input#code_second_level").val()),
+              description: $("input#description_second_level").val()
+            };
+            break;
+          case "third_level":
+            data = {
+              numerical_code: numerical_code,
+              first_level: country,
+              second_level: parseInt($("select#second_level option:selected").data("code")),
+              code: parseInt($("input#code_third_level").val()),
+              description: $("input#description_third_level").val()
+            };
+            break;
+          case "fourth_level":
+            data = {
+              numerical_code: numerical_code,
+              first_level: country,
+              second_level: parseInt($("select#second_level option:selected").data("code")),
+              third_level: parseInt($("select#third_level option:selected").data("code")),
+              code: parseInt($("input#code_fourth_level").val()),
+              description: $("input#description_fourth_level").val()
+            };
+            break;
+          case "fifth_level":
+            data = {
+              numerical_code: numerical_code,
+              first_level: country,
+              second_level: parseInt($("select#second_level option:selected").data("code")),
+              third_level: parseInt($("select#third_level option:selected").data("code")),
+              fourth_level: parseInt($("select#fourth_level option:selected").data("code")),
+              code: parseInt($("input#code_fifth_level").val()),
+              description: $("input#description_fifth_level").val()
+            };
+            break;
+        }
+        return data;
+      }
+
+      function ajax_create_level(url, parameters, element, code_field, this_button) {
+        $.ajax({
+          url: url,
+          type: "GET",
+          dataType: "json",
+          data: parameters,
+          contentType: "application/json; charset=utf-8",
+          beforeSend: function(){ this_button.ladda( 'start' ) },
+          success: function(data) {
+            element.append('<option value="'+data.id+'" data-code="'+data[code_field]+'">'+data.description+'</option>');
+            $("input.field_level").val("");
+          },
+          error: function(xhr,exception,status) {
+            var msg = "<ul>";
+            $.each(xhr.responseJSON, function (index, value) {
+              msg += "<li>"+value+"</li>";
+            });
+            msg += "</ul>";
+            percToastr.showToast({
+              shortCutFunction: 'warning',
+              msg: msg
+            });
+          },
+          complete: function(){ this_button.ladda( 'stop' ) }
+        });
+      }
+
+      function ajax_select_elements(url, parameters, element, code_field, name_level) {
+        $.ajax({
+          url: url,
+          type: "GET",
+          dataType: "json",
+          data: parameters,
+          contentType: "application/json; charset=utf-8",
+          success: function(data) {
+            element.empty();
+            element.append('<option value="">Crear '+name_level+'</option>');
+
+            $.each(data, function (index, val) {
+              element.append('<option value="'+val.id+'" data-code="'+val[code_field]+'">'+val.description+'</option>');
+            });
+          },
+          error: function(xhr,exception,status) {
+            console.log("error");
+            console.log(xhr);
+            console.log(exception);
+            console.log(status);
+          }
+        });
+      }
+    </script>
+<% end %>

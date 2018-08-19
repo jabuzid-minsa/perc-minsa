@@ -1,0 +1,177 @@
+<div class="ibox float-e-margins">
+	<div class="ibox-title">
+		<h5><%= t('app.analysis_tables.one.second_panel.title') %></h5>
+		<div class="ibox-tools">
+			<a class="collapse-link">
+				<i class="fa fa-chevron-up"></i>
+			</a>
+		</div>
+	</div>
+	<div class="ibox-content">
+		<div class="row">
+			<div class="col-md-6">
+				<table class="table table-bordered dataTable no-footer" cellspacing="0" id="consolidated_table">
+					<thead>
+					<tr>
+						<td></td>
+						<td><%= t('app.analysis_tables.common.total') %></td>
+						<td><%= t('app.analysis_tables.common.percentage') %></td>
+					</tr>
+					</thead>
+					<tbody>
+					<% total_acum = 0 %>
+					<tr data-summary='human_resource'>
+						<td><%= t('app.analysis_tables.common.human_resource') %></td>
+						<td class="currency text-right">                    
+							<% total_hr = @human_resource.map { |h| h.values_at("value") }.transpose.map { |v| v.compact.inject(:+) }[0] %>
+							<label class="decimal_numbers_2"><%= total_hr %></label>
+						</td>
+						<td class="percentage text-right" id="column_percentage_rh"></td>
+						<% total_hr = total_hr ? total_hr : 0 %>
+						<% total_acum = total_acum + total_hr %>
+					</tr>
+					<tr data-summary='overheads'>
+						<td><%= t('app.analysis_tables.common.overheads') %></td>
+						<td class="currency text-right">
+							<% total_oh = @overheads.map { |h| h.values_at("value") }.transpose.map { |v| v.compact.inject(:+) }[0] %>
+							<label class="decimal_numbers_2"><%= total_oh %></label>
+						</td>
+						<td class="percentage text-right" id="column_percentage_gg"></td>
+						<% total_oh = total_oh ? total_oh : 0 %>
+						<% total_acum = total_acum + total_oh %>
+					</tr>
+					<tr data-summary='supplies'>
+						<td><%= t('app.analysis_tables.common.supplies') %></td>
+						<td class="currency text-right">
+							<% total_sy = @supplies.map { |h| h.values_at("value") }.transpose.map { |v| v.compact.inject(:+) }[0] %>
+							<label class="decimal_numbers_2"><%= total_sy %></label>
+						</td>
+						<td class="percentage text-right" id="column_percentage_in"></td>
+						<% total_sy = total_sy ? total_sy : 0 %>
+						<% total_acum = total_acum + total_sy %>
+					</tr>
+					<tr data-summary='total_entity' style="background-color: rgba(63,207,218,0.6); font-weight: bold;">
+						<td><%= t('app.analysis_tables.common.total') %></td>
+						<td class="text-right" id="total_entity">
+							<label class="decimal_numbers_2"><%= total_acum %></label>
+						</td>
+						<td></td>
+					</tr>
+					</tbody>
+				</table>
+				<div id="consolidated_value_graphic"></div>
+			</div>
+			<div class="col-md-6">
+				<div class="content-chartjs">
+					<label for = "consolidated_polar_graphic" style="width: 100%; height: 100%">
+						<%= t('app.analysis_tables.one.second_panel.title_graph') %><br />
+						<canvas id='consolidated_polar_graphic'></canvas>
+					</label>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<% content_for :javascript do %>
+	<script type="text/javascript">
+		var consolidated_table = $('#consolidated_table'),
+				polar_graphic = document.getElementById('consolidated_polar_graphic').getContext('2d');
+		/** ---------------------- Functions ---------------------- **/
+		// Calculation of percentages for the consolidated table
+		function consolidated_percentage_calculation() {
+			var total, current_value;
+			
+			total = parseFloat(consolidated_table.find('#total_entity label').html().replace(new RegExp(',', 'g'), ''));
+			current_value = '';
+
+			consolidated_table.find('.currency').each(function (index, value) {
+				current_value = parseFloat(String($('label', value).html()).replace(new RegExp(',', 'g'), ''));
+				$(value).next().html("<label class=''>"+ (current_value * 100 / total).toFixed(2) +"%</label>");
+			});
+		}
+		// Data Collection and Polar Chart Creation
+		function creation_polar_chart() {
+			var consolidated_hr, consolidated_ov, consolidated_sy, polar_data, polar_options;
+
+			consolidated_hr = parseFloat(consolidated_table.find('tr[data-summary="human_resource"] .percentage label').html().replace(new RegExp('%', 'g'), ''));
+			consolidated_ov = parseFloat(consolidated_table.find('tr[data-summary="overheads"] .percentage label').html().replace(new RegExp('%', 'g'), ''));
+			consolidated_sy = parseFloat(consolidated_table.find('tr[data-summary="supplies"] .percentage label').html().replace(new RegExp('%', 'g'), ''));
+
+			polar_data = {
+				labels: ["<%= t('app.analysis_tables.common.human_resource') %>", "<%= t('app.analysis_tables.common.overheads') %>", "<%= t('app.analysis_tables.common.supplies') %>"],
+				datasets: [
+					{
+						label: "<%= t('app.analysis_tables.common.percentage') %>",
+						backgroundColor: ['rgba(232,48,96,0.6)', 'rgba(255,227,33,0.6)', 'rgba(63,207,218,0.6)'],
+						data: [consolidated_hr, consolidated_ov, consolidated_sy]
+					}
+				]
+			};
+			polar_options = {
+				responsive: true,
+				scale: {
+					ticks: {
+						beginAtZero: true,
+						max: 100
+					}
+				}
+			};
+			
+			new Chart(polar_graphic, {
+				type: 'polarArea',
+				data: polar_data,
+				options: polar_options
+			});
+
+			graph = c3.generate({
+				bindto: '#consolidated_value_graphic',
+				data:{
+					x : 'x',
+					columns: [
+						['x', 'Total'],
+						["<%= t('app.analysis_tables.common.human_resource') %>", clean_number_mask(consolidated_table.find('tr[data-summary="human_resource"] .currency label').html())],
+						["<%= t('app.analysis_tables.common.overheads') %>", clean_number_mask(consolidated_table.find('tr[data-summary="overheads"] .currency label').html())],
+						["<%= t('app.analysis_tables.common.supplies') %>", clean_number_mask(consolidated_table.find('tr[data-summary="supplies"] .currency label').html())]
+					],
+					colors: {
+						"<%= t('app.analysis_tables.common.human_resource') %>": '#E83060',
+						"<%= t('app.analysis_tables.common.overheads') %>": '#FFE321',
+						"<%= t('app.analysis_tables.common.supplies') %>": '#3FCFDA'
+					},
+					type: 'bar',
+					groups: [["<%= t('app.analysis_tables.common.human_resource') %>","<%= t('app.analysis_tables.common.overheads') %>","<%= t('app.analysis_tables.common.supplies') %>"]],
+					labels: {
+						format: {
+							y: d3.format("$,")
+						}
+					}
+				},
+				tooltip: {
+					format: {
+						value: function(value) {
+							return d3.format(",.2f")(value)
+						}
+					}
+				},
+				axis: {
+					rotated: true,
+					y: {
+						tick: {
+							rotate: 90,
+							multiline: true,
+							format: d3.format(",.0f")
+						}
+					},
+					x: {
+						type: 'category',
+						tick: {
+							rotate: 90,
+							multiline: true,
+						}
+					}
+				}
+			});
+		}
+	</script>
+<% end %>

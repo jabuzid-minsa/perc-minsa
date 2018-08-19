@@ -1,0 +1,214 @@
+<% content_for :stylesheet do %>
+    <%# Stylesheet for check type IOS %>
+    <%= stylesheet_link_tag 'checkios', media: 'screen', 'data-turbolinks-track' => true %>
+    <%# Stylesheet for Dual Select %>
+    <%= stylesheet_link_tag 'dual-select', media: 'screen', 'data-turbolinks-track' => true %>
+<% end %>
+
+<% content_for :breadcrumb_title do %><%= User.model_name.human %><% end %>
+<% content_for :breadcrumb_list do %>
+    <li><%= link_to "#{t('app.texts.list_of', element: User.model_name.human(:count => 2))}", users_url %></li>
+    <li class="active"><strong><%= t('app.texts.creation', element: User.model_name.human(:count => 1)) %></strong></li>
+<% end %>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-title">
+          <h5><%= t('app.texts.creating', element: User.model_name.human(:count => 1)) %></h5>
+        </div>
+        <div class="ibox-content">
+          <div class="row">
+            <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: {:class => 'p-w-md'}) do |f| %>
+                <% if devise_error_messages!.present? %>
+                    <div class="alert alert-danger" role="alert">
+                      <%= devise_error_messages! %>
+                    </div>
+                <% end %>
+
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <%= f.label :email %>
+                      <%= f.email_field :email, autofocus: true, class: 'form-control' %>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <%= f.label :password %>
+                      <% if @minimum_password_length %>
+                          <em>(<%= "#{@minimum_password_length} #{t('app.range_values.minimum_caracters')}" %> )</em>
+                      <% end %>
+                      <%= f.password_field :password, autocomplete: "off", class: 'form-control' %>
+                      <div class="form-group" style="display: none;">
+                        <%= f.label :password_confirmation %>
+                        <%= f.password_field :password_confirmation, autocomplete: "off", class: 'form-control' %>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <%= f.label :full_name %>
+                      <%= f.text_field :full_name, class: 'form-control' %>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <%= f.label :geography_id %>
+                      <%= f.select(:geography_id, list_of_countries.collect {|p| [ p.description.capitalize, p.id, data: {numerical_code: p.numerical_code} ] },
+                                   {selected: get_variable_country}, {class: 'form-control select2', id: 'countries_user'}) %>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <%= f.label :role %>
+                      <%= f.select :role, User.roles.to_a.map { |k, v| [t("app.users.roles.#{k}"), k] }, {}, {class: 'form-control select2'} %>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <%= f.label :state %>
+                      <%= check_state(f) %>
+                    </div>
+                  </div>
+                </div>
+
+                <% if current_user.is_valid_geography? or current_user.is_valid_session_country?(session[:country_id]) %>
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <%= f.label :network_ids %>
+                        <%= f.select(:network_ids, networks_for_country.collect {|p| [ "#{p.code} - #{p.description}", p.id ] }, {},
+                                     {class: 'form-control multi-select', id: 'networks_for_country', multiple: 'true'}) %>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <%= f.label :entity_ids %>
+                        <%= f.select(:entity_ids, entities_for_country.collect {|p| [ "#{p.code} - #{p.description}", p.id ] }, {},
+                                     {class: 'form-control multi-select', id: 'entities_for_country', multiple: 'true'}) %>
+                      </div>
+                    </div>
+                  </div>
+                <% end %>
+
+                <div class="row">
+                  <div class="col-md-6 text-right">
+                    <%= link_to t('app.buttons.back'), users_path, class: 'btn btn-outline btn-success' %>
+                  </div>
+                  <div class="col-md-6 text-left">
+                    <%= f.submit class: 'btn btn-primary' %>
+                  </div>
+                </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% content_for :javascript do %>
+    <%# Stylesheet for check type IOS %>
+    <%= javascript_include_tag 'checkios', 'data-turbolinks-track' => true %>
+    <%# Stylesheet for Dual Select %>
+    <%= javascript_include_tag 'dual-select', 'data-turbolinks-track' => true %>
+    <script type="text/javascript">
+      $(function() {
+        var elem = document.querySelector('.js-switch'),
+            switchery = new Switchery(elem, { color: '#64BD63', secondaryColor: '#F53028', jackColor: '#FFF', jackSecondaryColor: '#FFF' }),
+            input_search_multi_select = '<input type="text" class="form-control search-input" autocomplete="off" placeholder="<%= t('app.dual_select.multi_select.filter_place_holder') %>">',
+            selectable_header = '<label for=""><%= t('app.dual_select.multi_select.non_selected_list_label') %></label>' + input_search_multi_select,
+            selection_header = '<label for=""><%= t('app.dual_select.multi_select.selected_list_label') %></label>' + input_search_multi_select;
+
+        $('.multi-select').multiSelect({
+          selectableHeader: selectable_header,
+          selectionHeader: selection_header,
+          afterInit: function(ms){
+            var that = this,
+                $selectableSearch = that.$selectableUl.prev(),
+                $selectionSearch = that.$selectionUl.prev(),
+                selectableSearchString = '#'+that.$container.attr('id')+' .ms-elem-selectable:not(.ms-selected)',
+                selectionSearchString = '#'+that.$container.attr('id')+' .ms-elem-selection.ms-selected';
+
+            that.qs1 = $selectableSearch.quicksearch(selectableSearchString)
+                .on('keydown', function(e){
+                  if (e.which === 40){
+                    that.$selectableUl.focus();
+                    return false;
+                  }
+                });
+
+            that.qs2 = $selectionSearch.quicksearch(selectionSearchString)
+                .on('keydown', function(e){
+                  if (e.which == 40){
+                    that.$selectionUl.focus();
+                    return false;
+                  }
+                });
+          },
+          afterSelect: function(value, text){
+            this.qs1.cache();
+            this.qs2.cache();
+          },
+          afterDeselect: function(value, text){
+            this.qs1.cache();
+            this.qs2.cache();
+          }
+        });
+
+        $("#user_password").on("change paste keyup", function () {
+          console.log($("#user_password").val());
+          $("#user_password_confirmation").val($("#user_password").val());
+        });
+
+        //
+        var ajax_parameters = {
+          url: {
+            network: '<%= search_networks_for_country_path %>',
+            entity: '<%= search_entities_for_country_path %>'
+          },
+          data: {
+            numerical_code: 0
+          }
+        };
+
+        $("#countries_user").change(function () {
+          ajax_parameters.data.numerical_code = $("option:selected", this).data('numerical-code');
+
+          ajax_request(ajax_parameters.url.network, ajax_parameters.data, "#networks_for_country");
+          ajax_request(ajax_parameters.url.entity, ajax_parameters.data, "#entities_for_country");
+        });
+      }); // END $(function)
+
+      function ajax_request(url, parameters, element) {
+        $.ajax({
+          url: url,
+          type: "GET",
+          dataType: "json",
+          data: parameters,
+          contentType: "script",
+          success: function(data) {
+            $("option", element).remove();
+            $.each(data, function (index, val) {
+              $(element).append('<option value="'+val.id+'">'+val.code+" "+val.description+'</option>');
+            });
+            $(element).multiSelect('refresh');
+          },
+          error: function(xhr,exception,status) {
+            console.log('entra al error');
+            console.log(xhr);
+            console.log(exception);
+            console.log(status);
+          }
+        });
+      }
+    </script>
+<% end %>

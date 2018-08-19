@@ -1,0 +1,31 @@
+es:
+  activerecord:
+    models:
+      cost_center:
+        one: Centro de Producción
+        other: Centros de Producción
+    attributes:
+      cost_center:
+        code: Código
+        description: Descripción
+        definition: Definición
+        function: Función
+        cost_center_id: Centro Principal
+        geography_id: País
+        language_id: Idioma
+        staff_id: Personal
+        supply_id: Insumo
+        cost_distribution_id: Distribución del Costo
+        primary_production_unit_id: Unidad de Producción Primaria
+        secondary_production_unit_id: Unidad de Producción Secundaria
+        tertiary_production_unit_id: Unidad de Producción Ternaria
+        quaternary_production_unit_id: Unidad de Producción Cuaternaria
+        quinary_production_unit_id: Unidad de Producción Quinaria
+        state: Estado
+        created_at: Fecha Creación
+        updated_at: Ultima Actualización
+        comprehensive: Compensiva
+        secondary_equivalent_to_primary: Equivalencia 2do a 1er
+        tertiary_equivalent_to_primary: Equivalencia 3ro a 1er
+        quaternary_equivalent_to_primary: Equivalencia 4to a 1er
+        quinary_equivalent_to_primary: Equivalencia 5to a 1er

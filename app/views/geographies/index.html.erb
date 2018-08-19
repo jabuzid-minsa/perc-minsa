@@ -1,0 +1,169 @@
+<% content_for :stylesheet do %>
+    <%= stylesheet_link_tag 'datatable', media: 'screen', 'data-turbolinks-track' => true %>
+<% end %>
+
+<% content_for :breadcrumb_title do %><%= Geography.model_name.human %><% end %>
+<% content_for :breadcrumb_list do %>
+    <li class="active"><strong><%= t('app.texts.list_of', element: Geography.model_name.human(:count => 2)) %></strong></li>
+<% end %>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-title">
+          <h5><%= t('app.texts.list_of', element: Geography.model_name.human(:count => 2)) %></h5>
+          <div class="ibox-tools">
+            <a class="collapse-link">
+              <i class="fa fa-chevron-up"></i>
+            </a>
+          </div>
+        </div>
+        <div class="ibox-content">
+          <div class="">
+            <a href="<%= new_geography_path %>">
+              <button class="btn btn-outline btn-primary dim" type="button">
+                <i class="fa fa-plus"></i>
+              </button>
+            </a>
+          </div>
+          <% if current_user.is_valid_geography? or current_user.is_valid_session_country?(session[:country_id]) %>
+              <%= render :layout =>  'layouts/commons/list_element', locals: {
+                  :table_titles => columns_model_translated(Geography, headers_depth_detail(['first_level', 'second_level', 'third_level', 'fourth_level', 'fifth_level'], @country.depth_detail)), :view_actions => false} do %>
+                  <% @geographies.each do |geography| %>
+                      <tr class="gradeX">
+                        <td><%= geography[1] %></td>
+                        <% if @country.depth_detail >= 2 %>
+                            <td>
+                              <%= link_to common_edit_path(geography[2]) do %>
+                                  <%= geography[3] %>
+                              <% end %>
+                            </td>
+                        <% end %>
+                        <% if @country.depth_detail >= 3 %>
+                            <td>
+                              <%= link_to common_edit_path(geography[4]) do %>
+                                  <%= geography[5] %>
+                              <% end %>
+                            </td>
+                        <% end %>
+                        <% if @country.depth_detail >= 4 %>
+                            <td>
+                              <%= link_to common_edit_path(geography[6]) do %>
+                                  <%= geography[7] %>
+                              <% end %>
+                            </td>
+                        <% end %>
+                        <% if @country.depth_detail >= 5 %>
+                            <td>
+                              <%= link_to common_edit_path(geography[8]) do %>
+                                  <%= geography[9] %>
+                              <% end %>
+                            </td>
+                        <% end %>
+                      </tr>
+                  <% end %>
+              <% end %>
+          <% else %>
+              <%= render :layout =>  'layouts/commons/list_element', locals: {
+                  :table_titles => columns_model_translated(Geography, ['first_level', 'depth_detail', 'state']), :view_actions => true} do %>
+                  <% @geographies.each do |geography| %>
+                      <tr class="gradeX">
+                        <td><%= best_in_place_if can?(:update, Geography), geography, :description, :as => :input,
+                                :inner_class => 'form-control' %></td>
+                        <td><%= best_in_place_if can?(:update, Geography), geography, :depth_detail, :as => :select,
+                                                 :collection => {"1" => "1", "2" => "2", "3" => "3", "4" => "4", "5" => "5"},
+                                                 :inner_class => 'form-control' %></td>
+                        <td>
+                          <span class="<%= geography.state == true ? 'text-success' : 'text-danger' %> span-state">
+                              <%= best_in_place_if can?(:update, Geography), geography, :state, as: :checkbox, collection:
+                                  {false: t('app.status.deactivated'), true: t('app.status.activated')} %>
+                          </span>
+                        </td>
+                        <td>
+                          <%= link_to edit_geography_path(geography) do %>
+                              <i class="fa fa-pencil text-navy text-warning"></i>
+                          <% end %>
+                        </td>
+                      </tr>
+                  <% end %>
+              <% end %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% content_for :javascript do %>
+    <%= javascript_include_tag 'datatable', 'data-turbolinks-track' => true %>
+
+    <script type="text/javascript">
+      $(function() {
+        var actions_visible = true,
+            number_of_columns = $(".list_of_model_elements thead").find("th").length - 1,
+            name_table = "<%= t("app.controllers.#{params[:controller]}") %>",
+            texts_i18n = {
+              language: {
+                processing: "<%= t('javascript.data_tables.texts.processing') %>",
+                length_menu: "<%= t('javascript.data_tables.texts.length_menu') %>",
+                zero_records: "<%= t('javascript.data_tables.texts.zero_records') %>",
+                empty_table: "<%= t('javascript.data_tables.texts.empty_table') %>",
+                info: "<%= t('javascript.data_tables.texts.info') %>",
+                info_empty: "<%= t('javascript.data_tables.texts.info_empty') %>",
+                info_filtered: "<%= t('javascript.data_tables.texts.info_filtered') %>",
+                search: "<%= t('javascript.data_tables.texts.search') %>",
+                loading_records: "<%= t('javascript.data_tables.texts.loading_records') %>",
+                paginate: {
+                  first: "<%= t('javascript.data_tables.texts.paginate.first') %>",
+                  last: "<%= t('javascript.data_tables.texts.paginate.last') %>",
+                  next: "<%= t('javascript.data_tables.texts.paginate.next') %>",
+                  previous: "<%= t('javascript.data_tables.texts.paginate.previous') %>"
+                },
+                sort_ascending: "<%= t('javascript.data_tables.texts.paginate.previous') %>",
+                sort_descending: "<%= t('javascript.data_tables.texts.paginate.previous') %>",
+                copy_text: {
+                  title: "<%= t('javascript.data_tables.texts.copy_text.title') %>",
+                  success: {
+                    one: "<%= t('javascript.data_tables.texts.copy_text.success.one') %>",
+                    other: "<%= t('javascript.data_tables.texts.copy_text.success.other') %>"
+                  }
+                },
+                buttons: {
+                  copy: "<%= t('javascript.data_tables.texts.buttons.copy') %>",
+                  print: "<%= t('javascript.data_tables.texts.buttons.print') %>"
+                }
+              }
+            },
+            order = {
+              1: [[0,'asc']],
+              2: [[0,'asc']],
+              3: [[0,'asc']],
+              4: [[0,'asc']],
+              5: [[0,'asc']],
+            },
+            depth_detail = <%= (current_user.is_valid_geography? or current_user.is_valid_session_country?(session[:country_id])) ? @country.depth_detail : 1 %>;
+        <% if current_user.is_valid_geography? or current_user.is_valid_session_country?(session[:country_id]) %>
+          actions_visible = false;
+          order = {
+            1: [[0,'asc']],
+            2: [[0,'asc'], [1,'asc']],
+            3: [[0,'asc'], [1,'asc'], [2,'asc']],
+            4: [[0,'asc'], [1,'asc'], [2,'asc'], [3,'asc']],
+            5: [[0,'asc'], [1,'asc'], [2,'asc'], [3,'asc'], [4,'asc']],
+          };
+        <% end %>
+        perc_data_tables.construct_datatable(number_of_columns, name_table,order[depth_detail], actions_visible, texts_i18n);
+
+        $(".best_in_place").best_in_place();
+
+        $(".span-state span").on("DOMSubtreeModified", function () {
+          if ($(this).parent().hasClass("text-success")) {
+            $(this).parent().removeClass( "text-success" ).addClass("text-danger");
+          }else {
+            $(this).parent().removeClass( "text-danger" ).addClass("text-success");
+          }
+        });
+      });
+    </script>
+<% end %>

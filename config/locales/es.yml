@@ -1,0 +1,353 @@
+es:
+  # Translations for tool
+  app:
+    analysis_graphs:
+      management:
+        number_one:
+          title: Producción, Costos y Eficiencia
+        table_four:
+          title: Cuadro 4
+        number_two:
+          title: Rendimiento
+        spc_consumtion:
+          title: Consumos CPA
+        month_selection:
+          title: Seleccione Meses
+      details:
+        cost_production_center: Costos por centro de Producción - Detallado
+        efficiency: Eficiencia - Detallado
+      comparative:
+        title: Comparar Información
+    analysis_tables:
+      common:
+        average_cost: Costo Promedio
+        benefits: Benefits
+        bonuses: Bonuses
+        human_resource: Recurso Humano
+        months:
+          january: Enero
+          february: Febrero
+          march: Marzo
+          april: Abril
+          may: Mayo
+          june: Junio
+          july: Julio
+          august: Agosto
+          september: Septiembre
+          october: Octubre
+          november: Noviembre
+          december: Diciembre
+        overheads: Gastos Generales
+        percentage: Porcentaje
+        quantity: Cantidad
+        salaries: Salaries
+        supplies: Insumos
+        supplies_overheads: Insumos/Gastos
+        total: Total
+        total_cost: Costo Total
+      one:
+        first_panel:
+          title: Panel de control
+          month: Mes
+          select_items: Seleccionar Elementos
+          medicines: Medicamentos
+          op_material: Material de osteosíntesis y prótesis
+          hospitalization: Hospitalizacion
+          intensive_care_unit: Unidad de Cuidados Intensivos
+          quirofanos: Quirofanos
+          emergencies: Emergencias
+          consultation: Consultas
+          extramural_services: Servicios Extramurales
+          clinic: Centro de Salud
+          promotion_prevention: Promoción y Prevención
+          primary_health: Atención Primaria en Salud
+          basic_plan: Plan de Atención Basica
+          other_services: Otros Servicios
+          administration: Administracion
+          beds: Camas
+        second_panel:
+          title: Costos Consolidados
+          title_graph: Estructura Porcentual de Gastos
+        third_panel:
+          title: Costo Total de Conceptos del Gasto por Centros de Costo
+          button_detail: Detallado
+        fourth_panel:
+          title: Peso Ponderado del Costo por Concepto de Gasto y por Centros de Costos
+        fifth_panel:
+          title: Costos Operativos y Costos Indirectos
+          title_table: Peso Porcentual
+          operating_cost: Costo Operativo
+          indirect_cost: Costo Indirecto
+          validations:
+            title: Validaciones
+            first_table:
+              value: Valor
+              first_row: costos total centros de costos
+              second_row: Costos total por servicios finales
+              third_row: Diferencia
+            second_table:
+              missing_distribute: Faltan por Distribuir
+              first_row: Centros Apoyo Logistico
+              second_row: Centros Apoyo Administrativo
+              third_row: Centros Apoyo Asistencial
+            wrong_support: Total de centros que se poyan a si mismos
+      two:
+        second_panel:
+          title: Costos Indirectos
+        third_panel:
+          title: Costos Unitarios por Producción
+          production_unit: Producción Unitaria
+          total_cost_center: Total Centro de Costo
+          unit_cost_production: Costo Unitario Prod.
+      three:
+        button_detail: Detallado
+        production_center: Centro de Producción
+        production_unit: Unidad de Producción
+        production: Producción
+        hours: Horas
+      four:
+        title: Consumos CPA
+        button_detail: Detallado
+        production_center: Centro de Producción
+        production_unit: Unidad de Producción
+        production: Producción
+        support: Apoyos
+      five:
+        cost_center: Centro de Costo
+        selected_center: Centro de Costo Seleccionado
+      multiple_months:
+        selection_months:
+          button_analyze: Analizar
+          title: Analisis por multiples meses
+          to: a
+          selection_range: Rango para analizar
+        one:
+          additional_panel:
+            title: Costo Total de Conceptos del Gasto por Mes
+    buttons:
+      back: Regresar
+      create: Crear
+    change_date: Fecha cambiada exitosamente
+    controllers:
+      care_levels: niveles_atencion
+      cost_centers: centros_costo
+      cost_distributions: costos_distribucion
+      entities: entidades
+      geographies: divisiones_politicas
+      income_definitions: definicion_facturacion
+      labor_laws: legislacion_laboral
+      languages: idiomas
+      networks: redes
+      payrolls: empleados
+      production_units: unidades_produccion
+      salary_components: componentes_salariales
+      staffs: estandar_personal
+      supplies: insumos
+      supplies_categories: categorias_de_insumos
+      users: usuarios
+    copytigth:
+      incubo: Desarrollado por Incubo Asesorias Integrales S.A.S. © 2016
+      ops: OPS © 2016
+      login:
+        incubo: Desarrollado por Incubo Asesorias Integrales S.A.S © 2016
+        ops: Contenido por OPS © 2016
+    cost_centers:
+      functions:
+        final: Final
+        administrative_support: Apoyo Administrativo
+        care_support: Apoyo Asistencial
+        logistical_support: Apoyo Logístico
+      abbreviated_functions:
+        final: Final
+        administrative_support: Apoyo Admin
+        care_support: Apoyo Asist
+        logistical_support: Apoyo Log
+    dual_select:
+      multi_select:
+        non_selected_list_label: Elementos Disponibles
+        selected_list_label: Elementos Seleccionados
+        filter_place_holder: Filtrar
+      bootstrap:
+        filter_place_holder: Filtrar
+        filter_text_clear: Mostrar todo
+        info_text: Mostrando todo
+        info_text_empty: Lista vacia
+        info_text_filtered:
+          filtered: Filtrado
+          from: de
+        move_all_label: Mover todo
+        move_selected_label: Mover seleccionados
+        non_selected_list_label: Elementos Disponibles
+        remove_all_label: Remover todo
+        remove_selected_label: Remover selección
+        selected_list_label: Elementos Seleccionados
+    links:
+      activate: Habilitar
+      deactivate: Inhabilitar
+    login: Iniciar Sesión
+    logout: Cerrar Sesión
+    name: PERC
+    not_exists: El elemento no existe
+    entities:
+      payroll_types:
+        consolidated: Consolidado
+        detailed: Detallado
+    range_values:
+      minimum_caracters: caracteres minimo
+    sections:
+      analysis_and_graphs: Análisis y Gráficos
+      cost_tool: Costos
+      local_parametrization: Parametrización Local
+      multiple_months_analysis: Análisis Múltiples Meses
+      parametrization: Parametrización
+      settings: Configuración
+    status:
+      activated: Activo
+      deactivated: Inactivo
+    tags:
+      file_tag:
+        select_file: Seleccionar
+        change_file: Cambiar
+        remove_file: Remover
+    texts:
+      all_countries: Todos los paises
+      create: Crear %{element}
+      creating: Creando un nuevo %{element}
+      creation: Creación - %{element}
+      editing: Editando - %{element}
+      edition: Edición - %{element}
+      list_of: Lista de %{element}
+      loading: Cargando
+      monetary_value: Unidad Monetaria
+      not_apply: No Aplica
+      select: Seleccionar %{element}
+      associations: Relaciones del modelo %{element}
+      associations_detail: Relacionanado el elemento - %{element}
+    user_account:
+      create: Crear Cuenta
+      edit: Editar Cuenta
+      edition: Edición de la Cuenta
+    users:
+      roles:
+        global_administrator: Administrador Global
+        level_one_local_administrator: Administrador Local Nivel 1
+        level_two_local_administrator: Administrador Local Nivel 2
+        level_three_local_administrator: Administrador Local Nivel 3
+        level_one_manager: Gestor Nivel 1
+        level_two_manager: Gestor Nivel 2
+        level_three_manager: Gestor Nivel 3
+        level_one_operator: Operador Nivel 1
+        level_two_operator: Operador Nivel 2
+        level_three_operator: Operador Nivel 3
+        basic_administrator: Administrador Basico
+      abbreviated_roles:
+        global_administrator: Admin Global
+        level_one_local_administrator: Admin Local Niv 1
+        level_two_local_administrator: Admin Local Niv 2
+        level_three_local_administrator: Admin Local Niv 3
+        level_one_manager: Gestor Niv 1
+        level_two_manager: Gestor Niv 2
+        level_three_manager: Gestor Niv 3
+        level_one_operator: Operador Niv 1
+        level_two_operator: Operador Niv 2
+        level_three_operator: Operador Niv 3
+        basic_administrator: Admin Basico
+  # Common errors models
+  errors:
+    # The default format to use in full error messages.
+    format: '%{attribute} %{message}'
+    # The values :model, :attribute and :value are always available for interpolation
+    # The value :count is available when applicable. Can be used for pluralization.
+    messages:
+      taken: ya ha sido tomado por otro registro
+      inclusion: no esta incluido en la lista
+      exclusion: esta reservado
+      invalid: no es valido
+      confirmation: no coincide con %{attribute}
+      accepted: debe ser aceptada
+      empty: no puede estar vacio
+      blank: no puede estar en blanco
+      present: debe estar en blanco
+      too_long:
+        one: es demasiado largo (1 caracter maximo)
+        other: es demasiado largo (%{count} caracteres maximo)
+      too_short:
+        one: es demasiado corto (1 caracter m&iacute;nimo)
+        other: es demasiado corto (%{count} caracteres m&iacute;nimo)
+      wrong_length:
+        one: tiene una longitud incorrecta (debe tener 1 caracter)
+        other: tiene una longitud incorrecta (debe tener %{count} caracteres)
+      not_a_number: no es un numero
+      not_an_integer: debe ser un numero entero
+      greater_than: debe ser mayor que %{count}
+      greater_than_or_equal_to: debe ser mayor o igual a %{count}
+      equal_to: debe ser igual a %{count}
+      less_than: debe ser menor que %{count}
+      less_than_or_equal_to: debe ser menor o igual a %{count}
+      other_than: debe ser diferente de %{count}
+      odd: debe ser impar
+      even: debe ser par
+  # Errors, generals
+  general_errors:
+    # prohibited this language from being saved:
+    form_erros: surgieron al intentar crear el nuevo registro
+    texts:
+      code_taken: El código ya ha sido tomado
+      error:
+        one: error
+        other: errores
+      permission_denied: El acceso fue denegado, no posee permisos suficientes
+  # Help classes of Rails
+  helpers:
+    submit:
+      create: Crear %{model}
+      submit: Guardar %{model}
+      update: Actualizar %{model}
+  # Messages javascript files
+  javascript:
+    data_tables:
+      header_action: Acciones
+      texts:
+        processing: Procesando...
+        length_menu: Mostrando _MENU_ registros
+        zero_records: No se encontraron resultados
+        empty_table: Ningun dato disponible en esta tabla
+        info: Monstrando registros del _START_ al _END_ de un total de _TOTAL_ registros
+        info_empty: Mostrando registros del 0 al 0 de un total de 0 registros
+        info_filtered: (filtrado de un total de _MAX_ registros)
+        search: Buscar
+        info_thousands: ','
+        loading_records: Cargando...
+        paginate:
+          first: Primero
+          last: Último
+          next: Siguiente
+          previous: Anterior
+        sort_ascending: ': Activar para ordenar la columna de manera ascendente'
+        sort_descending: ': Activar para ordenar la columna de manera descendente'
+        copy_text:
+          title: Datos Copiados
+          success:
+            one: 1 fila copiada
+            other: '%d filas copiadas'
+        buttons:
+          copy: Copiar
+          print: Imprimir
+    sweet_alert:
+      confirm_button_text: 'Si, estoy seguro!'
+      text: 'Se inactivara el elemento seleccionado, si desea proceder con la acción presione el botón rojo!'
+      title: 'Esta Seguro?'
+  # Messages App
+  messages:
+    activated: Activado Correctamente
+    crud:
+      created: Creado Exitosamente
+      destroyed: Eliminado Correctamente
+      updated: Actualizado Correctamente
+    deactivated: Desactivado correctamente
+  # Additional translations for Devise
+  views_devise:
+    sessions:
+      new:
+        welcome: Bienvenido a la herramienta PERC
+        description: Breve introducción sobre la herramienta

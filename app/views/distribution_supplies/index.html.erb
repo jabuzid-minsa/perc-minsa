@@ -1,0 +1,137 @@
+<% content_for :stylesheet do %>
+    <%= stylesheet_link_tag 'datatable', media: 'screen', 'data-turbolinks-track' => true %>
+<% end %>
+
+<% content_for :breadcrumb_title do %><%= DistributionSupply.model_name.human %><% end %>
+<% content_for :breadcrumb_list do %>
+    <li class="active"><strong><%= t('app.texts.creating', element: DistributionSupply.model_name.human(:count => 2)) %></strong></li>
+<% end %>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-title">
+          <h5><%= t('app.texts.create', element: DistributionSupply.model_name.human(:count => 2)) %></h5>
+          <div class="ibox-tools">
+            <a class="collapse-link">
+              <i class="fa fa-chevron-up"></i>
+            </a>
+          </div>
+        </div>
+        <div class="ibox-content">
+          <div class="row">
+            <div class="col-md-5">
+              <div class="form-group">
+                <%= link_to "Excel", distribution_supplies_path(format: "xls") %> |
+                <%= link_to "Formato Excel", distribution_supplies_path(format: "xls_empty") %>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <%= form_tag import_distribution_supplies_path, multipart: true, class: 'form-inline' do %>
+                  <div class="checkbox m-r-xs">
+                    <input type="checkbox" id='empty_format' name='empty_format'>
+                    <label for="empty_format">
+                      Vaciar Antes
+                    </label>
+                  </div>
+                  <div class="form-group">
+                    <%= file_field_tag :file %>
+                  </div>
+                  <div class="form-group">
+                    <%= submit_tag "Importar", class: 'btn btn-default' %>
+                  </div>
+              <% end %>
+            </div>
+          </div>
+          <table class="table table-bordered dataTable no-footer" id="fixed_table" cellspacing="0">
+            <thead>
+            <tr>
+              <td><%= DistributionSupply.human_attribute_name(:cost_center_id) %></td>
+              <% @supplies.each do |supply| %>
+                  <td data-service="<%= supply.id %>"><%= supply.description %></td>
+              <% end %>
+            </tr>
+            </thead>
+            <tbody>
+              <% @cost_centers.each_with_index do |cost_center, index_cc| %>
+                <tr class="<%= 'bg-light-blue' if index_cc % 2 == 0 %>">
+                  <td><%= cost_center.description %></td>
+                  <% @supplies.each do |supply| %>
+                      <td><%= text_field_tag 'programming_hour', nil, step: 2, class: 'size-100 decimal_numbers_2 ajax_values',
+                                             data: {cost_center: cost_center.id, supply: supply.id},
+                                             value: acces_attribute_distribution_supplies(@distribution_supplies.find_by(cost_center_id: cost_center.id, supply_id: supply.id), 'value') %></td>
+                  <% end %>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% content_for :javascript do %>
+    <%= javascript_include_tag 'datatable', 'data-turbolinks-track' => true %>
+
+    <script type="text/javascript">
+      $(function() {
+        var ajax_parameters = {
+              year: <%= session[:year] %>,
+              month: <%= session[:month] %>,
+              cost_center: 0,
+              supply: 0,
+              salary_component: 0,
+              value: 0
+            },
+            table = $('#fixed_table').DataTable({
+              bInfo: 					false,
+              searching: 			false,
+              bSort: 					false,
+              scrollY:        "500px",
+              scrollX:        true,
+              scrollCollapse: true,
+              paging:         false,
+              fixedColumns:   {
+                leftColumns: 1
+              }
+            }),
+            current_value = 0;
+
+        $('.ajax_values').focusin(function () {
+          current_value = $(this).val();
+        });
+
+        $('.ajax_values').focusout(function () {
+          if (current_value != $(this).val()) {
+            ajax_parameters.cost_center = $(this).data('cost-center');
+            ajax_parameters.supply = $(this).data('supply');
+            ajax_parameters.value = $(this).val();
+
+            ajax_request(ajax_parameters);
+          }
+        });
+
+      });
+
+      function ajax_request(parameters) {
+        $.ajax({
+          url: '<%= save_distribution_supplies_path %>',
+          type: "GET",
+          dataType: "json",
+          data: parameters,
+          contentType: "script",
+          success: function(data) {
+            //
+          },
+          error: function(xhr,exception,status) {
+            console.log('entra al error');
+            console.log(xhr);
+            console.log(exception);
+            console.log(status);
+          }
+        });
+      }
+    </script>
+<% end %>

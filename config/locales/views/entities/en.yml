@@ -1,0 +1,20 @@
+en:
+  activerecord:
+    models:
+      entity:
+        one: Entity
+        other: Entities
+    attributes:
+      entity:
+        code: Code
+        abbreviation: Abbreviation
+        description: Description
+        payroll_type: Type of Payroll
+        care_level_id: Care Level
+        geography_id: Location
+        state: State
+        created_at: Created at
+        updated_at: Updated at
+  change_entity: Entity changed successfully
+  entity_associations: Relations of the entity
+  located_in: Located in

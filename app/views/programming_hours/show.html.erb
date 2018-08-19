@@ -1,0 +1,44 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Year:</strong>
+  <%= @programming_hour.year %>
+</p>
+
+<p>
+  <strong>Month:</strong>
+  <%= @programming_hour.month %>
+</p>
+
+<p>
+  <strong>Total:</strong>
+  <%= @programming_hour.total %>
+</p>
+
+<p>
+  <strong>Paid:</strong>
+  <%= @programming_hour.paid %>
+</p>
+
+<p>
+  <strong>Hours:</strong>
+  <%= @programming_hour.hours %>
+</p>
+
+<p>
+  <strong>Entity:</strong>
+  <%= @programming_hour.entity %>
+</p>
+
+<p>
+  <strong>Cost center:</strong>
+  <%= @programming_hour.cost_center %>
+</p>
+
+<p>
+  <strong>Payroll:</strong>
+  <%= @programming_hour.payroll %>
+</p>
+
+<%= link_to 'Edit', edit_programming_hour_path(@programming_hour) %> |
+<%= link_to 'Back', programming_hours_path %>

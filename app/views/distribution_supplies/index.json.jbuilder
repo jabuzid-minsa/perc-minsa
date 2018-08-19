@@ -1,0 +1,1 @@
+json.array! @distribution_supplies, partial: 'distribution_supplies/distribution_supply', as: :distribution_supply

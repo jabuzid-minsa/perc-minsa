@@ -1,0 +1,2 @@
+json.extract! distribution_cost, :id, :year, :month, :value, :cost_center_id, :supported_cost_center_id, :entity_id, :created_at, :updated_at
+json.url distribution_cost_url(distribution_cost, format: :json)

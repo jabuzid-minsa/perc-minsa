@@ -1,0 +1,34 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Year:</strong>
+  <%= @production_cost_center.year %>
+</p>
+
+<p>
+  <strong>Month:</strong>
+  <%= @production_cost_center.month %>
+</p>
+
+<p>
+  <strong>Value:</strong>
+  <%= @production_cost_center.value %>
+</p>
+
+<p>
+  <strong>Production units:</strong>
+  <%= @production_cost_center.production_units %>
+</p>
+
+<p>
+  <strong>Cost center:</strong>
+  <%= @production_cost_center.cost_center %>
+</p>
+
+<p>
+  <strong>Entity:</strong>
+  <%= @production_cost_center.entity %>
+</p>
+
+<%= link_to 'Edit', edit_production_cost_center_path(@production_cost_center) %> |
+<%= link_to 'Back', production_cost_centers_path %>

@@ -1,0 +1,165 @@
+<% content_for :stylesheet do %>
+		<%= stylesheet_link_tag 'datatable', media: 'screen', 'data-turbolinks-track' => true %>
+		<%= stylesheet_link_tag 'c3charts', media: 'screen', 'data-turbolinks-track' => true %>
+<% end %>
+
+<% content_for :breadcrumb_title do %><%= t('app.sections.analysis_and_graphs') %><% end %>
+<% content_for :breadcrumb_list do %>
+		<li class="active"><strong><%= t('app.analysis_tables.four.title') %></strong></li>
+<% end %>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+	<div class="row">
+		<div class="col-lg-12">
+			<div class="ibox float-e-margins">
+				<div class="ibox-title">
+					<h5><%= t('app.analysis_tables.four.title') %></h5>
+					<div class="ibox-tools">
+						<a class="collapse-link">
+							<i class="fa fa-chevron-up"></i>
+						</a>
+					</div>
+				</div>
+				<div class="ibox-content">
+					<%= form_tag(analysis_graphs_data_consumption_url, method: 'post', remote: true, 'data-type' => :json, id: 'filter_info') do  %>
+						<div class="row">
+							<div class="col-md-4">
+								<%= select_tag('filter_cost_center[cost_center_id]', options_from_collection_for_select(@cost_centers, 'id', 'description'),
+													 {class: 'form-control m-b select2'}) %>
+							</div>
+							<div class="col-md-8">
+								<%= button_tag(type: 'submit', class: 'minimalize-styl-2 btn btn-primary no-margins filter_cost_center', style: 'max-height: 28px;') do %>
+									<i class='fa fa-search'></i>
+								<% end %>
+								
+								<%= button_tag(type: 'submit', class: 'minimalize-styl-2 btn btn-primary no-margins reset-filters', style: 'max-height: 28px; margin-left: 10px !important;') do %>
+									<i class='fa fa-refresh'></i>
+								<% end %>
+							</div>
+						</div>
+					<% end %>
+					<hr class="hr-line-solid"/>
+					<table class="table table-bordered dataTable no-footer fixed_table" id="information_table" cellspacing="0">
+						<thead>
+							<tr>
+								<th><label for=""><%= t('app.analysis_tables.four.production_center') %></label></th>
+								<th><label for=""><%= t('app.analysis_tables.four.production_unit') %></label></th>
+								<th><label for=""><%= t('app.analysis_tables.four.production') %></label></th>
+								<% @support_centers.each do |support_center| %>
+										<th data-support="<%= support_center.id %>" class='support_center'>
+											<label for=""><%= support_center.description %></label>
+										</th>
+								<% end %>
+							</tr>
+						</thead>
+						<tbody>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<% content_for :javascript do %>
+		<%= javascript_include_tag 'datatable', 'data-turbolinks-track' => true %>
+		<%= javascript_include_tag 'c3charts', 'data-turbolinks-track' => true %>
+
+		<script type="text/javascript" charset="utf-8">
+			var table = '', table_data = $('#information_table');
+
+			$(function () {
+				create_datatable();
+
+				$('button.reset-filters').click(function () {
+					reset_data_table(table);
+					table_data.find('tbody').empty();
+					create_datatable();
+				});
+
+				$("form#filter_info").on('ajax:success', function(event, data, status, xhr) {
+					reset_data_table(table);
+
+					add_supports_value(data.supports, data.production[0].cost_center);
+					add_calculation_production(data.production);
+
+					create_datatable();
+				});
+			});
+			// Clean mask of number
+			function clean_number_mask(number) {
+				return parseFloat(String(number).replace(/,/g, ""));
+			}
+
+			// Destroy table
+			function reset_data_table(table) {
+				if (table != '') {
+					table.destroy();
+				}
+			}
+
+			// Create Table
+			function create_datatable() {
+				table = $('#information_table').DataTable({
+					bInfo: 					false,
+					searching: 			false,
+					bSort: 					false,
+					scrollY:        "500px",
+					scrollX:        true,
+					scrollCollapse: true,
+					paging:         false,
+					fixedColumns:   {
+						leftColumns: 3
+					},
+					dom: 'Bfrtip',
+					buttons: [
+						{
+							extend: 'excelHtml5',
+							title: 'Data export'
+						}
+					]
+				});
+			}
+
+			// Append hours for staff
+			function add_supports_value(supports, cost_center) {
+				var current_support, record_support, html;
+				html = '<tr data-center="'+cost_center+'" class="record_hour"><td></td><td></td><td><label>'+"<%= t('app.analysis_tables.four.support') %>"+'</label></td>';
+
+				table_data.find('thead th:gt(2)').each(function(index, value) {
+					current_support = $(value).data('support');
+					record_support = supports.filter(function(data) { return data.cost_center == current_support })[0];
+
+					if (record_support) {
+						html += '<td class="text-right" data-support="'+current_support+'">('+record_support.name_unit+')<br><label class="decimal_number_2">'+record_support.value+'</label></td>';
+					} else {
+						html += '<td class="text-right" data-support="'+current_support+'"><label class="decimal_number_2">0</label></td>';
+					}
+				});
+				html += '</tr>';
+
+				table_data.find('tbody').append(html);
+			}
+
+			// Append production and calculation for staff
+			function add_calculation_production(production) {
+				var current_hour, record_production, html, current_production;
+
+				$(production).each(function(index, value) {
+					current_production = value.value;
+					html = '<tr><td><label>'+value.name+'</label></td><td><label>'+value.name_unit+'</label></td><td class="text-right"><label class="decimal_number_2">'+current_production+'</label></td>';
+					table_data.find('tbody tr.record_hour[data-center="'+value.cost_center+'"] td:gt(2)').each(function(ind, val) {
+						current_hour = clean_number_mask($(val).find('label').html());
+						if (current_production > 0) {
+							html += '<td class="text-right"><label class="decimal_number_2">'+(current_hour/current_production).toFixed(2)+'</label></td>'
+						} else {
+							html += '<td class="text-right"><label class="decimal_number_2">0</label></td>'
+						}
+					});	
+					html += '</tr>';
+
+					table_data.find('tbody').append(html);
+				});
+			}
+		</script>
+<% end %>

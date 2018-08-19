@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+					xmlns:o="urn:schemas-microsoft-com:office:office"
+					xmlns:x="urn:schemas-microsoft-com:office:excel"
+					xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+					xmlns:html="http://www.w3.org/TR/REC-html40">
+	<Worksheet ss:Name="<%= DistributionCost.model_name.human %>">
+		<Table>
+			<Row>
+				<Cell><Data ss:Type="String"></Data></Cell>
+				<% CostCenter.for_entity(session[:entity_id]).order_priority.order(:code).each do |cost_center| %>
+						<Cell><Data ss:Type="String"><%= "#{cost_center.id}-#{cost_center.description}" %></Data></Cell>
+				<% end %>
+			</Row>
+			<% CostCenter.for_entity(session[:entity_id]).supports.order_priority.order(:code).each do |cost_center| %>
+					<% if cost_center.primary_production_unit.present? %>
+							<Row>
+								<Cell><Data ss:Type="String"><%= "#{cost_center.id}_1-#{cost_center.description} | #{cost_center.primary_production_unit.description}" %></Data></Cell>
+								<%  @supported_cost_centers.each do |supported_cost_center| %>
+									<Cell><Data ss:Type="Number"><%= acces_attribute_distribution_cost(@distribution_costs.find_by(cost_center_id: cost_center.id, supported_cost_center_id: supported_cost_center.id, production_units: 1), 'value') %></Data></Cell>
+								<% end %>
+							</Row>
+					<% end %>
+					<% if cost_center.secondary_production_unit.present? %>
+							<Row>
+								<Cell><Data ss:Type="String"><%= "#{cost_center.id}_2-#{cost_center.description} | #{cost_center.secondary_production_unit.description}" %></Data></Cell>
+								<%  @supported_cost_centers.each do |supported_cost_center| %>
+                  <Cell><Data ss:Type="Number"><%= acces_attribute_distribution_cost(@distribution_costs.find_by(cost_center_id: cost_center.id, supported_cost_center_id: supported_cost_center.id, production_units: 2), 'value') %></Data></Cell>
+                <% end %>
+							</Row>
+					<% end %>
+					<% if cost_center.tertiary_production_unit.present? %>
+							<Row>
+								<Cell><Data ss:Type="String"><%= "#{cost_center.id}_3-#{cost_center.description} | #{cost_center.tertiary_production_unit.description}" %></Data></Cell>
+								<%  @supported_cost_centers.each do |supported_cost_center| %>
+                  <Cell><Data ss:Type="Number"><%= acces_attribute_distribution_cost(@distribution_costs.find_by(cost_center_id: cost_center.id, supported_cost_center_id: supported_cost_center.id, production_units: 3), 'value') %></Data></Cell>
+                <% end %>
+							</Row>
+					<% end %>
+					<% if cost_center.quaternary_production_unit.present? %>
+							<Row>
+								<Cell><Data ss:Type="String"><%= "#{cost_center.id}_4-#{cost_center.description} | #{cost_center.quaternary_production_unit.description}" %></Data></Cell>
+								<%  @supported_cost_centers.each do |supported_cost_center| %>
+                  <Cell><Data ss:Type="Number"><%= acces_attribute_distribution_cost(@distribution_costs.find_by(cost_center_id: cost_center.id, supported_cost_center_id: supported_cost_center.id, production_units: 4), 'value') %></Data></Cell>
+                <% end %>
+							</Row>
+					<% end %>
+					<% if cost_center.quinary_production_unit.present? %>
+							<Row>
+								<Cell><Data ss:Type="String"><%= "#{cost_center.id}_5-#{cost_center.description} | #{cost_center.quinary_production_unit.description}" %></Data></Cell>
+								<%  @supported_cost_centers.each do |supported_cost_center| %>
+                  <Cell><Data ss:Type="Number"><%= acces_attribute_distribution_cost(@distribution_costs.find_by(cost_center_id: cost_center.id, supported_cost_center_id: supported_cost_center.id, production_units: 5), 'value') %></Data></Cell>
+                <% end %>
+							</Row>
+					<% end %>
+			<% end %>
+		</Table>
+	</Worksheet>
+</Workbook>

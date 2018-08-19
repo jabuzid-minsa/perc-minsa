@@ -1,0 +1,124 @@
+<% content_for :stylesheet do %>
+    <%# Stylesheet for check type IOS %>
+    <%= stylesheet_link_tag 'checkios', media: 'screen', 'data-turbolinks-track' => true %>
+    <%= stylesheet_link_tag 'iCheck/custom.css', media: 'screen', 'data-turbolinks-track' => true %>
+<% end %>
+
+<div class="row">
+  <%= form_for(@labor_law, html: { class: 'p-w-md' }) do |f| %>
+      <% if @labor_law.errors.any? %>
+          <div class="alert alert-danger" role="alert">
+            <h2>
+              <%= pluralize(@labor_law.errors.count, t('general_errors.texts.error.one'), t('general_errors.texts.error.other')) %>
+              &nbsp;
+              <%= t('general_errors.form_erros') %>
+            </h2>
+            <ul>
+              <% @labor_law.errors.full_messages.each do |message| %>
+                  <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+      <% end %>
+      <%= f.hidden_field :entity_id, :value => session[:entity_id] %>
+      <%= f.hidden_field :year, :value => get_date(@labor_law, 'year') %>
+      <%= f.hidden_field :month, :value => get_date(@labor_law, 'month') %>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label :year %>
+            <input type="text" class="form-control" value="<%= get_date(@labor_law, 'year') %>" disabled />
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label :month %>
+            <input type="text" class="form-control" value="<%= get_date(@labor_law, 'month') %>" disabled />
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label :staff_id %>
+            <%= f.select :staff_id, Staff.active.for_entity(session['entity_id']).collect { |p| [p.description, p.id] },
+                         {},
+                         {class: 'form-control select2', id: 'parent'} %>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label :labor_standard_id %>
+            <%= f.select :labor_standard_id, LaborStandard.active.for_country(get_current_country_id).collect { |p| [p.description, p.id] },
+                         {},
+                         {class: 'form-control select2', id: 'parent'} %>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label :contract_type_id %>
+            <%= f.select :contract_type_id, ContractType.active.for_country(get_current_country_id).collect { |p| [p.description, p.id] },
+                         {},
+                         {class: 'form-control select2', id: 'parent'} %>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label :min_wage %>
+            <%= f.text_field :min_wage, class: 'form-control decimal_numbers_2' %>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label :state %>
+            <%= check_state(f) %>
+          </div>
+        </div>
+      </div>
+
+
+
+      <div class="row">
+          <%= f.collection_check_boxes(:salary_component_ids, SalaryComponent.active.available_for_country(get_country_for_element(nil, 'numerical_code')), :id, :description ) do |salary_component| %>
+            <div class="col-md-3">
+              <div class="i-checks">
+                <%= salary_component.label do %>
+                    <%= salary_component.check_box %> <%= salary_component.text %>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 text-right">
+          <%= link_to t('app.buttons.back'), :back, class: 'btn btn-outline btn-success' %>
+        </div>
+        <div class="col-md-6 text-left">
+          <%= f.submit class: 'btn btn-primary' %>
+        </div>
+      </div>
+  <% end %>
+</div>
+
+<% content_for :javascript do %>
+    <%# Stylesheet for check type IOS %>
+    <%= javascript_include_tag 'checkios', 'data-turbolinks-track' => true %>
+    <%= javascript_include_tag 'iCheck/icheck.min.js', 'data-turbolinks-track' => true %>
+    <script type="text/javascript">
+      $(function() {
+        $('.i-checks').iCheck({
+          checkboxClass: 'icheckbox_square-green'
+        });
+        var elem = $('.js-switch');
+        $.each(elem, function (index, value) {
+          new Switchery(value, {color: '#64BD63', secondaryColor: '#F53028', jackColor: '#FFF', jackSecondaryColor: '#FFF'});
+        });
+        //switchery = new Switchery(elem, { color: '#64BD63', secondaryColor: '#F53028', jackColor: '#FFF', jackSecondaryColor: '#FFF' });
+      });
+    </script>
+<% end %>

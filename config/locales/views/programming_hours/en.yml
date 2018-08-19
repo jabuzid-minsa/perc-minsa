@@ -1,0 +1,20 @@
+en:
+  activerecord:
+    models:
+      programming_hour:
+        one: Programming Hour
+        other: Programming Hours
+    attributes:
+      programming_hour:
+        year: Year
+        month: Month
+        total: Total Employees
+        paid: Total Pais
+        hours: Hours
+        entity_id: Entity
+        cost_center_id: Cost Center
+        payroll_id: Employee
+        salary_component_id: Salary Component
+        created_at: Created at
+        updated_at: Updated at
+  limit_hours: The component _component_ was assigned a maximum value of _max_value_, the current sum is of _total_

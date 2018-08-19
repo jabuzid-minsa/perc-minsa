@@ -1,0 +1,1 @@
+json.array! @programming_hours, partial: 'programming_hours/programming_hour', as: :programming_hour

@@ -1,0 +1,2 @@
+json.extract! distribution_overhead, :id, :year, :month, :general_value, :value, :type_distribution_id, :cost_center_id, :supply_id, :entity_id, :created_at, :updated_at
+json.url distribution_overhead_url(distribution_overhead, format: :json)

@@ -1,0 +1,189 @@
+<nav class="navbar-default navbar-static-side" role="navigation">
+	<div class="sidebar-collapse">
+		<ul class="nav metismenu" id="side-menu">
+			<li class="nav-header">
+				<div class="dropdown profile-element">
+					<span>
+						<%= image_tag current_user.avatar.url(:small), class: 'img-circle' %>
+					</span>
+					<a data-toggle="dropdown" class="dropdown-toggle" href="#">
+						<span class="clear">
+							<span class="block m-t-xs">
+								<strong class="font-bold">
+									<%= name_current_user(current_user) %>
+								</strong>
+							</span> 
+							<span class="text-muted text-xs block"><%= t("app.users.roles.#{current_user.role}") %> <b class="caret"></b></span>
+						</span>
+					</a>
+					<ul class="dropdown-menu animated fadeInRight m-t-xs">
+						<li>
+							<%= link_to t('app.user_account.edit'), edit_user_registration_path %>
+						</li>
+						<li class="divider"></li>
+						<li>
+							<%= link_to t('app.logout'), destroy_user_session_path, method: :delete %>
+						</li>
+					</ul>
+				</div>
+				<div class="logo-element">
+          <%= image_tag current_user.avatar.url(:small), class: 'img-circle' %>
+				</div>
+			</li>
+      <% if can? :access_settings, User  %>
+        <li class="<%= is_active_prefix('settings') %>">
+          <a href="">
+            <i class="fa fa-cog"></i><span class="nav-label"><%= t('app.sections.settings') %></span>
+            <span class="fa arrow"></span>
+          </a>
+          <ul class="nav nav-second-level collapse <%= is_active_prefix('settings') %>">
+            <li class="<%= is_active_controller('languages') %>"><%= link_to Language.model_name.human, languages_path %></li>
+          </ul>
+        </li>
+      <% end %>
+      <% if can? :access_parametrization, User %>
+        <li class="<%= is_active_prefix('parametrization') %>">
+          <a href="">
+            <i class="fa fa-cogs"></i>
+            <span class="nav-label" data-i18n="nav.dashboard"><%= t('app.sections.parametrization') %></span>
+            <span class="fa arrow"></span>
+          </a>
+          <ul class="nav nav-second-level collapse <%= is_active_prefix('parametrization') %>">
+            <% if can? :read, Geography %>
+                <li class="<%= is_active_controller('geographies') %>"><%= link_to Geography.model_name.human, geographies_url %></li>
+            <% end %>
+            <% if can? :read, SuppliesCategory %>
+                <li class="<%= is_active_controller('supplies_categories') %>"><%= link_to SuppliesCategory.model_name.human, supplies_categories_url %></li>
+            <% end %>
+            <% if can? :read, CostDistribution %>
+                <li class="<%= is_active_controller('cost_distributions') %>"><%= link_to CostDistribution.model_name.human, cost_distributions_url %></li>
+            <% end %>
+            <% if can? :read, CareLevel %>
+                  <li class="<%= is_active_controller('care_levels') %>"><%= link_to CareLevel.model_name.human, care_levels_url %></li>
+            <% end %>
+            <% if can? :read, ProductionUnit %>
+                <li class="<%= is_active_controller('production_units') %>"><%= link_to ProductionUnit.model_name.human, production_units_url %></li>
+            <% end %>
+            <% if can? :read, User %>
+                <li class="<%= is_active_controller('users') %>"><%= link_to User.model_name.human, users_url %></li>
+            <% end %>
+            <% if can? :read, Supply %>
+                <li class="<%= is_active_controller('supplies') %>"><%= link_to Supply.model_name.human, supplies_url %></li>
+            <% end %>
+            <% if can? :read, Staff %>
+                <li class="<%= is_active_controller('staffs') %>"><%= link_to Staff.model_name.human, staffs_url %></li>
+            <% end %>
+            <% if can? :read, CostCenter %>
+                <li class="<%= is_active_controller('cost_centers') %>"><%= link_to CostCenter.model_name.human, cost_centers_url %></li>
+            <% end %>
+          </ul>
+        </li>
+      <% end %>
+
+      <% if can? :access_local_parametrization, User and (current_user.is_valid_geography? or current_user.is_valid_session_country?(session[:country_id])) %>
+          <li class="<%= is_active_prefix('local_parametrization') %>">
+            <a href="">
+              <i class="fa fa-wrench"></i>
+              <span class="nav-label" data-i18n="nav.dashboard"><%= t('app.sections.local_parametrization') %></span>
+              <span class="fa arrow"></span>
+            </a>
+            <ul class="nav nav-second-level collapse <%= is_active_prefix('local_parametrization') %>">
+              <% if can? :read, SalaryComponent %>
+                  <li class="<%= is_active_controller('salary_components') %>"><%= link_to SalaryComponent.model_name.human, salary_components_path %></li>
+              <% end %>
+              <% if can? :read, Entity %>
+                  <li class="<%= is_active_controller('entities') %>"><%= link_to Entity.model_name.human, entities_url %></li>
+              <% end %>
+              <% if can? :read, Network %>
+                  <li class="<%= is_active_controller('networks') %>"><%= link_to Network.model_name.human, networks_url %></li>
+              <% end %>
+              <% if can? :read, IncomeDefinition and (session[:entity_id].present? and session[:entity_id] != "") %>
+                  <li class="<%= is_active_controller('income_definitions') %>"><%= link_to IncomeDefinition.model_name.human, income_definitions_path %></li>
+              <% end %>
+              <% if can? :read, LaborLaw and (session[:entity_id].present? and session[:entity_id] != "") %>
+                  <li class="<%= is_active_controller('labor_laws') %>"><%= link_to LaborLaw.model_name.human, labor_laws_url %></li>
+              <% end %>
+            </ul>
+          </li>
+      <% end %>
+
+      <% if can? :access_cost_tool, User and (current_user.is_valid_geography? or current_user.is_valid_session_country?(session[:country_id])) and session[:entity_id].present? and session[:year].present? %>
+          <li class="<%= is_active_prefix('cost_tool') %>">
+            <a href="">
+              <i class="fa fa-puzzle-piece"></i>
+              <span class="nav-label" data-i18n="nav.dashboard"><%= t('app.sections.cost_tool') %></span>
+              <span class="fa arrow"></span>
+            </a>
+            <ul class="nav nav-second-level collapse <%= is_active_prefix('local_parametrization') %>">
+              <% if can? :read, DistributionArea %>
+                  <li class="<%= is_active_controller('distribution_areas') %>"><%= link_to DistributionArea.model_name.human(:count => 2), distribution_areas_path %></li>
+              <% end %>
+              <% if can? :read, Payroll %>
+                  <li class="<%= is_active_controller('payrolls') %>"><%= link_to Payroll.model_name.human, payrolls_url %></li>
+              <% end %>
+              <% if can? :read, ProgrammingHour %>
+                  <li class="<%= is_active_controller('programming_hours') %>"><%= link_to ProgrammingHour.model_name.human(:count => 2), programming_hours_path %></li>
+              <% end %>
+              <% if can? :read, DistributionSupply %>
+                  <li class="<%= is_active_controller('distribution_supplies') %>"><%= link_to DistributionSupply.model_name.human, distribution_supplies_path %></li>
+              <% end %>
+              <% if can? :read, DistributionOverhead %>
+                  <li class="<%= is_active_controller('distribution_overheads') %>"><%= link_to DistributionOverhead.model_name.human, distribution_overheads_path %></li>
+              <% end %>
+              <% if can? :read, ProductionCostCenter %>
+                  <li class="<%= is_active_controller('production_cost_centers') %>"><%= link_to ProductionCostCenter.model_name.human, production_cost_centers_path %></li>
+              <% end %>
+              <% if can? :read, DistributionCost %>
+                  <li class="<%= is_active_controller('distribution_costs') %>"><%= link_to DistributionCost.model_name.human, distribution_costs_path %></li>
+              <% end %>
+              <% if can? :read, Income %>
+                  <li class="<%= is_active_controller('incomes') %>"><%= link_to Income.model_name.human, incomes_path %></li>
+              <% end %>
+            </ul>
+          </li>
+      <% end %>
+
+      <% if can? :access_analysis_and_graphs, User and (current_user.is_valid_geography? or current_user.is_valid_session_country?(session[:country_id])) and session[:entity_id].present? and session[:year].present? %>
+          <li class="<%= is_active_prefix('graphics') %>">
+            <a>
+              <i class="fa fa-pie-chart"></i>
+              <span class="nav-label" data-i18n="nav.dashboard"><%= t('app.sections.analysis_and_graphs') %></span>
+              <span class="fa arrow"></span>
+            </a>
+            <ul class="nav nav-second-level collapse <%= is_active_prefix('graphics') %>">
+              <% if can? :view_management_number_one, User %>
+                  <li class="<%= is_active_action('management_number_one') %>"><%= link_to t('app.analysis_graphs.management.number_one.title'), analysis_graphs_management_number_one_path %></li>
+              <% end %>
+              <% if can? :view_management_number_one, User %>
+                  <li class="<%= is_active_action('detail_report_cost_production_center') %>"><%= link_to 'Cuadro 4', analysis_graphs_detail_report_cost_production_center_path %></li>
+              <% end %>
+              <% if can? :view_management_number_two, User %>
+                  <li class="<%= is_active_action('management_number_two') %>"><%= link_to t('app.analysis_graphs.management.number_two.title'), analysis_graphs_management_number_two_path %></li>
+              <% end %>
+              <li class="<%= is_active_action('consumption_centers_support') %>"><%= link_to 'Consumos CPA', analysis_graphs_consumption_centers_support_path %></li>
+              <% if can? :view_comparative_graphs, User %>
+                  <li class="<%= is_active_action('compare_information') %>"><%= link_to t('app.analysis_graphs.comparative.title'), analysis_graphs_compare_information_path %></li>
+              <% end %>
+            </ul>
+          </li>
+      <% end %>
+
+      <% if can? :access_multiple_analysis, User and (current_user.is_valid_geography? or current_user.is_valid_session_country?(session[:country_id])) and (session[:entity_id].present?) %>
+          <li class="<%= is_active_prefix('multiple_months') %>">
+            <a>
+              <i class="fa fa-pie-chart"></i>
+              <span class="nav-label" data-i18n="nav.dashboard">Multiples Meses</span>
+              <span class="fa arrow"></span>
+            </a>
+            <ul class="nav nav-second-level collapse <%= is_active_prefix('multiple_months') %>">
+              <li class="<%= is_active_action('date_ranges') %>"><%= link_to 'Seleccion Meses', multiple_range_dates_path %></li>
+              <li class="<%= is_active_action('report_number_one') %>"><%= link_to 'Produccion, Costos y Eficiencia', multiple_report_number_one_path %></li>
+              <li class="<%= is_active_action('report_detail_number_one') %>"><%= link_to 'Cuadro 4', multiple_report_detail_number_one_path %></li>
+              <li class="<%= is_active_action('report_number_two') %>"><%= link_to 'Rendimiento', multiple_report_number_two_path %></li>
+              <li class="<%= is_active_action('consumption_centers_support') %>"><%= link_to 'Consumos CPA', multiple_consumption_support_path %></li>
+            </ul>
+          </li>
+      <% end %>
+		</ul>
+	</div>
+</nav>

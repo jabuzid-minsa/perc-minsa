@@ -1,0 +1,18 @@
+es:
+  activerecord:
+    models:
+      distribution_overhead:
+        one: Distribución Gasto General
+        other: Distribución Gastos Generales
+    attributes:
+      distribution_overhead:
+        year: Año
+        month: Mes
+        general_value: Valor General
+        value: Valor
+        type_distribution_id: Tipo de Distribución
+        entity_id: Entidad
+        cost_center_id: Centro de Costo
+        supply_id: Insumo
+        created_at: Fecha Creación
+        updated_at: Ultima Actualización

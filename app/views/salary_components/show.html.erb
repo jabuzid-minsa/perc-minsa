@@ -1,0 +1,39 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Code:</strong>
+  <%= @salary_component.code %>
+</p>
+
+<p>
+  <strong>Abbreviation:</strong>
+  <%= @salary_component.abbreviation %>
+</p>
+
+<p>
+  <strong>Description:</strong>
+  <%= @salary_component.description %>
+</p>
+
+<p>
+  <strong>Max value:</strong>
+  <%= @salary_component.max_value %>
+</p>
+
+<p>
+  <strong>Rate:</strong>
+  <%= @salary_component.rate %>
+</p>
+
+<p>
+  <strong>Geography:</strong>
+  <%= @salary_component.geography %>
+</p>
+
+<p>
+  <strong>State:</strong>
+  <%= @salary_component.state %>
+</p>
+
+<%= link_to 'Edit', edit_salary_component_path(@salary_component) %> |
+<%= link_to 'Back', salary_components_path %>

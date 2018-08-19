@@ -1,0 +1,1 @@
+json.partial! "cost_distributions/cost_distribution", cost_distribution: @cost_distribution

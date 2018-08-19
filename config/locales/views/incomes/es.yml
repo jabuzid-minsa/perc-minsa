@@ -1,0 +1,15 @@
+es:
+  activerecord:
+    models:
+      income:
+        one: Ingreso
+        other: Ingresos
+    attributes:
+      income:
+        year: Año
+        month: Mes
+        value: Valor
+        entity_id: Entidad
+        cost_center_id: Centro de Costo
+        created_at: Fecha Creación
+        updated_at: Ultima Actualización

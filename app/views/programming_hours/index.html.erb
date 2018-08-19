@@ -1,0 +1,255 @@
+<% content_for :stylesheet do %>
+		<%= stylesheet_link_tag 'datatable', media: 'screen', 'data-turbolinks-track' => true %>
+<% end %>
+
+<% content_for :breadcrumb_title do %><%= ProgrammingHour.model_name.human %><% end %>
+<% content_for :breadcrumb_list do %>
+		<li class="active"><strong><%= t('app.texts.creating', element: ProgrammingHour.model_name.human(:count => 2)) %></strong></li>
+<% end %>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+	<div class="row">
+		<div class="col-lg-12">
+			<div class="ibox float-e-margins">
+				<div class="ibox-title">
+					<h5><%= t('app.texts.create', element: ProgrammingHour.model_name.human(:count => 2)) %></h5>
+					<div class="ibox-tools">
+						<a class="collapse-link">
+							<i class="fa fa-chevron-up"></i>
+						</a>
+					</div>
+				</div>
+				<div class="ibox-content">
+					<div class="row">
+						<div class="col-md-5">
+							<div class="form-group">
+								<%= link_to "Excel", programming_hours_path(format: "xls") %> |
+								<%= link_to "Formato Excel", programming_hours_path(format: "xls_empty") %>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<%= form_tag import_programming_hours_path, multipart: true, class: 'form-inline' do %>
+									<div class="checkbox m-r-xs">
+                    <input type="checkbox" id='empty_format' name='empty_format'>
+                    <label for="empty_format">
+                      Vaciar Antes
+                    </label>
+                  </div>
+                  <div class="form-group">
+                    <%= file_field_tag :file %>
+                  </div>
+									<div class="form-group">
+										<%= submit_tag "Importar", class: 'btn btn-default' %>
+									</div>
+							<% end %>
+						</div>
+					</div>
+					<table class="table table-bordered dataTable no-footer" id="fixed_table" cellspacing="0">
+						<thead>
+						<tr>
+							<td><%= ProgrammingHour.human_attribute_name(:payroll_id) %></td>
+							<td><%= LaborLaw.human_attribute_name(:contract_type_id) %></td>
+							<td><%= ProgrammingHour.human_attribute_name(:total) %></td>
+							<td><%= ProgrammingHour.human_attribute_name(:paid) %></td>
+							<td><%= SalaryComponent.model_name.human %></td>
+							<% @cost_centers.each do |cost_center| %>
+									<td data-service="<%= cost_center.id %>"><%= cost_center.description %></td>
+							<% end %>
+						</tr>
+						</thead>
+						<tbody>
+							<%= will_paginate @staffs %>
+							<% last_staff = 0 %>
+							<% @staffs.each_with_index do |staff, index_pr| %>
+									<% if last_staff != staff['id'] %>
+										<tr class="<%= 'bg-light-blue' if index_pr % 2 == 0 %>" data-payroll="<%= staff['id'] %>" data-hour-value="<%= staff['min_wage'] %>">
+											<td><%= staff['roster'] %></td>
+											<td><%= staff['contract_type'] %></td>
+											<td><%= text_field_tag 'programming_hour', nil, step: 2, class: "form-control size-20 decimal_numbers_2 ajax_hours_total total_per_payroll_#{staff['id']}",
+															data: {payroll: staff['id']}, value: find_hours_for_payroll(@programming_hours, 'total', staff['id'],nil, nil, 1) %>
+											</td>
+											<td><%= text_field_tag 'programming_hour', nil, step: 2, class: "form-control decimal_numbers_2 ajax_hours_paid hours_per_payroll_#{staff['id']}",
+																									 data: {payroll: staff['id']}, value: find_hours_for_payroll(@programming_hours, 'paid', staff['id'], nil, nil, staff.salary) %>
+											</td>
+											<td id="scp_<%= staff['id'] %>" data-max-value="<%= staff['max_value'] %>" data-percentage="<%= staff['rate'] %>">
+												<%= staff['abbreviation'] %>
+												<%= " ($)" if staff['rate'].to_i == 0 %>
+											</td>
+											<% @cost_centers.each do |cost_center| %>
+													<td><%= text_field_tag 'programming_hour', nil, step: 2, class: 'form-control size-100 decimal_numbers_2 ajax_hours',
+													data: {cost_center: cost_center.id, payroll: staff['id'], salary_component: staff['salary_component_id']},
+													value: find_hours_for_payroll(@programming_hours, 'hours', staff['id'], staff['salary_component_id'], cost_center.id) %>
+													</td>
+											<% end %>
+										</tr>
+									<% else  %>
+										<tr class="<%= 'bg-light-blue' if index_pr % 2 == 0 %>" data-payroll="<%= staff['id'] %>" data-hour-value="<%= staff['min_wage'] %>">
+											<td></td>
+											<td></td>
+											<td></td>
+											<td></td>
+											<td id="scp_<%= staff['id'] %>" data-max-value="<%= staff['max_value'] %>" data-percentage="<%= staff['rate'] %>">
+												<%= staff['abbreviation'] %>
+												<%= " ($)" if staff['rate'].to_i == 0 %>
+											</td>
+											<% @cost_centers.each do |cost_center| %>
+													<td><%= text_field_tag 'programming_hour', nil, step: 2, class: 'form-control size-100 decimal_numbers_2 ajax_hours',
+													data: {cost_center: cost_center.id, payroll: staff['id'], salary_component: staff['salary_component_id']},
+													value: find_hours_for_payroll(@programming_hours, 'hours', staff['id'], staff['salary_component_id'], cost_center.id) %>
+													</td>
+											<% end %>
+										</tr>
+									<% end  %>
+									<% last_staff = staff['id'] %>
+							<% end %>							
+						</tbody>
+					</table>
+					<%= will_paginate @staffs %>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<% content_for :javascript do %>
+		<%= javascript_include_tag 'datatable', 'data-turbolinks-track' => true %>
+
+		<script type="text/javascript">
+			$(document).ready(function() {
+				var ajax_parameters = {
+							year: <%= session[:year] %>,
+							month: <%= session[:month] %>,
+							cost_center: 0,
+							payroll: 0,
+							salary_component: 0,
+							hours: 0,
+							total: 0,
+							paid: 0
+						},
+						table = $('#fixed_table').DataTable({
+							bInfo: 					false,
+							searching: 			false,
+							bSort: 					false,
+							scrollY:        "300px",
+							scrollX:        true,
+							scrollCollapse: true,
+							paging:         false,
+							fixedColumns:   {
+								leftColumns: 5
+							}
+						}),
+						current_meters = 0;
+
+				$('.ajax_hours').focusin(function () {
+					current_meters = $(this).val();
+				});
+
+				$('.ajax_hours').focusout(function () {
+					if (current_meters != $(this).val()) {
+						ajax_parameters.cost_center = $(this).data('cost-center');
+						ajax_parameters.payroll = $(this).data('payroll');
+						ajax_parameters.salary_component = $(this).data('salary-component');
+						ajax_parameters.hours = $(this).val();
+						$(".total_per_payroll_"+ $(this).data("payroll")).each(function(k, v) {
+								var val = $(v).val();
+								if (val != '') {
+									ajax_parameters.total = val;
+								}
+							});
+						$(".hours_per_payroll_"+ $(this).data("payroll")).each(function(k, v) {
+								var val = $(v).val();
+								if (val != '') {
+									ajax_parameters.paid = val;
+								}
+							});
+
+						validate_salary_component($(this));
+						/*validate_total_paid($(this));*/
+						ajax_request(ajax_parameters);
+					}
+				});
+
+			});
+
+			function validate_salary_component($this) {
+				var tr_parent = $this.closest("tr"),
+					max_value = parseFloat(tr_parent.find("td[data-max-value]").data("max-value")),
+					total = 0,
+					message = "<%= t('limit_hours') %>",
+					component = tr_parent.find("#scp_"+tr_parent.data("payroll")).html(),
+					total_staff = convert_to_float($('.ajax_hours_total[data-payroll="'+$this.data('payroll')+'"]').val());
+
+				$(".ajax_hours", tr_parent).each(function () {
+					total += parseFloat($(this).val()) || 0;
+				});
+
+				if (max_value > 0 && total > (max_value * total_staff)){
+					message = message.replace("_component_", component);
+					message = message.replace("_max_value_", (max_value * total_staff));
+					message = message.replace("_total_", total);
+					percToastr.showToast({
+						shortCutFunction: 'warning',
+						msg: message
+					});
+				}
+			}
+			
+			function validate_total_paid($this) {
+				var tbody_parent = $("tbody"),
+						tr_parent = tbody_parent.find("tr[data-payroll='"+ $this.data("payroll") +"']"),
+						total = parseFloat(tr_parent.find('.ajax_hours_paid').val()),
+						component = $(".hours_per_payroll_"+ $this.data("payroll")),
+						hour_value = parseFloat(tr_parent.first().data("hour-value")) / 176,
+						sum_values = 0,
+						valor = 0,
+						percentage = 0;
+
+				$(tr_parent).each(function (index, value) {
+					percentage = parseFloat($(value).find("#scp_"+$this.data("payroll")).data("percentage"));
+					$(".ajax_hours", value).each(function (index_i, value_i) {
+						if (percentage > 1) {
+							valor = hour_value + (hour_value * percentage) / 100;
+						} else {
+							valor = (hour_value);
+						}
+						sum_values += valor * $(value_i).val() || 0;
+					});
+				});
+
+				$(component).val(sum_values);
+				if (total != sum_values) {
+					component.addClass( "text-warning" );
+				}else {
+					component.removeClass( "text-warning" ).addClass( "text-success" );
+				}
+			}
+
+			function ajax_request(parameters) {
+				$.ajax({
+					url: '<%= save_programming_hours_path %>',
+					type: "GET",
+					dataType: "json",
+					data: parameters,
+					contentType: "script",
+					success: function(data) {
+						//console.log('entro');
+					},
+					error: function(xhr,exception,status) {
+						console.log('entra al error');
+						console.log(xhr);
+						console.log(exception);
+						console.log(status);
+					}
+				});
+			}
+
+			function clean_mask_number(number) {
+				return parseFloat(String(number).replace(/,/g, ""));
+			}
+
+			function convert_to_float(string) {
+				var clear_string = clean_mask_number(string);
+				return parseFloat(clear_string);
+			}
+		</script>
+<% end %>

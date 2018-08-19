@@ -1,0 +1,29 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Code:</strong>
+  <%= @cost_distribution.code %>
+</p>
+
+<p>
+  <strong>Description:</strong>
+  <%= @cost_distribution.description %>
+</p>
+
+<p>
+  <strong>Geography:</strong>
+  <%= @cost_distribution.geography %>
+</p>
+
+<p>
+  <strong>Language:</strong>
+  <%= @cost_distribution.language %>
+</p>
+
+<p>
+  <strong>State:</strong>
+  <%= @cost_distribution.state %>
+</p>
+
+<%= link_to 'Edit', edit_cost_distribution_path(@cost_distribution) %> |
+<%= link_to 'Back', cost_distributions_path %>

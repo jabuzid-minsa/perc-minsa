@@ -1,0 +1,44 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Year:</strong>
+  <%= @distribution_overhead.year %>
+</p>
+
+<p>
+  <strong>Month:</strong>
+  <%= @distribution_overhead.month %>
+</p>
+
+<p>
+  <strong>General value:</strong>
+  <%= @distribution_overhead.general_value %>
+</p>
+
+<p>
+  <strong>Value:</strong>
+  <%= @distribution_overhead.value %>
+</p>
+
+<p>
+  <strong>Type distribution:</strong>
+  <%= @distribution_overhead.type_distribution %>
+</p>
+
+<p>
+  <strong>Cost center:</strong>
+  <%= @distribution_overhead.cost_center %>
+</p>
+
+<p>
+  <strong>Supply:</strong>
+  <%= @distribution_overhead.supply %>
+</p>
+
+<p>
+  <strong>Entity:</strong>
+  <%= @distribution_overhead.entity %>
+</p>
+
+<%= link_to 'Edit', edit_distribution_overhead_path(@distribution_overhead) %> |
+<%= link_to 'Back', distribution_overheads_path %>

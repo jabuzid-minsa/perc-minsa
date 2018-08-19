@@ -1,0 +1,1 @@
+json.array! @income_definitions, partial: 'income_definitions/income_definition', as: :income_definition

@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  year: 1
+  month: 1
+  value: 9.99
+  cost_center_id: 
+  entity_id: 
+
+two:
+  year: 1
+  month: 1
+  value: 9.99
+  cost_center_id: 
+  entity_id: 

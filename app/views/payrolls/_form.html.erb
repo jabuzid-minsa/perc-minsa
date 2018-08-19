@@ -1,0 +1,99 @@
+<% content_for :stylesheet do %>
+<% end %>
+
+<div class="row">
+	<%= form_for(@payroll, html: { class: 'p-w-md' }) do |f| %>
+			<% if @payroll.errors.any? %>
+					<div id="alert alert-danger" class="bg-danger">
+						<%= pluralize(@payroll.errors.count, t('general_errors.texts.error.one'), t('general_errors.texts.error.other')) %>
+						&nbsp;
+						<%= t('general_errors.form_erros') %>
+						<ul>
+							<% @payroll.errors.full_messages.each do |message| %>
+									<li><%= message %></li>
+							<% end %>
+						</ul>
+					</div>
+			<% end %>
+
+			<div class="row">
+				<div class="col-md-6">
+					<div class="form-group">
+						<%= f.label :entity_id %>
+						<%= f.hidden_field :entity_id, :value => session[:entity_id] %>
+						<input type="text" class="form-control" value="<%= Entity.find(session[:entity_id]).description %>", disabled />
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="form-group">
+						<%= f.label :labor_law_id %>
+						<%= f.select :labor_law_id, LaborLaw.active.for_entity(session[:entity_id]).collect { |p| ["#{p.labor_standard.description} - #{p.contract_type.description} - #{p.staff.description}", p.id] },
+												 { include_blank: '' },
+												 {class: 'form-control select2', id: 'parent'} %>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-md-6">
+					<div class="form-group">
+						<%= f.label :salary %>
+						<%= f.text_field :salary, class: 'form-control decimal_numbers_2', autofocus: true %>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="form-group">
+						<label for=""><%= "#{Payroll.human_attribute_name(:dni)} #{t('explanation_dni')}" %></label>
+						<% if not @consolidated %>						
+							<%= f.text_field :dni, class: 'form-control' %>							
+						<% else %>
+							<input type="text" class="form-control" value="", disabled />
+						<% end %>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-md-6">
+					<div class="form-group">
+						<%= f.label :name %>
+						<% if not @consolidated %>
+							<%= f.text_field :name, class: 'form-control' %>
+						<% else %>
+							<%= f.hidden_field :name, :value => '' %>
+							<input type="text" class="form-control" value="", disabled />
+						<% end %>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="form-group">
+						<%= f.label :bonuses %>
+						<%= f.text_field :bonuses, class: 'form-control decimal_numbers_2' %>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-6">
+					<div class="form-group">
+						<%= f.label :benefits %>
+						<%= f.text_field :benefits, class: 'form-control decimal_numbers_2' %>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-md-6 text-right">
+					<%= link_to t('app.buttons.back'), :back, class: 'btn btn-outline btn-success' %>
+				</div>
+				<div class="col-md-6 text-left">
+					<%= f.submit class: 'btn btn-primary' %>
+				</div>
+			</div>
+	<% end %>
+</div>
+
+<% content_for :javascript do %>
+		<script type="text/javascript">
+			$(function() {});
+		</script>
+<% end %>

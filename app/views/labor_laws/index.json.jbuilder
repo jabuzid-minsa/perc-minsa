@@ -1,0 +1,1 @@
+json.array! @labor_laws, partial: 'labor_laws/labor_law', as: :labor_law

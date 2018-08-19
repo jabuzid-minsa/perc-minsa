@@ -1,0 +1,34 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Code:</strong>
+  <%= @staff.code %>
+</p>
+
+<p>
+  <strong>Description:</strong>
+  <%= @staff.description %>
+</p>
+
+<p>
+  <strong>Staff:</strong>
+  <%= @staff.staff %>
+</p>
+
+<p>
+  <strong>Geography:</strong>
+  <%= @staff.geography %>
+</p>
+
+<p>
+  <strong>Language:</strong>
+  <%= @staff.language %>
+</p>
+
+<p>
+  <strong>State:</strong>
+  <%= @staff.state %>
+</p>
+
+<%= link_to 'Edit', edit_staff_path(@staff) %> |
+<%= link_to 'Back', staffs_path %>

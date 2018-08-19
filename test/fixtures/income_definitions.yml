@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  invoice: false
+  cost_center_id: 
+  entity_id: 
+
+two:
+  invoice: false
+  cost_center_id: 
+  entity_id: 

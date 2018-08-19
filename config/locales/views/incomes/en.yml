@@ -1,0 +1,15 @@
+en:
+  activerecord:
+    models:
+      income:
+        one: Income
+        other: Income
+    attributes:
+      income:
+        year: Year
+        month: Month
+        value: Value
+        entity_id: Entity
+        cost_center_id: Cost Center
+        created_at: Created at
+        updated_at: Updated at

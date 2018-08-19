@@ -1,0 +1,18 @@
+es:
+  activerecord:
+    models:
+      supply:
+        one: Insumo y Gasto
+        other: Insumos y Gastos
+    attributes:
+      supply:
+        code: Código
+        description: Descripción
+        definition: Definición
+        supply_id: Insumo Principal
+        geography_id: País
+        language_id: Idioma
+        supplies_category_id: Categoría de Insumo
+        state: Estado
+        created_at: Fecha Creación
+        updated_at: Ultima Actualización

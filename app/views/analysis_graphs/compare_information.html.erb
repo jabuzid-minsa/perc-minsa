@@ -1,0 +1,224 @@
+<% content_for :stylesheet do %>
+		<%= stylesheet_link_tag 'datatable', media: 'screen', 'data-turbolinks-track' => true %>
+		<%= stylesheet_link_tag 'c3charts', media: 'screen', 'data-turbolinks-track' => true %>
+<% end %>
+
+<% content_for :breadcrumb_title do %><%= t('app.sections.analysis_and_graphs') %><% end %>
+<% content_for :breadcrumb_list do %>
+		<li class="active"><strong><%= t('app.analysis_graphs.comparative.title') %></strong></li>
+<% end %>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+	<div class="row">
+		<div class="col-lg-12">
+			<div class="ibox float-e-margins">
+				<div class="ibox-title">
+					<h5><%= t('app.analysis_graphs.comparative.title') %></h5>
+					<div class="ibox-tools">
+						<a class="collapse-link">
+							<i class="fa fa-chevron-up"></i>
+						</a>
+					</div>
+				</div>
+				<div class="ibox-content">
+					<%= form_tag(analysis_graphs_compare_information_search_path, method: 'post', remote: true, 'data-type' => :json, id: 'filter_info') do  %>
+						<div class="row">
+							<div class="col-md-4">
+								<div class="input-group date datepicker_month">
+									<span class="input-group-addon" style="padding: 5px 12px;"><i class="fa fa-calendar"></i></span>
+									<input type="text" class="form-control" id="datepicker_comparative" name="comparative_filters[comparative_date]" style="max-height: 28px;" value=""/>
+								</div>
+							</div>
+							<div class="col-md-4">
+								<%= select_tag('comparative_filters[cost_center_id]', options_from_collection_for_select(@cost_centers, 'id', 'description'),
+													 {:include_blank => true, class: 'form-control m-b select2'}) %>
+							</div>
+							<div class="col-md-4">
+								<%= button_tag(type: 'submit', class: 'minimalize-styl-2 btn btn-primary no-margins filter_cost_center', style: 'max-height: 28px;') do %>
+									<i class='fa fa-search'></i>
+								<% end %>
+							</div>
+						</div>
+					<% end %>
+					<hr class="hr-line-solid"/>
+					<div class="row">
+						<div class="col-sm-12">
+							<h2><%= t('app.analysis_tables.common.total') %></h2>
+							<div id="comparative_totals"></div>
+						</div>
+					</div>
+					<hr class="hr-line-solid"/>
+					<div class="row">
+						<div class="col-sm-12">
+							<h2 id="selected_cost_center"><%= t('app.analysis_tables.five.selected_center') %></h2>
+							<div id="comparative_cos_center"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<% content_for :javascript do %>
+		<%= javascript_include_tag 'datatable', 'data-turbolinks-track' => true %>
+		<%= javascript_include_tag 'c3charts', 'data-turbolinks-track' => true %>
+
+		<script type="text/javascript" charset="utf-8">
+			$(function () {
+				datepicker_settings.datepicker_config('.datepicker_month');
+
+				$("form#filter_info").on('ajax:success', function(event, data, status, xhr) {
+					// Detail Bar Chart
+					var colors_graph = {};
+					colors_graph[ $('#work_date_costs_navbar').val() ] = '#0499D8';
+					colors_graph[ $('#datepicker_comparative').val() ] = '#86CEEC';
+					c3.generate({
+						bindto: '#comparative_totals',
+						data: {
+							x : 'x',
+							columns: [
+								[ 'x', "<%= t('app.analysis_tables.common.human_resource') %>","<%= t('app.analysis_tables.common.overheads') %>","<%= t('app.analysis_tables.common.supplies') %>" ],
+								[ $('#work_date_costs_navbar').val(), sum_values_array(data.current_date.human_resource), sum_values_array(data.current_date.overheads), sum_values_array(data.current_date.supplies) ],
+								[ $('#datepicker_comparative').val(), sum_values_array(data.comparative.human_resource), sum_values_array(data.comparative.overheads), sum_values_array(data.comparative.supplies) ]
+							],
+							colors: colors_graph,
+							type: 'bar',
+							//groups: [ ["Recurso Humano"], ["Gastos Generales"], ["Insumos"] ],
+							labels: {
+								format: {
+									y: d3.format("$,")
+								}
+							}
+						},
+						tooltip: {
+							format: {
+								value: function(value) {
+									return d3.format(",.2f")(value)
+								}
+							}
+						},
+						axis: {
+							y : {
+								tick: {
+									format: d3.format(",.2f")
+								}
+							},
+							x: {
+								type: 'category',
+								tick: {
+									//rotate: 90,
+									multiline: true,
+									width: 100
+								},
+								height: 130
+							}
+						}
+					}); // End C3 Generate
+					var chart_cc = c3;
+					// Validacion para crear grafico por centro de costo seleccionado
+					if (!isNaN($('#comparative_filters_cost_center_id').val()) && $('#comparative_filters_cost_center_id').val() != "") {
+						var cost_center = $('#comparative_filters_cost_center_id').val(),
+								name_cost_Center = $( "#comparative_filters_cost_center_id option:selected" ).text(),
+								colors_graph_cc = {};
+						$('#selected_cost_center').html("<%= t('app.analysis_tables.five.cost_center') %>"+' - ' + name_cost_Center);
+						colors_graph_cc[ $('#work_date_costs_navbar').val()+'-'+name_cost_Center ] = '#0499D8';
+						colors_graph_cc[ $('#datepicker_comparative').val()+'-'+name_cost_Center ] = '#86CEEC';
+						// Detail Bar Chart
+						chart_cc = c3.generate({
+							bindto: '#comparative_cos_center',
+							data: {
+								x : 'x',
+								columns: [
+									//[ 'x', $('#work_date_costs_navbar').val()+'-'+name_cost_Center, $('#datepicker_comparative').val()+'-'+name_cost_Center ],
+									[ 'x', "<%= t('app.analysis_tables.common.human_resource') %>","<%= t('app.analysis_tables.common.overheads') %>","<%= t('app.analysis_tables.common.supplies') %>" ],
+									[ $('#work_date_costs_navbar').val()+'-'+name_cost_Center, sum_values_per_cost_center(data.current_date.human_resource, cost_center), sum_values_per_cost_center(data.current_date.overheads, cost_center), sum_values_per_cost_center(data.current_date.supplies, cost_center) ],
+									[ $('#datepicker_comparative').val()+'-'+name_cost_Center, sum_values_per_cost_center(data.comparative.human_resource, cost_center), sum_values_per_cost_center(data.comparative.overheads, cost_center), sum_values_per_cost_center(data.comparative.supplies, cost_center) ]
+									//[ 'Recurso Humano', sum_values_per_cost_center(data.current_date.human_resource, cost_center), sum_values_per_cost_center(data.comparative.human_resource, cost_center) ],
+									//[ 'Gastos Generales', sum_values_per_cost_center(data.current_date.overheads, cost_center), sum_values_per_cost_center(data.comparative.overheads, cost_center) ],
+									//[ 'Insumos', sum_values_per_cost_center(data.current_date.supplies, cost_center), sum_values_per_cost_center(data.comparative.supplies, cost_center) ]
+								],
+								colors: colors_graph_cc,
+								type: 'bar',
+								//groups: [ ["Recurso Humano", "Gastos Generales", "Insumos"] ],
+								labels: {
+									format: {
+										y: d3.format("$,")
+									}
+								}
+							},
+							tooltip: {
+								format: {
+									value: function(value) {
+										return d3.format(",.2f")(value)
+									}
+								}
+							},
+							axis: {
+								y : {
+									tick: {
+										format: d3.format(",.2f")
+									}
+								},
+								x: {
+									type: 'category',
+									tick: {
+										//rotate: 90,
+										multiline: true,
+										width: 100
+									},
+									height: 130
+								}
+							}
+						}); // End C3 Generate
+					} else {
+						$('#selected_cost_center').html('Centro de costo - (No Seleccionado)');
+						chart_cc = c3.generate({
+							bindto: '#comparative_cos_center',
+							data: {
+								x : 'x',
+								columns: [
+									[ 'x', "<%= t('app.analysis_tables.common.human_resource') %>","<%= t('app.analysis_tables.common.overheads') %>","<%= t('app.analysis_tables.common.supplies') %>" ]
+								]
+							}
+						}); // End C3 Generate
+					}
+				});// End Ajax Form
+			});
+
+			function convert_to_float(string) {
+				var clear_string = clean_mask_number(string);
+				clear_string = isNaN(clear_string) ? '0' : clear_string;
+				return parseFloat(clear_string);
+			}
+
+			function clean_mask_number(number) {
+				return parseFloat(String(number).replace(/,/g, ""));
+			}
+
+			function sum_values_array(data) {
+				var sum = 0;
+				sum = data.reduce(
+					function(sum, current){
+						return sum + convert_to_float(current.value);
+					}, 0
+				);
+				return sum;
+			}
+
+			function sum_values_per_cost_center(data, cost_center) {
+				var sum = 0;
+				sum = data.reduce(
+					function(sum, current){						
+						if (current.cost_center == cost_center) {
+							sum = sum + convert_to_float(current.value);
+						} else {
+							sum = sum + 0;
+						}
+						return sum;
+					}, 0
+				);
+				return sum;
+			}
+		</script>
+<% end %>

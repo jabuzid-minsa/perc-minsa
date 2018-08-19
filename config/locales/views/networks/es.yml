@@ -1,0 +1,16 @@
+es:
+  activerecord:
+    models:
+      network:
+        one: Red
+        other: Redes
+    attributes:
+      network:
+        code: Código
+        description: Descripción
+        geography_id: Ubicación
+        state: Estado
+        created_at: Fecha Creación
+        updated_at: Ultima Actualización
+  change_network: Red cambiada con exito
+  located_in: Ubicada en

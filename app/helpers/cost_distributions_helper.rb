@@ -1,0 +1,2 @@
+module CostDistributionsHelper
+end

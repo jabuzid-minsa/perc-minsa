@@ -1,0 +1,13 @@
+es:
+  activerecord:
+    models:
+      entity_cost_center:
+        one: Centro de Costo por Entidad
+        other: Centros de Costos por Entidad
+    attributes:
+      entity_cost_center:
+        entity_id: Entidad
+        cost_center_id: Centro de Costo
+        function: Función
+        created_at: Fecha Creación
+        updated_at: Ultima Actualización

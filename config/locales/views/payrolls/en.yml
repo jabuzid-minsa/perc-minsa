@@ -1,0 +1,18 @@
+en:
+  activerecord:
+    models:
+      payroll:
+        one: Payroll
+        other: Payrolls
+    attributes:
+      payroll:
+        dni: ID
+        name: Name
+        salary: Base Salary
+        bonuses: Bonuses
+        benefits: Benefits
+        labor_law_id: Employee Categoryt
+        entity_id: Entity
+        created_at: Created at
+        updated_at: Upated at
+  explanation_dni: (Unique identify document)

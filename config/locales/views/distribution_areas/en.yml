@@ -1,0 +1,15 @@
+en:
+  activerecord:
+    models:
+      distribution_area:
+        one: Distribution Area
+        other: Distribution Areas
+    attributes:
+      distribution_area:
+        year: Year
+        month: Month
+        meters: Meters
+        entity_id: Entity
+        cost_center_id: Cost Center
+        created_at: Created at
+        updated_at: Updated at

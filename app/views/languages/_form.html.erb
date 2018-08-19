@@ -1,0 +1,66 @@
+<% content_for :stylesheet do %>
+    <%# Stylesheet for check type IOS %>
+    <%= stylesheet_link_tag 'checkios', media: 'screen', 'data-turbolinks-track' => true %>
+<% end %>
+
+<div class="row">
+  <%= form_for(@language, html: { class: 'p-w-md' }) do |f| %>
+      <% if @language.errors.any? %>
+          <div class="alert alert-danger" role="alert">
+            <h2>
+              <%= pluralize(@language.errors.count, t('general_errors.texts.error.one'), t('general_errors.texts.error.other')) %>,
+              <%= t('general_errors.form_erros') %>
+            </h2>
+            <ul>
+              <% @language.errors.full_messages.each do |message| %>
+                  <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+      <% end %>
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label :abbreviation %>
+            <%= f.text_field :abbreviation, autofocus: true, class: 'form-control' %>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label :name %>
+            <%= f.text_field :name, class: 'form-control' %>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label :state %>
+            <%= check_state(f) %>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 text-right">
+          <%= link_to t('app.buttons.back'), :back, class: 'btn btn-outline btn-success' %>
+        </div>
+        <div class="col-md-6 text-left">
+          <%= f.submit class: 'btn btn-primary' %>
+        </div>
+      </div>
+  <% end %>
+</div>
+
+<% content_for :javascript do %>
+    <%# Stylesheet for check type IOS %>
+    <%= javascript_include_tag 'checkios', 'data-turbolinks-track' => true %>
+    <script type="text/javascript">
+      $(function() {
+        var elem = document.querySelector('.js-switch'),
+            switchery = new Switchery(elem, { color: '#64BD63', secondaryColor: '#F53028', jackColor: '#FFF', jackSecondaryColor: '#FFF' });
+      });
+    </script>
+<% end %>

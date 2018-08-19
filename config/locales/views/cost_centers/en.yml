@@ -1,0 +1,31 @@
+en:
+  activerecord:
+    models:
+      cost_center:
+        one: Cost Center
+        other: Cost Centers
+    attributes:
+      cost_center:
+        code: Code
+        description: Description
+        definition: Definition
+        function: Function
+        cost_center_id: Main Center
+        geography_id: Country
+        language_id: Idiom
+        staff_id: Staff
+        supply_id: Supply
+        cost_distribution_id: Cost Distribution
+        primary_production_unit_id: Primary Production Unit
+        secondary_production_unit_id: Secondary Production Unit
+        tertiary_production_unit_id: Ternary Production Unit
+        quaternary_production_unit_id: Quaternary Production Unit
+        quinary_production_unit_id: Quinary Production Unit
+        state: State
+        created_at: Created at
+        updated_at: Updated at
+        comprehensive: Comprehensive
+        secondary_equivalent_to_primary: Equivalence 2nd to 1st
+        tertiary_equivalent_to_primary: Equivalence 3rd a 1st
+        quaternary_equivalent_to_primary: Equivalence 4th a 1st
+        quinary_equivalent_to_primary: Equivalence 5th a 1st

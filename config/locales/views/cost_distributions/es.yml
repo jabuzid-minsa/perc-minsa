@@ -1,0 +1,16 @@
+es:
+  activerecord:
+    models:
+      cost_distribution:
+        one: Distribución del Costo
+        other: Distribución de Costos
+    attributes:
+      cost_distribution:
+        code: Código
+        description: Descripción
+        definition: Definición
+        geography_id: País
+        language_id: Idioma
+        state: Estado
+        created_at: Fecha Creación
+        updated_at: Ultima Actualización

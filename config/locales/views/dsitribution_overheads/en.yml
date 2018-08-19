@@ -1,0 +1,18 @@
+en:
+  activerecord:
+    models:
+      distribution_overhead:
+        one: Distribution Overhead
+        other: Distribution Overheads
+    attributes:
+      distribution_overhead:
+        year: Year
+        month: Month
+        general_value: General Value
+        value: Value
+        type_distribution_id: Type Distribution
+        entity_id: Entity
+        cost_center_id: Cost Center
+        supply_id: Supply
+        created_at: Created at
+        updated_at: Updated at

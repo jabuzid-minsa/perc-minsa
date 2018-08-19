@@ -1,0 +1,2 @@
+json.extract! geography, :id, :first_level, :second_level, :third_level, :fourth_level, :fifth_level, :description, :depth_detail, :state, :created_at, :updated_at
+json.url geography_url(geography, format: :json)

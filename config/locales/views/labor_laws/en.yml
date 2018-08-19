@@ -1,0 +1,23 @@
+en:
+  activerecord:
+    models:
+      labor_law:
+        one: Standard Employee
+        other: Employee Standards
+    attributes:
+      labor_law:
+        year: Year
+        month: Month
+        hours_max: Hours Max
+        extra_hours: Extra Hours
+        max_extra_hours: Maximum Extras Hours
+        festive_hours: Holiday Hours
+        max_festive_hours: Maximum Holiday Hours
+        min_wage: Base salary
+        staff_id: Position
+        labor_standard_id: Labor Levels
+        contract_type_id: Type of contract
+        entity_id: Entity
+        state: State
+        created_at: Created at
+        updated_at: Updated at

@@ -1,0 +1,1 @@
+json.array! @distribution_areas, partial: 'distribution_areas/distribution_area', as: :distribution_area

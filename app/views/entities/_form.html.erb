@@ -1,0 +1,198 @@
+<% content_for :stylesheet do %>
+    <%# Stylesheet for check type IOS %>
+    <%= stylesheet_link_tag 'checkios', media: 'screen', 'data-turbolinks-track' => true %>
+<% end %>
+
+<div class="row">
+  <%= form_for(@entity, html: { class: 'p-w-md' }) do |f| %>
+      <% if @entity.errors.any? %>
+          <div id="alert alert-danger" class="bg-danger">
+            <%= pluralize(@entity.errors.count, t('general_errors.texts.error.one'), t('general_errors.texts.error.other')) %>
+            &nbsp;
+            <%= t('general_errors.form_erros') %>
+            <ul>
+              <% @entity.errors.full_messages.each do |message| %>
+                  <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+      <% end %>
+
+      <% if @entity.geography.present? %>
+          <div class="row">
+            <div class="col-md-8">
+              <div class="form-group">
+                <h3> <small><%= t('located_in') %>:</small>&nbsp;<%= @entity.geography.description %></h3>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <% if @entity.present? %>
+                  <span><%= link_to t('entity_associations'), entity_associations_path(@entity), class: 'btn btn-outline btn-success' %></span>
+              <% end %>
+            </div>
+          </div>
+      <% end %>
+
+      <%# Id for geography val to current record %>
+      <%= f.hidden_field(:geography_id, value: get_country_for_element(@entity))  %>
+
+      <div class="row">
+        <%# Validations for the Regions %>
+        <% if get_country_for_element(@entity, 'depth_detail') >= 2 %>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label><%= Geography.human_attribute_name(:second_level) %></label>
+                <%= select_tag "second_level",
+                               options_for_select(
+                                   Geography.regions.active.where(first_level: get_country_for_element(@entity, 'first_level'))
+                                       .collect{ |u| [u.description, u.id, {'data-code' => u.second_level}] }
+                               ), class: 'form-control select2', id: 'second_level', data: {level: 'second_level'},
+                               include_blank: t('app.texts.select', element: Geography.human_attribute_name('second_level')) %>
+              </div>
+            </div>
+        <% end %>
+
+        <%# Validations for the Departments %>
+        <% if get_country_for_element(@entity, 'depth_detail') >= 3 %>
+            <div class="col-md-6">
+              <div class="form-group" style="display: none">
+                <label><%= Geography.human_attribute_name(:third_level) %></label>
+                <%= select_tag "third_level", '', class: 'form-control select2 width-100', id: 'third_level', data: {level: 'third_level'},
+                               include_blank: t('app.texts.select', element: Geography.human_attribute_name('third_level')) %>
+              </div>
+            </div>
+        <% end %>
+      </div>
+
+      <div class="row">
+        <%# Validations for the Departments %>
+        <% if get_country_for_element(@entity, 'depth_detail') >= 4 %>
+            <div class="col-md-6">
+              <div class="form-group" style="display: none">
+                <label><%= Geography.human_attribute_name(:fourth_level) %></label>
+                <%= select_tag "fourth_level", '', class: 'form-control select2', id: 'fourth_level', data: {level: 'fourth_level'},
+                               include_blank: t('app.texts.select', element: Geography.human_attribute_name('fourth_level')) %>
+              </div>
+            </div>
+        <% end %>
+
+        <%# Validations for the Departments %>
+        <% if get_country_for_element(@entity, 'depth_detail') == 5 %>
+            <div class="col-md-6">
+              <div class="form-group" style="display: none">
+                <label><%= Geography.human_attribute_name(:fifth_level) %></label>
+                <%= select_tag "fifth_level", '', class: 'form-control select2', id: 'fifth_level', data: {level: 'fifth_level'},
+                               include_blank: t('app.texts.select', element: Geography.human_attribute_name('fifth_level')) %>
+              </div>
+            </div>
+        <% end %>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label :code %>
+            <%= f.text_field :code, class: 'form-control', id: 'code' %>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label :abbreviation %>
+            <%= f.text_field :abbreviation, class: 'form-control' %>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label :description %>
+            <%= f.text_field :description, class: 'form-control' %>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label :care_level_id %>
+            <%= f.select(:care_level_id, CareLevel.idiom.active.collect {|p| [ p.description.capitalize, p.id ] }, {},
+                         {class: 'form-control select2'}) %>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label :payroll_type %>
+            <%= f.select :payroll_type, Entity.payroll_types.to_a.map { |k, v| [t("app.entities.payroll_types.#{k}"), k, data: {code: v}] }, {include_blank: ''}, {class: 'form-control select2'} %>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label :state %>
+            <%= check_state(f) %>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 text-right">
+          <%= link_to t('app.buttons.back'), :back, class: 'btn btn-outline btn-success' %>
+        </div>
+        <div class="col-md-6 text-left">
+          <%= f.submit class: 'btn btn-primary' %>
+        </div>
+      </div>
+  <% end %>
+</div>
+
+<% content_for :javascript do %>
+    <%# Stylesheet for check type IOS %>
+    <%= javascript_include_tag 'checkios', 'data-turbolinks-track' => true %>
+    <%= javascript_include_tag 'moduls/geography.search', 'data-turbolinks-track' => true %>
+    <script type="text/javascript">
+      $(function() {
+        var elem = document.querySelector('.js-switch'),
+            switchery = new Switchery(elem, { color: '#64BD63', secondaryColor: '#F53028', jackColor: '#FFF', jackSecondaryColor: '#FFF' });
+
+        $("select[data-level]").change(function () {
+          var toggle = {
+                current_level: $(this).data('level'),
+                current_level_value: $("option:selected", this).data("code"),
+              },
+              select_geography = {
+                current_level_option_value: $("option:selected", this).val(),
+                dom_geography_id: $("#entity_geography_id"),
+                country_id: "<%= get_country_for_element(@entity, 'id') %>"
+              },
+              ajax_data = {
+                size_country: "<%= get_country_for_element(@entity, 'depth_detail') %>",
+                blank_option: {
+                  third_level: "<%= t('app.texts.select', element: Geography.human_attribute_name(:third_level)) %>",
+                  fourth_level: "<%= t('app.texts.select', element: Geography.human_attribute_name(:fourth_level)) %>",
+                  fifth_level: "<%= t('app.texts.select', element: Geography.human_attribute_name(:fifth_level)) %>"
+                },
+                url: {
+                  second_level: "<%= get_geographies_third_level_path %>",
+                  third_level: "<%= get_geographies_fourth_level_path %>",
+                  fourth_level: "<%= get_geographies_fifth_level_path %>"
+                },
+                parameters: {
+                  first_level: "<%= get_country_for_element(@entity, 'first_level') %>",
+                  second_level: typeof $("#second_level option:selected").data("code") !== "undefined" ? $("#second_level option:selected").data("code") : "0",
+                  third_level: typeof $("#third_level option:selected").data("code") !== "undefined" ? $("#third_level option:selected").data("code") : "0",
+                  fourth_level: typeof $("#fourth_level option:selected").data("code") !== "undefined" ? $("#fourth_level option:selected").data("code") : "0",
+                  fifth_level: typeof $("#fifth_level option:selected").data("code") !== "undefined" ? $("#fifth_level option:selected").data("code") : "0"
+                },
+                dom_element: {
+                  second_level: $("#second_level"),
+                  third_level: $("#third_level"),
+                  fourth_level: $("#fourth_level"),
+                  fifth_level: $("#fifth_level")
+                }
+              };
+
+          geography_search.start_process(toggle, select_geography, ajax_data);
+        });
+      });
+    </script>
+<% end %>

@@ -1,0 +1,48 @@
+<% content_for :stylesheet do %>
+<% end %>
+
+<div class="middle-box text-center loginscreen animated fadeInDown" style="width: 400px !important;">
+  <%= image_tag("logo_universal_health.png", class: "img-responsive pos_abs img-background") %>
+  <div class="">
+    <div class="text-left">
+      <h1 class="logo-name no-margins"><%= t('app.name') %></h1>
+    </div>
+    <h2><%= t('.change_your_password') %></h2>
+
+    <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put, :class => 'm-t' }) do |f| %>
+      <%= devise_error_messages! %>
+      <%= f.hidden_field :reset_password_token %>
+
+      <div class="form-group text-left">
+        <%= f.label :password, t('.new_password') %><br />
+        <%= f.password_field :password, autocomplete: "off", class: 'form-control' %>
+      </div>
+      
+      <div class="form-group text-left">
+        <%= f.label :password_confirmation, t('.confirm_new_password') %><br />
+        <%= f.password_field :password_confirmation, autocomplete: "off", class: 'form-control' %>
+      </div>
+
+      <div class="text-center">
+        <%= f.submit t('.change_my_password'), class: 'btn btn-primary' %>
+      </div>
+    <% end %>
+
+    <div class="text-center spacing-inside-t5 p-w-xl">
+      <%= render "devise/shared/links" %>
+    </div>
+    <p class="m-t"> <small><%= t('app.copytigth.ops') %></small> </p>
+    <p class="m-t"> <small><%= t('app.copytigth.incubo') %></small> </p>
+    <div class="row">
+      <div class="col-md-6">
+        <%= image_tag("es_logo_paho.png", class: "img-responsive") %>
+      </div>
+      <div class="col-md-6">
+        <%= image_tag("es_logo_who.png", class: "img-responsive") %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% content_for :javascript do %>
+<% end %>

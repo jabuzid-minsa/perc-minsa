@@ -1,0 +1,34 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Code:</strong>
+  <%= @supply.code %>
+</p>
+
+<p>
+  <strong>Description:</strong>
+  <%= @supply.description %>
+</p>
+
+<p>
+  <strong>Supply:</strong>
+  <%= @supply.supply %>
+</p>
+
+<p>
+  <strong>Geography:</strong>
+  <%= @supply.geography %>
+</p>
+
+<p>
+  <strong>Language:</strong>
+  <%= @supply.language %>
+</p>
+
+<p>
+  <strong>State:</strong>
+  <%= @supply.state %>
+</p>
+
+<%= link_to 'Edit', edit_supply_path(@supply) %> |
+<%= link_to 'Back', supplies_path %>

@@ -1,0 +1,16 @@
+en:
+  activerecord:
+    models:
+      supplies_category:
+        one: Supply Category
+        other: Supply Categories
+    attributes:
+      supplies_category:
+        code: Code
+        description: Description
+        definition: Definition
+        geography_id: Country
+        language_id: Idiom
+        state: State
+        created_at: Created at
+        updated_at: Updated at

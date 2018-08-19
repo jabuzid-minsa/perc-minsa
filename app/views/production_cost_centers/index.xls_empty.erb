@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+					xmlns:o="urn:schemas-microsoft-com:office:office"
+					xmlns:x="urn:schemas-microsoft-com:office:excel"
+					xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+					xmlns:html="http://www.w3.org/TR/REC-html40">
+	<Worksheet ss:Name="<%= ProductionCostCenter.model_name.human %>">
+		<Table>
+			<Row>
+				<Cell><Data ss:Type="String"><%= CostCenter.model_name.human %></Data></Cell>
+				<Cell><Data ss:Type="String"><%= ProductionCostCenter.human_attribute_name(:production_units) %></Data></Cell>
+				<Cell><Data ss:Type="String"><%= ProductionCostCenter.human_attribute_name(:value) %></Data></Cell>
+			</Row>
+			<% @cost_centers.each_with_index do |cost_center, index_cc| %>
+				<% if cost_center.primary_production_unit.present? %>
+					<Row>
+						<Cell><Data ss:Type="String"><%= "#{cost_center.id}__#{cost_center.code} - #{cost_center.description}" %></Data></Cell>
+						<Cell><Data ss:Type="String"><%= "1__#{cost_center.primary_production_unit.description}" %></Data></Cell>
+					</Row>
+				<% end %>
+				<% if cost_center.secondary_production_unit.present? %>
+					<Row>
+						<Cell><Data ss:Type="String"><%= "#{cost_center.id}__#{cost_center.code} - #{cost_center.description}" %></Data></Cell>
+						<Cell><Data ss:Type="String"><%= "2__#{cost_center.secondary_production_unit.description}" %></Data></Cell>
+					</Row>
+				<% end %>
+				<% if cost_center.tertiary_production_unit.present? %>
+					<Row>
+						<Cell><Data ss:Type="String"><%= "#{cost_center.id}__#{cost_center.code} - #{cost_center.description}" %></Data></Cell>
+						<Cell><Data ss:Type="String"><%= "3__#{cost_center.tertiary_production_unit.description}" %></Data></Cell>
+					</Row>
+				<% end %>
+				<% if cost_center.quaternary_production_unit.present? %>
+					<Row>
+						<Cell><Data ss:Type="String"><%= "#{cost_center.id}__#{cost_center.code} - #{cost_center.description}" %></Data></Cell>
+						<Cell><Data ss:Type="String"><%= "4__#{cost_center.quaternary_production_unit.description}" %></Data></Cell>
+					</Row>
+				<% end %>
+				<% if cost_center.quinary_production_unit.present? %>
+					<Row>
+						<Cell><Data ss:Type="String"><%= "#{cost_center.id}__#{cost_center.code} - #{cost_center.description}" %></Data></Cell>
+						<Cell><Data ss:Type="String"><%= "5__#{cost_center.quinary_production_unit.description}" %></Data></Cell>
+					</Row>
+				<% end %>
+				<% if cost_center.cost_center.present? and ['01000', '01100', '01200', '01300', '01400', '01500', '01600', '02000', '05000', '05100', '05200', '05300'].include?(cost_center.cost_center.code) %>
+					<Row>
+						<Cell><Data ss:Type="String"><%= "#{cost_center.id}__#{cost_center.code} - #{cost_center.description}" %></Data></Cell>
+						<Cell><Data ss:Type="String"><%= "6__N. Camas" %></Data></Cell>
+					</Row>
+				<% end %>
+			<% end %>
+		</Table>
+	</Worksheet>
+</Workbook>

@@ -1,0 +1,233 @@
+<div class="ibox float-e-margins">
+	<div class="ibox-title">
+		<h5><%= t('app.analysis_tables.two.second_panel.title') %></h5>
+		<div class="ibox-tools">
+			<a class="collapse-link">
+				<i class="fa fa-chevron-up"></i>
+			</a>
+		</div>
+	</div>
+	<div class="ibox-content">
+		<div class="row">
+			<div class="col-md-12">
+				<table class="table table-bordered dataTable no-footer fixed_table" cellspacing="0" id="indirect_costs_table">
+					<thead>
+						<tr>
+							<td></td>
+							<% @supported_cost_centers.each do |cost_center| %>
+									<td data-cost-center="<%= cost_center.description %>" data-function="<%= cost_center.function %>">
+										<label for=""><%= cost_center.description %></label>
+									</td>
+							<% end %>
+						</tr>
+					</thead>
+					<tbody>
+						<% @production_cost_centers.each do |cost_center| %>
+							<tr class="row_overheads" data-function="<%= cost_center.function %>" data-center="<%= cost_center.id %>">
+								<td>
+									<label for=""><%= cost_center.description %></label>
+								</td>
+							</tr>
+						<% end %>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-4">
+				<%= select_tag('indirect_evaluated', options_from_collection_for_select(@production_cost_centers, 'id', 'description'),
+									 {class: 'form-control m-b select2'}) %>
+			</div>
+			<div class="col-md-8">
+				<%= button_tag(type: 'button', class: 'minimalize-styl-2 btn btn-primary no-margins evaluated-indirect', style: 'max-height: 28px;', 'data-target': '#indirect_evaluated_table', 'data-select': '#indirect_evaluated', 'data-info': '#indirect_costs_table') do %>
+					<i class='fa fa-search'></i>
+				<% end %>
+				
+				<%= button_tag(type: 'button', class: 'minimalize-styl-2 btn btn-primary no-margins reset-indirect', style: 'max-height: 28px; margin-left: 10px !important;', 'data-target': '#indirect_evaluated_table', 'data-select': '#indirect_evaluated', 'data-info': '#indirect_costs_table') do %>
+					<i class='fa fa-refresh'></i>
+				<% end %>
+			</div>
+		</div>
+		<hr class="hr-line-solid"/>
+		<table class="table table-bordered dataTable no-footer" id="indirect_evaluated_table" cellspacing="0">
+			<thead>
+				<tr>
+					<th><label for=""><%= t('app.analysis_tables.common.supplies_overheads') %></label></th>
+					<% @supported_cost_centers.each do |cost_center| %>
+							<th data-cost-center="<%= cost_center.id %>" data-function="<%= cost_center.function %>">
+								<label for=""><%= cost_center.description %></label>
+							</th>
+					<% end %>
+				</tr>
+			</thead>
+			<tbody>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<% content_for :javascript do %>
+	<script type="text/javascript">
+		/** ---------------------- Variables ---------------------- **/
+		var processed_production = <%= @distribution_processed.to_json.html_safe %>,		
+				direct_cost_table = $('#summary_table'),
+				indirect_cost_table = $('#indirect_costs_table'),
+				form_distribute = {
+					logistical_support: 'd',
+					administrative_support: 'p',
+					care_support: 'd'
+				};
+		/** ---------------------- Functions ---------------------- **/
+		function sum_indirect_cost(cost_center, index) {
+			var sum = 0;
+			indirect_cost_table.find('tbody tr:lt('+index+') td[data-cost-center="'+cost_center+'"] label').each(function(ind, value) {
+				if (!$(value).data('distributed')) {
+					if (!isNaN(clean_number_mask($(value).html()))) {
+						sum += clean_number_mask($(value).html());
+					}
+					
+				}
+			});
+
+			return sum;
+		}
+		//
+		function mark_cost_center(cost_center, index) {
+			indirect_cost_table.find('tbody tr:gt('+index+') td[data-cost-center="'+cost_center+'"]').each(function(ind, value) {
+				$(value).attr('data-distributed', 'true');
+			});
+		}
+		//
+		function set_indirect_cost(index, cost_center, value) {
+			var cell = indirect_cost_table.find('tbody tr:eq('+index+') td[data-cost-center="'+cost_center+'"]'), 
+					remainder = 0,
+					value_convert = clean_number_mask(value);
+			
+			if (cell.data('distributed')) { 
+				remainder = value_convert;
+			}
+			
+			cell.find('label').html(value_convert);
+
+			return remainder;
+		}
+		//
+		function total_entity_distributed_percentage(value_center, remainder) {
+			var total_entity = clean_number_mask(direct_cost_table.find('tbody tr[data-summary="total"] td:eq(-1) label').html());
+
+			return (total_entity - value_center) - remainder;
+		}
+		//
+		function copy_columns_row_totals() {
+			var html = '';
+			html = direct_cost_table.find('tbody tr[data-summary="total"]').html();
+
+			indirect_cost_table.find('tbody tr').each(function(index, value) {
+				$.when($(value).append(html)).done(function() {
+					$(value).find('td:eq(1)').remove();
+					$(value).find('td:eq(-1)').remove();
+				});
+			});
+
+			indirect_cost_table.find('tbody tr td label.decimal_numbers_2').html('');
+		}
+		//
+		function distribute_indirect_costs() {
+			var supports, supported, supported_center, supported_data, direct_cost, indirect_cost, calculated_value, unit_cost, remainder = 0,
+					total_entity, html;
+			indirect_cost_table.find('tbody tr').each(function(index, value) {
+				if ($(value).data('function') == 'administrative_support') {
+					
+					direct_cost = clean_number_mask(direct_cost_table.find('tbody tr[data-summary="total"] td[data-cost-center="'+ $(value).data('center')+'"] label').html());
+					indirect_cost = sum_indirect_cost($(value).data('center'), index);
+					unit_cost = direct_cost + indirect_cost;
+					
+					total_entity = total_entity_distributed_percentage(unit_cost, remainder);
+					
+					$(value).find('td:not(:first)').each(function(ind, val) {
+						if (!$(val).data('distributed') && $(val).data('function') !== 'administrative_support') { 
+							direct_cost = clean_number_mask(direct_cost_table.find('tbody tr[data-summary="total"] td[data-cost-center="'+ $(val).data('cost-center')+'"] label').html());
+							indirect_cost = sum_indirect_cost($(val).data('cost-center'), index);
+
+							calculated_value = (((direct_cost + indirect_cost)/total_entity) * unit_cost).toFixed(2);
+
+							set_indirect_cost(index, $(val).data('cost-center'), calculated_value);
+						}
+					});
+					mark_cost_center($(value).data('center'), index);
+				} else {
+					supports = processed_production.filter(function(data) { return data.cost_center_id == $(value).data('center') });
+				
+					$(supports).each(function(ind, val) {
+						supported = val.supported_cost_centers_values.split('_');
+
+						direct_cost = clean_number_mask(direct_cost_table.find('tbody tr[data-summary="total"] td[data-cost-center="'+val.cost_center_id+'"] label').html());
+						indirect_cost = sum_indirect_cost(val.cost_center_id, index);
+						unit_cost = (direct_cost+indirect_cost)/parseFloat(val.total_support);
+
+						$(supported).each(function(i, v) {
+							supported_center = v.split('|')[0];
+							supported_data = v.split('|')[1];
+							
+							calculated_value = (supported_data * unit_cost).toFixed(2);
+
+							remainder += set_indirect_cost(index, supported_center, calculated_value);
+							
+						});
+
+						mark_cost_center(val.cost_center_id, index);
+					});
+				}
+			});
+			
+			// Agregar Fila de remanentes
+			if (remainder > 0) {
+				console.log(remainder);
+				html = '<tr class="row_overheads" data-remainder="remainder">';
+				html += indirect_cost_table.find('tbody tr:eq(-1)').html().trim();
+				html += '</tr>';
+
+				$.when(indirect_cost_table.find('tbody').append(html)).done(function() {
+					indirect_cost_table.find('tbody tr:eq(-1) td:first label').html('COSTOS REMANENTES');
+				});
+
+				total_entity = total_entity_distributed_percentage(0, remainder);
+				
+				indirect_cost_table.find('tbody tr[data-remainder="remainder"] td:not(:first)').each(function(ind, val) {
+					if (!$(val).data('distributed')) { 
+						direct_cost = clean_number_mask(direct_cost_table.find('tbody tr[data-summary="total"] td[data-cost-center="'+ $(val).data('cost-center')+'"] label').html());
+						indirect_cost = sum_indirect_cost($(val).data('cost-center'), -1);
+						
+						calculated_value = (((direct_cost + indirect_cost)/total_entity) * remainder).toFixed(2);						
+
+						set_indirect_cost(-1, $(val).data('cost-center'), calculated_value);
+					}
+				});
+			}
+		}
+		function calculated_totals_indirect() {
+			var html = '<tr class="row_overheads" data-indirect="total"><td><label>Total</label></td>', 
+					sum = 0;
+			indirect_cost_table.find('tbody tr:eq(-1) td:not(:first)').each(function(index, value) {
+				sum = 0;
+				indirect_cost_table.find('tbody tr td[data-cost-center="'+$(value).data('cost-center')+'"] label').each(function(ind, val) {
+					sum += $.isNumeric(clean_number_mask($(val).html())) ? clean_number_mask($(val).html()) : 0;
+				});
+				html += '<td class="text-right" data-cost-center="'+$(value).data('cost-center')+'" data-function="'+$(value).data('function')+'">' +
+								'<label class="decimal_numbers_2">'+sum.toFixed(2)+'<label>' +
+								'</td>';
+			});
+			html += '</tr>';
+
+			indirect_cost_table.find('tbody').append(html);
+		}
+		//
+		function calculated_costs_indirect() {
+			$.when(copy_columns_row_totals()).done(function() {
+				$.when(distribute_indirect_costs()).done(function() {
+					calculated_totals_indirect();
+				});
+			});
+		}
+	</script>
+<% end %>

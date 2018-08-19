@@ -1,0 +1,17 @@
+es:
+  activerecord:
+    models:
+      production_unit:
+        one: Unidad de Producción
+        other: Unidades de Producción
+    attributes:
+      production_unit:
+        code: Código
+        abbreviation: Abreviatura
+        description: Descripción
+        definition: Definición
+        geography_id: País
+        language_id: Idioma
+        state: Estado
+        created_at: Fecha Creación
+        updated_at: Ultima Actualización

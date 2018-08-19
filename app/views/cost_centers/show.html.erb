@@ -1,0 +1,54 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Code:</strong>
+  <%= @cost_center.code %>
+</p>
+
+<p>
+  <strong>Description:</strong>
+  <%= @cost_center.description %>
+</p>
+
+<p>
+  <strong>Function:</strong>
+  <%= @cost_center.function %>
+</p>
+
+<p>
+  <strong>Cost center:</strong>
+  <%= @cost_center.cost_center %>
+</p>
+
+<p>
+  <strong>Geography:</strong>
+  <%= @cost_center.geography %>
+</p>
+
+<p>
+  <strong>Language:</strong>
+  <%= @cost_center.language %>
+</p>
+
+<p>
+  <strong>Staff:</strong>
+  <%= @cost_center.staff %>
+</p>
+
+<p>
+  <strong>Supply:</strong>
+  <%= @cost_center.supply %>
+</p>
+
+<p>
+  <strong>Cost distribution:</strong>
+  <%= @cost_center.cost_distribution %>
+</p>
+
+<p>
+  <strong>State:</strong>
+  <%= @cost_center.state %>
+</p>
+
+<%= link_to 'Edit', edit_cost_center_path(@cost_center) %> |
+<%= link_to 'Back', cost_centers_path %>

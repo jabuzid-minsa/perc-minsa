@@ -1,0 +1,34 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Code:</strong>
+  <%= @production_unit.code %>
+</p>
+
+<p>
+  <strong>Abbreviation:</strong>
+  <%= @production_unit.abbreviation %>
+</p>
+
+<p>
+  <strong>Description:</strong>
+  <%= @production_unit.description %>
+</p>
+
+<p>
+  <strong>Geography:</strong>
+  <%= @production_unit.geography %>
+</p>
+
+<p>
+  <strong>Language:</strong>
+  <%= @production_unit.language %>
+</p>
+
+<p>
+  <strong>State:</strong>
+  <%= @production_unit.state %>
+</p>
+
+<%= link_to 'Edit', edit_production_unit_path(@production_unit) %> |
+<%= link_to 'Back', production_units_path %>

@@ -1,0 +1,17 @@
+en:
+  activerecord:
+    models:
+      salary_component:
+        one: Salary Component
+        other: Salary Components
+    attributes:
+      salary_component:
+        code: Code
+        abbreviation: Abbreviation
+        description: Description
+        max_value: Maximum Monthly Hours
+        rate: Percentage
+        geography_id: Location
+        state: State
+        created_at: Created at
+        updated_at: Updated at

@@ -1,0 +1,17 @@
+en:
+  activerecord:
+    models:
+      staff:
+        one: Staff Standar
+        other: Staff Standars
+    attributes:
+      staff:
+        code: Code
+        description: Description
+        definition: Definition
+        staff_id: Main Standar
+        geography_id: Country
+        language_id: Idiom
+        state: State
+        created_at: Created at
+        updated_at: Updated at

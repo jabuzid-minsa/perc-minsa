@@ -1,0 +1,29 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Year:</strong>
+  <%= @income.year %>
+</p>
+
+<p>
+  <strong>Month:</strong>
+  <%= @income.month %>
+</p>
+
+<p>
+  <strong>Value:</strong>
+  <%= @income.value %>
+</p>
+
+<p>
+  <strong>Cost center:</strong>
+  <%= @income.cost_center %>
+</p>
+
+<p>
+  <strong>Entity:</strong>
+  <%= @income.entity %>
+</p>
+
+<%= link_to 'Edit', edit_income_path(@income) %> |
+<%= link_to 'Back', incomes_path %>

@@ -1,0 +1,36 @@
+<% content_for :stylesheet do %>
+    <%# Stylesheet for check type IOS %>
+    <%= stylesheet_link_tag 'checkios', media: 'screen', 'data-turbolinks-track' => true %>
+<% end %>
+
+<% content_for :breadcrumb_title do %><%= Geography.model_name.human %><% end %>
+<% content_for :breadcrumb_list do %>
+    <li><%= link_to "#{t('app.texts.list_of', element: Geography.model_name.human(:count => 2))}", languages_path %></li>
+    <li class="active"><strong><%= t('app.texts.edition', element: Geography.model_name.human(:count => 1)) %></strong></li>
+<% end %>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-title">
+          <h5><%= t('app.texts.editing', element: Geography.model_name.human(:count => 1)) %></h5>
+        </div>
+        <div class="ibox-content">
+          <%= render 'form_edit' %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% content_for :javascript do %>
+    <%# Stylesheet for check type IOS %>
+    <%= javascript_include_tag 'checkios', 'data-turbolinks-track' => true %>
+    <script type="text/javascript">
+      $(function() {
+        var elem = document.querySelector('.js-switch'),
+            switchery = new Switchery(elem, { color: '#64BD63', secondaryColor: '#F53028', jackColor: '#FFF', jackSecondaryColor: '#FFF' });
+      });
+    </script>
+<% end %>

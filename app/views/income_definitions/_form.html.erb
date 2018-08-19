@@ -1,0 +1,66 @@
+<% content_for :stylesheet do %>
+    <%# Stylesheet for check type IOS %>
+    <%= stylesheet_link_tag 'checkios', media: 'screen', 'data-turbolinks-track' => true %>
+<% end %>
+
+<div class="row">
+  <%= form_for(@income_definition, html: { class: 'p-w-md' }) do |f| %>
+      <% if @income_definition.errors.any? %>
+          <div id="alert alert-danger" class="bg-danger">
+            <%= pluralize(@income_definition.errors.count, t('general_errors.texts.error.one'), t('general_errors.texts.error.other')) %>
+            &nbsp;
+            <%= t('general_errors.form_erros') %>
+            <ul>
+              <% @income_definition.errors.full_messages.each do |message| %>
+                  <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+      <% end %>
+      <%= f.hidden_field :entity_id, :value => @income_definition.entity_id %>
+      <%= f.hidden_field :cost_center_id, :value => @income_definition.cost_center_id %>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label :entity_id %>
+            <input type="text" class="form-control" value="<%= @income_definition.entity.description %>", disabled />
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label :cost_center_id %>
+            <input type="text" class="form-control" value="<%= @income_definition.cost_center.description %>", disabled />
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label :invoice %>
+            <%= check_state(f, :invoice) %>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 text-right">
+          <%= link_to t('app.buttons.back'), income_definitions_path, class: 'btn btn-outline btn-success' %>
+        </div>
+        <div class="col-md-6 text-left">
+          <%= f.submit class: 'btn btn-primary' %>
+        </div>
+      </div>
+  <% end %>
+</div>
+
+<% content_for :javascript do %>
+    <%# Stylesheet for check type IOS %>
+    <%= javascript_include_tag 'checkios', 'data-turbolinks-track' => true %>
+    <script type="text/javascript">
+      $(function() {
+        var elem = document.querySelector('.js-switch'),
+            switchery = new Switchery(elem, { color: '#64BD63', secondaryColor: '#F53028', jackColor: '#FFF', jackSecondaryColor: '#FFF' });
+      });
+    </script>
+<% end %>

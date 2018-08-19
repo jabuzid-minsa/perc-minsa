@@ -1,0 +1,23 @@
+<% content_for :stylesheet do %>
+<% end %>
+
+<% content_for :breadcrumb_title do %><%= Supply.model_name.human %><% end %>
+<% content_for :breadcrumb_list do %>
+    <li><%= link_to "#{t('app.texts.list_of', element: Supply.model_name.human(:count => 2))}", supplies_path %></li>
+    <li class="active"><strong><%= t('app.texts.edition', element: Supply.model_name.human(:count => 1)) %></strong></li>
+<% end %>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-title">
+          <h5><%= t('app.texts.editing', element: Supply.model_name.human(:count => 1)) %></h5>
+        </div>
+        <div class="ibox-content">
+          <%= render 'form' %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

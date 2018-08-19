@@ -1,0 +1,1 @@
+json.partial! "care_levels/care_level", care_level: @care_level

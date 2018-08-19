@@ -1,0 +1,23 @@
+es:
+  activerecord:
+    models:
+      labor_law:
+        one: Estandar Empleado
+        other: Estandares de Empleados
+    attributes:
+      labor_law:
+        year: Año
+        month: Mes
+        hours_max: Horas Máximas
+        extra_hours: Horas Extras
+        max_extra_hours: Horas Extras Máximas
+        festive_hours: Horas Festivas
+        max_festive_hours: Horas Festivas Máximas
+        min_wage: Salario Base
+        staff_id: Cargo
+        labor_standard_id: Niveles Laborales
+        contract_type_id: Tipo de Contrato
+        entity_id: Entidad
+        state: Estado
+        created_at: Fecha Creación
+        updated_at: Ultima Actualización

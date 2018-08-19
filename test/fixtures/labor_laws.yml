@@ -1,0 +1,29 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  year: 1
+  month: 1
+  hours_max: 9.99
+  extra_hours: false
+  max_extra_hours: 9.99
+  festive_hours: false
+  max_festive_hours: 9.99
+  min_wage: 9.99
+  staff_id: 
+  labor_standard_id: 
+  contract_type_id: 
+  entity_id: 
+
+two:
+  year: 1
+  month: 1
+  hours_max: 9.99
+  extra_hours: false
+  max_extra_hours: 9.99
+  festive_hours: false
+  max_festive_hours: 9.99
+  min_wage: 9.99
+  staff_id: 
+  labor_standard_id: 
+  contract_type_id: 
+  entity_id: 

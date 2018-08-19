@@ -1,0 +1,1 @@
+json.array! @care_levels, partial: 'care_levels/care_level', as: :care_level

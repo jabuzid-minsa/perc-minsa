@@ -1,0 +1,353 @@
+en:
+  # Translations for tool
+  app:
+    analysis_graphs:
+      management:
+        number_one:
+          title: Production, Costs and Efficiency
+        table_four:
+          title: Table 4
+        number_two:
+          title: Performance
+        spc_consumtion:
+          title: SPC Consumtion
+        month_selection:
+          title: Month Selection
+      details:
+        cost_production_center: Costs per production center - Detailed
+        efficiency: Efficiency - Detailed
+      comparative:
+        title: Compare Information
+    analysis_tables:
+      common:
+        average_cost: Average cost
+        benefits: Benefits
+        bonuses: Bonuses
+        human_resource: Human Resource
+        months:
+          january: January
+          february: February
+          march: March
+          april: April
+          may: May
+          june: June
+          july: July
+          august: August
+          september: September
+          october: October
+          november: November
+          december: December
+        overheads: Overheads
+        percentage: Percentage
+        quantity: Quantity
+        salaries: Salaries
+        supplies: Supplies
+        supplies_overheads: Supplies/Overheads
+        total: Total
+        total_cost: Total cost        
+      one:
+        first_panel:
+          title: Control Panel
+          month: Month
+          select_items: Select Elements
+          medicines: Medicines
+          op_material: Osteosynthesis and Prosthesis Material
+          hospitalization: Hospitalization
+          intensive_care_unit: Intensive Care Unit
+          quirofanos: Quirofanos
+          emergencies: Emergencies
+          consultation: Consultation
+          extramural_services: Extramural Services
+          clinic: Clinic
+          promotion_prevention: Promotion and Prevention
+          primary_health: Primary Health Care
+          basic_plan: Basic Care Plan
+          other_services: Other Services
+          administration: Administration
+          beds: Beds
+        second_panel:
+          title: Consolidated Costs
+          title_graph: Percentage Structure of Expenses
+        third_panel:
+          title: Total Cost of Spending Concepts by Cost Centers
+          button_detail: Detailed
+        fourth_panel:
+          title: Weighted Weight of Cost by Concept of Expenditure and by Cost Centers
+        fifth_panel:
+          title: Operating Costs and Indirect Costs
+          title_table: Percentage Weight
+          operating_cost: Operating Cost
+          indirect_cost: Indirect Cost
+          validations:
+            title: Validations
+            first_table:
+              value: Value
+              first_row: Total Costs Cost Centers
+              second_row: Total Costs for Final Services
+              third_row: Difference
+            second_table:
+              missing_distribute: Missing to Distribute
+              first_row: Support Centers Logistic
+              second_row: Administrative Support Centers
+              third_row: Assistance Support Centers
+            wrong_support: Total Centers that Support Themselves
+      two:
+        second_panel:
+          title: Indirect Costs
+        third_panel:
+          title: Unit Costs per Production
+          production_unit: Production Unit
+          total_cost_center: Total Cost Center
+          unit_cost_production: Unit Cost Prod.
+      three:
+        button_detail: Detailed
+        production_center: Production Center
+        production_unit: Production Unit
+        production: Production
+        hours: Hours
+      four:
+        title: SPC Consumtion
+        button_detail: Detailed
+        production_center: Production Center
+        production_unit: Production Unit
+        production: Production
+        support: Support for
+      five:
+        cost_center: Cost Center
+        selected_center: Selected Cost Center
+      multiple_months:
+        selection_months:
+          button_analyze: Analyze
+          title: Analysis for multiple months
+          to: to
+          selection_range: Range to analyze
+        one:
+          additional_panel:
+            title: Total Cost of Spending Concepts per Month
+    buttons:
+      back: Back
+      create: Create
+    change_date: Successfully changed date
+    controllers:
+      care_levels: levels_attention
+      cost_centers: costs_centers
+      cost_distributions: distribution_costs
+      entities: entities
+      geographies: political_divisions
+      income_definitions: income_definition
+      labor_laws: labor_laws
+      languages: idioms
+      networks: networks
+      payrolls: employees
+      production_units: production_units
+      salary_components: salary_components
+      staffs: personal_standard
+      supplies: supplies
+      supplies_categories: supplies_categories
+      users: users
+    copytigth:
+      incubo: Developed by Incubo Asesorias Integrales S.A.S. © 2016
+      ops: PAHO © 2016
+      login:
+        incubo: Desarrollado por Incubo Asesorias Integrales S.A.S © 2016
+        ops: Contenido por OPS © 2016
+    cost_centers:
+      functions:
+        final: Final
+        administrative_support: Administrative Support
+        care_support: Care Support
+        logistical_support: Logistical Support
+      abbreviated_functions:
+        final: Final
+        administrative_support: Admin Support
+        care_support: Care Support
+        logistical_support: Logistical Support
+    dual_select:
+      multi_select:
+        non_selected_list_label: Available Items
+        selected_list_label: Selected items
+        filter_place_holder: Filter
+      bootstrap:
+        filter_place_holder: Filter
+        filter_text_clear: Show All
+        info_text: Showing All
+        info_text_empty: Empty List
+        info_text_filtered:
+          filtered: Filtered out
+          from: from
+        move_all_label: Move All
+        move_selected_label: Move Selected
+        non_selected_list_label: Available Items
+        remove_all_label: Remove All
+        remove_selected_label: Remove Selection
+        selected_list_label: Selected Items
+    links:
+      activate: Enable
+      deactivate: Disable
+    login: Log In
+    logout: Log Out
+    name: PERC
+    not_exists: The element does not exists
+    entities:
+      payroll_types:
+        consolidated: Consolidated
+        detailed: Detailed
+    range_values:
+      minimum_caracters: minimal characters
+    sections:
+      analysis_and_graphs: Analysis and Graphics
+      cost_tool: Costs
+      local_parametrization: Local Parameterization
+      multiple_months_analysis: Multiple Months Analysis
+      parametrization: Parameterization
+      settings: Configuration
+    status:
+      activated: Active
+      deactivated: Inactive
+    tags:
+      file_tag:
+        select_file: Select
+        change_file: Change
+        remove_file: Remove
+    texts:
+      all_countries: All Countries
+      create: Create %{element}
+      creating: Creating un nuevo %{element}
+      creation: Creation - %{element}
+      editing: Editing - %{element}
+      edition: Edition - %{element}
+      list_of: List of %{element}
+      loading: Loading
+      monetary_value: Monetary Value
+      not_apply: Not Apply
+      select: Select %{element}
+      associations: Relationships of the model %{element}
+      associations_detail: Related to the element - %{element}
+    user_account:
+      create: Create Account
+      edit: Edit Account
+      edition: Edition of the Account
+    users:
+      roles:
+        global_administrator: Global Administrator
+        level_one_local_administrator: Local Administrator Level 1
+        level_two_local_administrator: Local Administrator Level 2
+        level_three_local_administrator: Local Administrator Level 3
+        level_one_manager: Level 1 Manager
+        level_two_manager: Level 2 Manager
+        level_three_manager: Level 3 Manager
+        level_one_operator: Level 1 Operator
+        level_two_operator: Level 2 Operator
+        level_three_operator: Level 3 Operator
+        basic_administrator: Basic Administrator
+      abbreviated_roles:
+        global_administrator: Admin Global
+        level_one_local_administrator: Local Admin Level 1
+        level_two_local_administrator: Local Admin Level 2
+        level_three_local_administrator: Local Admin Level 3
+        level_one_manager: Manager Level 1
+        level_two_manager: Manager Level 2
+        level_three_manager: Manager Level 3
+        level_one_operator: Operator Level 1
+        level_two_operator: Operator Level 2
+        level_three_operator: Operator Level 3
+        basic_administrator: Basic Admin
+  # Common errors models
+  errors:
+    # The default format to use in full error messages.
+    format: '% {attribute}% {message}'
+    # The values: model,: attribute and: value are always available for interpolation
+    # The value: count is available when applicable. Can be used for pluralization.
+    messages:
+      taken: it has already been taken by another record
+      Inclusion: not included in the list
+      Exclusion: is reserved
+      invalid: not valid
+      confirmation: does not match% {attribute}
+      accepted: must be accepted
+      empty: can not be empty
+      blank: can not be blank
+      present: must be blank
+      too_long:
+        one: it is too long (1 character maximum)
+        other: it is too long (% {count} maximum characters)
+      too_short:
+        one: it is too short (1 character minimum)
+        other: it is too short (% {count} minimum characters)
+      wrong_length:
+        one: it has an incorrect length (it must have 1 character)
+        other: it has an incorrect length (must have% {count} characters)
+      not_a_number: it is not a number
+      not_an_integer: must be a whole number
+      greater_than: must be greater than% {count}
+      greater_than_or_equal_to: must be greater than or equal to% {count}
+      equal_to: must be equal to% {count}
+      less_than: must be less than% {count}
+      less_than_or_equal_to: must be less than or equal to% {count}
+      other_than: must be different from% {count}
+      odd: it must be odd
+      even: must be even
+  # Errors, generals
+  general_errors:
+    #bidden this language from being saved:
+    form_erros: arose when trying to create the new record
+    texts:
+      code_taken: The code has already been taken
+      error:
+        one: error
+        other: errors
+      permission_denied: Access denied, do not have sufficient permits
+  # Help classes of Rails
+  helpers:
+    submit:
+      create: Create% {model}
+      submit: Save% {model}
+      update: Update% {model}
+  # Messages javascript files
+  javascript:
+    data_tables:
+      header_action: Actions
+      texts:
+        processing: Processing ...
+        length_menu: Showing _MENU_ records
+        zero_records: No results found
+        empty_table: No data available in this table
+        info: Showing records from _START_ to _END_ of a total of _TOTAL_ records
+        info_empty: Showing records from 0 to 0 of a total of 0 records
+        info_filtered: (filtering a total of _MAX_ records)
+        search: Search
+        info_thousands: ','
+        loading_records: Loading ...
+        paginate:
+          first: First
+          last: Last
+          next: Next
+          previous: Previous
+        sort_ascending: ': Activate to order the column ascending'
+        sort_descending: ': Activate to sort the column in a descending way'
+        copy_text:
+          title: Copied data
+          success:
+            one: 1 copied row
+            other: '% d copied rows'
+        buttons:
+          copy: Copy
+          print: Print
+    sweet_alert:
+      confirm_button_text: 'Yes, I am sure!'
+      text: 'The selected element will be inactivated, if you wish to proceed with the action press the red button!'
+      title: 'Are you sure?'
+  # Messages App
+  messages:
+    activated: Activated Correctly
+    crud:
+      created: Created Successfully
+      destroyed: Eliminated Correctly
+      updated: Updated Properly
+    deactivated: Deactivated correctly
+  # Additional translations for Devise
+  views_devise:
+    sessions:
+      new:
+        welcome: Welcome to the PERC tool
+        description: Brief introduction about the tool

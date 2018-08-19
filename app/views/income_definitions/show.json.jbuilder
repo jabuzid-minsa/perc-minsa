@@ -1,0 +1,1 @@
+json.partial! "income_definitions/income_definition", income_definition: @income_definition

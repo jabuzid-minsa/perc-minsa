@@ -1,0 +1,263 @@
+<% content_for :stylesheet do %>
+    <%# Stylesheet for check type IOS %>
+    <%= stylesheet_link_tag 'checkios', media: 'screen', 'data-turbolinks-track' => true %>
+<% end %>
+
+<div class="row">
+  <%= form_for(@cost_center, html: { class: 'p-w-md' }) do |f| %>
+      <% if @cost_center.errors.any? %>
+          <div class="alert alert-danger" role="alert">
+            <h2>
+              <%= pluralize(@cost_center.errors.count, t('general_errors.texts.error.one'), t('general_errors.texts.error.other')) %>,
+              <%= t('general_errors.form_erros') %>
+            </h2>
+            <ul>
+              <% @cost_center.errors.full_messages.each do |message| %>
+                  <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+      <% end %>
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label :geography_id %>
+            <%= f.hidden_field :geography_id, :value => get_attribute_geography(@cost_center) %>
+            <%= f.hidden_field :language_id, :value => get_current_idiom %>
+            <input type="text" class="form-control" value="<%= get_attribute_geography(@cost_center, 'description') %>", disabled />
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label :cost_center_id %>
+            <%= f.select :cost_center_id, CostCenter.groupers.active.collect { |p| [p.description, p.id] },
+                         {include_blank: CostCenter.human_attribute_name(:cost_center_id)},
+                         {class: 'form-control select2', id: 'parent'} %>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label :code %>
+            <%= f.text_field :code, class: 'form-control', autofocus: true %>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label :description %>
+            <%= f.text_field :description, class: 'form-control' %>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label :definition %>
+            <%= f.text_field :definition, class: 'form-control' %>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label :function %>
+            <%= f.select :function, CostCenter.functions.to_a.map { |k, v| [t("app.cost_centers.functions.#{k}"), k, data: {code: v}] }, {include_blank: ''}, {class: 'form-control select2'} %>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label :staff_id %>
+            <%= f.select :staff_id, Staff.child.active.collect { |p| [p.description, p.id] },
+                         {include_blank: t('app.texts.not_apply')},
+                         {class: 'form-control select2', id: 'parent'} %>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label :cost_distribution_id %>
+            <%= f.select :cost_distribution_id, CostDistribution.idiom.active.collect { |p| [p.description, p.id] },
+                         {include_blank: t('app.texts.not_apply')},
+                         {class: 'form-control select2', id: 'cost_distribution'} %>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-2">
+          <div class="form-group">
+            <%= f.label :comprehensive do %>
+                <%= f.check_box :comprehensive, class: 'i-checks', id: 'cost_center_comprehensive' %>
+                <%= t('activerecord.attributes.cost_center.comprehensive') %>
+            <% end %>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group">
+            <%= f.label :primary_production_unit_id %>
+            <%= f.select :primary_production_unit_id, ProductionUnit.idiom.active.collect { |p| [p.description, p.id] },
+                         {include_blank: t('app.texts.not_apply')},
+                         {class: 'form-control select2', id: 'parent'} %>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-group">
+            <%= f.label :secondary_production_unit_id %>
+            <%= f.select :secondary_production_unit_id, ProductionUnit.idiom.active.collect { |p| [p.description, p.id] },
+                         {include_blank: t('app.texts.not_apply')},
+                         {class: 'form-control select2', id: 'parent'} %>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-group equivalent_comprehensive" style="display: none;">
+            <%= f.label :secondary_equivalent_to_primary %>
+            <%= f.text_field :secondary_equivalent_to_primary, class: 'form-control decimal_numbers_2' %>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-3">
+          <div class="form-group">
+            <%= f.label :tertiary_production_unit_id %>
+            <%= f.select :tertiary_production_unit_id, ProductionUnit.idiom.active.collect { |p| [p.description, p.id] },
+                         {include_blank: t('app.texts.not_apply')},
+                         {class: 'form-control select2', id: 'parent'} %>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-group equivalent_comprehensive" style="display: none;">
+            <%= f.label :tertiary_equivalent_to_primary %>
+            <%= f.text_field :tertiary_equivalent_to_primary, class: 'form-control decimal_numbers_2' %>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-group">
+            <%= f.label :quaternary_production_unit_id %>
+            <%= f.select :quaternary_production_unit_id, ProductionUnit.idiom.active.collect { |p| [p.description, p.id] },
+                         {include_blank: t('app.texts.not_apply')},
+                         {class: 'form-control select2', id: 'parent'} %>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-group equivalent_comprehensive" style="display: none;">
+            <%= f.label :quaternary_equivalent_to_primary %>
+            <%= f.text_field :quaternary_equivalent_to_primary, class: 'form-control decimal_numbers_2' %>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-3">
+          <div class="form-group">
+            <%= f.label :quinary_production_unit_id %>
+            <%= f.select :quinary_production_unit_id, ProductionUnit.idiom.active.collect { |p| [p.description, p.id] },
+                         {include_blank: t('app.texts.not_apply')},
+                         {class: 'form-control select2', id: 'parent'} %>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-group equivalent_comprehensive" style="display: none;">
+            <%= f.label :quinary_equivalent_to_primary %>
+            <%= f.text_field :quinary_equivalent_to_primary, class: 'form-control decimal_numbers_2' %>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label :state %>
+            <%= check_state(f) %>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 text-right">
+          <%= link_to t('app.buttons.back'), :back, class: 'btn btn-outline btn-success' %>
+        </div>
+        <div class="col-md-6 text-left">
+          <%= f.submit class: 'btn btn-primary' %>
+        </div>
+      </div>
+  <% end %>
+</div>
+
+<% content_for :javascript do %>
+    <%# Stylesheet for check type IOS %>
+    <%= javascript_include_tag 'checkios', 'data-turbolinks-track' => true %>
+    <script type="text/javascript">
+      $(function() {
+        valid_comprehensive_checked();
+        $('#cost_center_comprehensive').on('ifChanged', function () {
+          valid_comprehensive_checked();
+        });
+        var elem = document.querySelector('.js-switch'),
+            switchery = new Switchery(elem, { color: '#64BD63', secondaryColor: '#F53028', jackColor: '#FFF', jackSecondaryColor: '#FFF' });
+
+        $('.i-checks').iCheck({
+          checkboxClass: 'icheckbox_square-green',
+          radioClass: 'iradio_square-green',
+        });
+
+        valid_function($('#cost_center_function'));
+        $('#cost_center_function').change(function () {
+          valid_function(this);
+        });
+
+        $("#parent").change(function () {
+          var data = { cost_center: $("#parent option:selected").val() };
+          ajax_request(data, '#cost_center_code')
+        });
+
+        $('')
+      }); // END $(function)
+
+      function ajax_request(parameters, element) {
+        $.ajax({
+          url: '<%= cost_centers_next_code_path %>',
+          type: "GET",
+          dataType: "json",
+          data: parameters,
+          contentType: "script",
+          success: function(data) {
+            $(element).val(data);
+          },
+          error: function(xhr,exception,status) {
+            console.log('entra al error');
+            console.log(xhr);
+            console.log(exception);
+            console.log(status);
+          }
+        });
+      }
+
+      function valid_function(element) {
+        var code = $('option:selected', element).data("code");
+        if (code == <%= CostCenter.functions[:final] %>){
+          $("#cost_distribution").prop('disabled', true);
+          $("#cost_distribution").val("");
+          $("#cost_distribution").select2({
+            placeholder: "<%= t('app.texts.not_apply') %>",
+            val: ""
+          });
+        } else {
+          $("#cost_distribution").prop('disabled', false);
+          $("#cost_distribution").select2({
+            placeholder: "<%= t('app.texts.not_apply') %>",
+            val: ""
+          });
+        }
+      }
+
+      function valid_comprehensive_checked() {
+        if (document.getElementById('cost_center_comprehensive').checked) {
+          $('.equivalent_comprehensive').show('slow');
+        }else {
+          $('.equivalent_comprehensive').hide('slow');
+        }
+      }
+    </script>
+<% end %>

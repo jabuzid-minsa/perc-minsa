@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  code: MyString
+  description: MyString
+  staff_id: 
+  geography_id: 
+  language_id: 
+  state: false
+
+two:
+  code: MyString
+  description: MyString
+  staff_id: 
+  geography_id: 
+  language_id: 
+  state: false

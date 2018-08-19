@@ -1,0 +1,1 @@
+json.partial! "distribution_overheads/distribution_overhead", distribution_overhead: @distribution_overhead

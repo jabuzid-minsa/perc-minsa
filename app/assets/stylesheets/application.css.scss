@@ -1,0 +1,129 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, vendor/assets/stylesheets,
+ * or vendor/assets/stylesheets of plugins, if any, can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the top of the
+ * compiled file, but it's generally better to create a new file per style scope.
+ *
+ * Stylesheets files outside main package
+ *= require toastr/toastr.min.css
+ *= require select2/select2.min.css
+ *= require datapicker/datepicker3.css
+ *
+ * Main package stylesheets files
+ *= require_self
+ *= require animate/animate.css
+ *= require style
+ *= require font-awesome
+ *= require ladda/ladda-themeless.min.css
+ *= require main
+ *
+ * Jasny
+ *= require jasny/jasny-bootstrap.min.css
+ */
+
+.bg-light-blue {
+  background-color: rgb(220,245,255) !important;
+}
+
+.pos_abs {
+  position: absolute;
+}
+
+.img-background {
+  opacity: 0.5;
+  left: 90%;
+  top: 25%;
+  z-index: 1;
+}
+
+input.search-input{
+  box-sizing: border-box;
+  -moz-box-sizing:border-box;
+  width: 100%;
+  margin-bottom: 5px;
+  height: auto;
+}
+
+.margin-top-10 {
+  margin-top: 10px;
+}
+
+.no-margin {
+  margin: 0px !important;
+}
+
+.padding-side-15 {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+.padding-s10 {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.size-120 {
+  width: 120px !important;
+}
+
+.size-100 {
+  width: 100px !important;
+}
+
+.size-20 {
+  width: 70px !important;
+}
+
+.spacing-inside-t5 > a {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+thead input, tfoot input {
+  width: 100%;
+  padding: 3px;
+  box-sizing: border-box;
+}
+
+.select2 {
+  min-width: 100% !important;
+}
+
+.highlight_zero {
+  color: #000;
+}
+
+.header_human_resource {
+  background-color: #E83060 !important;
+  color: #fff;
+}
+tr.row_human_resource:nth-child(even) {
+  background-color: #FF5181;
+}
+
+.header_overheads {
+  background-color: #FFE321 !important;
+  color: #fff;
+}
+tr.row_overheads:nth-child(even) {
+  background-color: #FFE36B;
+}
+
+.header_supplies {
+  background-color: #3FCFDA !important;
+  color: #fff;
+}
+tr.row_supplies:nth-child(even) {
+  background-color: #A7CFEF;
+}
+
+.table_colors tbody tr:nth-child(even) {
+  background-color: #86CEEC;
+}
+.table_colors tbody tr:nth-child(odd) {
+  background-color: #C6E7F5;
+}

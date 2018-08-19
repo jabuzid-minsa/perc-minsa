@@ -1,0 +1,26 @@
+/*
+ * Section: Common Styles
+ */
+.center-vertical {
+  align-content: center;
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.hide-until-full-load {
+  display: none;
+}
+
+/*
+ * Section: Styles to indicate the loading of asynchronous requests
+ */
+.loading-fullscreen {
+  background-color: rgba(0, 0, 0, 0.7);
+  left: 0;
+  height: 100%;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  vertical-align: middle;
+  z-index: 3000;
+}

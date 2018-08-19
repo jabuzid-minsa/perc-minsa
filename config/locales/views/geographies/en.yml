@@ -1,0 +1,21 @@
+en:
+  change_country: Country successfully changed
+  code_attributes: Code %{attr}
+  activerecord:
+    models:
+      geography:
+        one: Geographical Division
+        other: Geographical Divisions
+    attributes:
+      geography:
+        numerical_code: Numerical Code
+        first_level: Country
+        second_level: Region
+        third_level: Department
+        fourth_level: Municipality
+        fifth_level: Neighborhood
+        description: Description
+        depth_detail: Depth Detail
+        state: State
+        created_at: Created at
+        updated_at: Updated at

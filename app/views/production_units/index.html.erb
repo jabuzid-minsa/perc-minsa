@@ -1,0 +1,114 @@
+<% content_for :stylesheet do %>
+    <%= stylesheet_link_tag 'datatable', media: 'screen', 'data-turbolinks-track' => true %>
+<% end %>
+
+<% content_for :breadcrumb_title do %><%= ProductionUnit.model_name.human %><% end %>
+<% content_for :breadcrumb_list do %>
+    <li class="active"><strong><%= t('app.texts.list_of', element: ProductionUnit.model_name.human(:count => 2)) %></strong></li>
+<% end %>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-title">
+          <h5><%= t('app.texts.list_of', element: ProductionUnit.model_name.human(:count => 2)) %></h5>
+          <div class="ibox-tools">
+            <a class="collapse-link">
+              <i class="fa fa-chevron-up"></i>
+            </a>
+          </div>
+        </div>
+        <div class="ibox-content">
+          <div class="">
+            <a href="<%= new_production_unit_path %>">
+              <button class="btn btn-outline btn-primary dim" type="button">
+                <i class="fa fa-plus"></i>
+              </button>
+            </a>
+          </div>
+          <%= render :layout =>  'layouts/commons/list_element', locals: {
+              :table_titles => columns_model_translated(ProductionUnit, ['geography_id', 'code', 'abbreviation', 'description', 'definition', 'state']), :view_actions => true} do %>
+              <% @production_units.each do |production_unit| %>
+                  <tr class="gradeX">
+                    <td><%= get_attribute_geography(production_unit, 'description') %></td>
+                    <td><%= best_in_place_if can?(:update, ProductionUnit), production_unit, :code, :as => :input,
+                                             :inner_class => 'form-control' %></td>
+                    <td><%= best_in_place_if can?(:update, ProductionUnit), production_unit, :abbreviation, :as => :input,
+                                             :inner_class => 'form-control' %></td>
+                    <td><%= best_in_place_if can?(:update, ProductionUnit), production_unit, :description, :as => :input,
+                                             :inner_class => 'form-control' %></td>
+                    <td><%= production_unit.definition %></td>
+                    <td>
+                      <span class="<%= production_unit.state == true ? 'text-success' : 'text-danger' %> span-state">
+                        <%= best_in_place_if can?(:update, ProductionUnit), production_unit, :state, as: :checkbox, collection:
+                            {false: t('app.status.deactivated'), true: t('app.status.activated')} %>
+                      </span>
+                    </td>
+                    <td>
+                      <%= link_to edit_production_unit_path(production_unit) do %>
+                          <i class="fa fa-pencil text-navy text-warning"></i>
+                      <% end %>
+                    </td>
+                  </tr>
+              <% end %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% content_for :javascript do %>
+    <%= javascript_include_tag 'datatable', 'data-turbolinks-track' => true %>
+
+    <script type="text/javascript">
+      $(function() {
+        var number_of_columns = $(".list_of_model_elements thead").find("th").length - 1,
+            name_table = "<%= t("app.controllers.#{params[:controller]}") %>",
+            texts_i18n = {
+              language: {
+                processing: "<%= t('javascript.data_tables.texts.processing') %>",
+                length_menu: "<%= t('javascript.data_tables.texts.length_menu') %>",
+                zero_records: "<%= t('javascript.data_tables.texts.zero_records') %>",
+                empty_table: "<%= t('javascript.data_tables.texts.empty_table') %>",
+                info: "<%= t('javascript.data_tables.texts.info') %>",
+                info_empty: "<%= t('javascript.data_tables.texts.info_empty') %>",
+                info_filtered: "<%= t('javascript.data_tables.texts.info_filtered') %>",
+                search: "<%= t('javascript.data_tables.texts.search') %>",
+                loading_records: "<%= t('javascript.data_tables.texts.loading_records') %>",
+                paginate: {
+                  first: "<%= t('javascript.data_tables.texts.paginate.first') %>",
+                  last: "<%= t('javascript.data_tables.texts.paginate.last') %>",
+                  next: "<%= t('javascript.data_tables.texts.paginate.next') %>",
+                  previous: "<%= t('javascript.data_tables.texts.paginate.previous') %>"
+                },
+                sort_ascending: "<%= t('javascript.data_tables.texts.paginate.previous') %>",
+                sort_descending: "<%= t('javascript.data_tables.texts.paginate.previous') %>",
+                copy_text: {
+                  title: "<%= t('javascript.data_tables.texts.copy_text.title') %>",
+                  success: {
+                    one: "<%= t('javascript.data_tables.texts.copy_text.success.one') %>",
+                    other: "<%= t('javascript.data_tables.texts.copy_text.success.other') %>"
+                  }
+                },
+                buttons: {
+                  copy: "<%= t('javascript.data_tables.texts.buttons.copy') %>",
+                  print: "<%= t('javascript.data_tables.texts.buttons.print') %>"
+                }
+              }
+            };
+        perc_data_tables.construct_datatable(number_of_columns, name_table,[[0,'asc']], true, texts_i18n);
+
+        $(".best_in_place").best_in_place();
+
+        $(".span-state span").on("DOMSubtreeModified", function () {
+          if ($(this).parent().hasClass("text-success")) {
+            $(this).parent().removeClass( "text-success" ).addClass("text-danger");
+          }else {
+            $(this).parent().removeClass( "text-danger" ).addClass("text-success");
+          }
+        });
+      });
+    </script>
+<% end %>

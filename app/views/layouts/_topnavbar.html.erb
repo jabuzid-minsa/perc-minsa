@@ -1,0 +1,61 @@
+<div class="row border-bottom">
+	<nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+    <div class="row">
+      <div class="col-md-1">
+        <a class="navbar-minimalize minimalize-styl-2 btn btn-primary" href="#">
+          <i class="fa fa-bars"></i>
+        </a>
+      </div>
+      <div class="col-md-2 m-t-sm nav navbar-top-links">
+        <% if can? :change_country, Geography %>
+            <%= select("geography", "country", list_of_countries.collect {|p| [ p.description, p.id ] },
+                       {selected: session[:country_id]},
+                       {class: 'form-control m-b select2', id: 'change_country_navbar'}) %>
+        <% else %>
+            <label class="form-control m-b"><%= current_user.geography.description %></label>
+        <% end %>
+      </div>
+      <div class="col-md-2 m-t-sm nav navbar-top-links">
+        <% if can? :change_network, Network and (current_user.is_valid_geography? or current_user.is_valid_session_country?(session[:country_id])) %>
+            <%= select("network m-t-sm", "network", get_associated_networks.collect {|p| [ p.description.capitalize, p.id ] },
+                       {include_blank: t('app.texts.select', element: Network.model_name.human), selected: session[:entity_id]},
+                       {class: 'form-control m-b select2', id: 'change_network_navbar'}) %>
+        <% end %>
+      </div>
+      <div class="col-md-2 m-t-sm nav navbar-top-links">
+        <% if can? :change_entity, Entity and (current_user.is_valid_geography? or current_user.is_valid_session_country?(session[:country_id])) %>
+            <%= select("entity m-t-sm", "entity", get_associated_entities.collect {|p| [ p.description.capitalize, p.id ] },
+                       {include_blank: t('app.texts.select', element: Entity.model_name.human), selected: session[:entity_id]},
+                       {class: 'form-control m-b select2', id: 'change_entity_navbar'}) %>
+        <% end %>
+      </div>
+      <div class="col-md-2 m-t-sm nav navbar-top-links">
+        <% if can? :select_date, User and (current_user.is_valid_geography? or current_user.is_valid_session_country?(session[:country_id])) %>
+            <div class="form-group" id="datepicker_month" style="max-height: 28px;">
+              <div class="input-group date">
+                <span class="input-group-addon" style="padding: 5px 12px;"><i class="fa fa-calendar"></i></span>
+                <input type="text" class="form-control" id="work_date_costs_navbar" style="max-height: 28px;" value="<%= "#{session[:month]}-#{session[:year]}" %>"/>
+              </div>
+            </div>
+        <% end %>
+      </div>
+      <div class="col-md-1 m-t-sm nav navbar-top-links">
+        <% if (current_user.is_valid_geography? or current_user.is_valid_session_country?(session[:country_id])) %>
+            <button class="minimalize-styl-2 btn btn-primary no-margins" style="max-height: 28px;" id="send_global_data">
+              <i class="fa fa-paper-plane"></i>
+            </button>
+        <% end %>
+        <% if session[:entity_id].present? %>
+            <a data-toggle="modal" class="minimalize-styl-2 btn btn-default no-margins" href="#modal-check_dates" id="check_dates_entity" style="max-height: 28px;">
+              <i class="fa fa-calendar-o"></i>
+            </a>
+        <% end %>
+      </div>
+      <div class="col-md-2 m-t-sm nav navbar-top-links" style="padding-right: 30px;">
+        <%= select("languages", "idiom", Language.active.collect {|p| [ p.name.capitalize, p.abbreviation ] },
+                   {selected: session['language_user']},
+                   {class: 'form-control m-b select2', id: 'change_idiom'}) %>
+      </div>
+    </div>
+  </nav>
+</div>

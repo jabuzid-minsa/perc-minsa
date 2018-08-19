@@ -1,0 +1,1 @@
+json.partial! "distribution_supplies/distribution_supply", distribution_supply: @distribution_supply

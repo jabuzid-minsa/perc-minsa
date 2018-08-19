@@ -1,0 +1,2 @@
+json.extract! salary_component, :id, :code, :abbreviation, :description, :max_value, :rate, :geography_id, :state, :created_at, :updated_at
+json.url salary_component_url(salary_component, format: :json)

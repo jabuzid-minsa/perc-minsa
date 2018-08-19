@@ -1,0 +1,2 @@
+json.extract! production_cost_center, :id, :year, :month, :value, :production_units, :cost_center_id, :entity_id, :created_at, :updated_at
+json.url production_cost_center_url(production_cost_center, format: :json)

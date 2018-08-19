@@ -1,0 +1,63 @@
+<% content_for :stylesheet do %>
+<% end %>
+
+<div class="middle-box text-center loginscreen animated fadeInDown" style="width: 400px !important;">
+  <%= image_tag("logo_universal_health.png", class: "img-responsive pos_abs img-background") %>
+  <div class="">
+    <div class="text-left">
+      <h1 class="logo-name no-margins"><%= t('app.name') %></h1>
+    </div>
+    <h3><%= t('views_devise.sessions.new.welcome') %></h3>
+    <p>
+      <%= t('views_devise.sessions.new.description') %>
+    </p>
+    <%= form_for(resource, as: resource_name, url: session_path(resource_name), :html => {:class => 'm-t p-w-xl'}) do |f| %>
+        <%= devise_error_messages! %>
+        <% if devise_error_messages!.present? %>
+            <div class="form-group text-left">
+              <div class="alert alert-danger" role="alert">
+                <%= devise_error_messages! %>
+              </div>
+            </div>
+        <% end %>
+        <div class="form-group text-left">
+          <%= f.label :email %>
+          <%= f.email_field :email, autofocus: true, class: 'form-control', required: 'required' %>
+        </div>
+
+        <div class="form-group text-left">
+          <%= f.label :password %>
+          <%= f.password_field :password, autocomplete: "off", class: 'form-control', required: 'required' %>
+        </div>
+
+        <% if devise_mapping.rememberable? -%>
+            <div class="text-left">
+              <div class="form-group">
+                <%= f.check_box :remember_me, class: 'i-checks' %>
+                <%= f.label :remember_me %>
+              </div>
+            </div>
+        <% end %>
+
+        <div class="text-right">
+          <strong><%= f.submit t('app.login'), class: 'btn btn-primary block full-width m-b' %></strong>
+        </div>
+    <% end %>
+    <div class="text-center spacing-inside-t5 p-w-xl">
+      <%= render "devise/shared/links" %>
+    </div>
+    <p class="m-t"> <small><%= t('app.copytigth.ops') %></small> </p>
+    <p class="m-t"> <small><%= t('app.copytigth.incubo') %></small> </p>
+    <div class="row">
+      <div class="col-md-6">
+        <%= image_tag("es_logo_paho.png", class: "img-responsive") %>
+      </div>
+      <div class="col-md-6">
+        <%= image_tag("es_logo_who.png", class: "img-responsive") %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% content_for :javascript do %>
+<% end %>

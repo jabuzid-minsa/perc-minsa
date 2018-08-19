@@ -1,0 +1,19 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Invoice:</strong>
+  <%= @income_definition.invoice %>
+</p>
+
+<p>
+  <strong>Cost center:</strong>
+  <%= @income_definition.cost_center %>
+</p>
+
+<p>
+  <strong>Entity:</strong>
+  <%= @income_definition.entity %>
+</p>
+
+<%= link_to 'Edit', edit_income_definition_path(@income_definition) %> |
+<%= link_to 'Back', income_definitions_path %>

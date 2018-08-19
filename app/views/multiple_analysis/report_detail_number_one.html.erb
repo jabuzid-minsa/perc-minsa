@@ -1,0 +1,154 @@
+<% content_for :stylesheet do %>
+		<%= stylesheet_link_tag 'datatable', media: 'screen', 'data-turbolinks-track' => true %>
+		<%= stylesheet_link_tag 'c3charts', media: 'screen', 'data-turbolinks-track' => true %>
+<% end %>
+
+<% content_for :breadcrumb_title do %><%= t('app.sections.analysis_and_graphs') %><% end %>
+<% content_for :breadcrumb_list do %>
+		<li><%= link_to t('app.analysis_graphs.management.number_one.title'), analysis_graphs_management_number_one_path %></li>
+		<li class="active"><strong><%= t('app.analysis_graphs.details.cost_production_center') %></strong></li>
+<% end %>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+	<div class="row">
+		<div class="col-lg-12">
+			<%= render 'multiple_analysis/partials/table_four/operating_costs' %>
+			
+			<%= render 'multiple_analysis/partials/table_four/indirect_costs' %>
+			
+			<%= render 'multiple_analysis/partials/table_four/production_centers' %>
+		</div>
+	</div>
+</div>
+
+<% content_for :javascript do %>
+	<%= javascript_include_tag 'datatable', 'data-turbolinks-track' => true %>
+
+	<script type="text/javascript">
+		//
+		var detail_table = $('table#summary_table'),
+				summary_hr = detail_table.find('tbody tr[data-summary="human_resource"]'),
+				summary_ov = detail_table.find('tbody tr[data-summary="overhead"]'),
+				summary_sp = detail_table.find('tbody tr[data-summary="supply"]'),
+				summary_tt = detail_table.find('tbody tr[data-summary="total"]');
+		/** ---------------------- Functions ---------------------- **/
+			function clean_number_mask(number) {
+				return parseFloat(String(number).replace(/,/g, ""));
+			}
+		//
+		function calculate_totals_detail_table() {
+			var value_hr, value_ov, value_sp, cost_center, function_center, html = '';
+			summary_hr.find('td').each(function(index, value) {
+				if (index > 0) {
+					cost_center = $(value).data('cost-center');
+					function_center = $(value).data('function');
+					value_hr = clean_number_mask($(value).find('label').html());
+					value_ov = clean_number_mask(summary_ov.find('td:eq('+index+') label').html());
+					value_sp = clean_number_mask(summary_sp.find('td:eq('+index+') label').html());
+
+					html += '<td class="text-right" data-cost-center="'+cost_center+'" data-function="'+function_center+'"><label class="decimal_numbers_2">'+(value_hr+value_ov+value_sp).toFixed(2)+'</label></td>'
+				}
+			});
+			summary_tt.append(html);
+		}
+		//
+		function calculate_totals_column_detail_table() {
+			var sum;
+
+			detail_table.find('thead tr').append('<td><label>Total</label></td>');
+
+			detail_table.find('tbody tr').each(function(index, value) {
+				sum = 0;
+				$(value).find('td:not(:first) label').each(function(ind, val) {
+					sum += clean_number_mask($(val).html());
+				});
+				$(value).append('<td class="text-right"><label class="decimal_numbers_2">'+(sum).toFixed(2)+'</label></td>');
+			});
+		}
+		/** ---------------------- Document Ready ---------------------- **/
+		$(function () {
+			$('button.evaluated-data').click(function () {
+				var table_id = $(this).data('target'),
+						select_id = $(this).data('select'),
+						table_info = $(this).data('info');
+
+				evaluate_supply(table_id, select_id, table_info);
+			});
+
+			$('button.reset-data').click(function () {
+				var table_id = $(this).data('target'),
+						select_id = $(this).data('select'),
+						table_info = $(this).data('info');
+
+				empty_datatable(table_id);
+				evaluate_supply(table_id, select_id, table_info);
+			});
+			
+			$('button.evaluated-indirect').click(function () {
+				var table_id = $(this).data('target'),
+						select_id = $(this).data('select'),
+						table_info = $(this).data('info');
+
+				evaluate_indirect_costs(table_id, select_id, table_info);
+			});
+
+			$('button.reset-indirect').click(function () {
+				var table_id = $(this).data('target'),
+						select_id = $(this).data('select'),
+						table_info = $(this).data('info');
+
+				empty_datatable(table_id);
+				evaluate_indirect_costs(table_id, select_id, table_info);
+			});
+			
+			$.when(calculate_totals_detail_table()).done(function() {
+				$.when(calculate_totals_column_detail_table()).done(function() {
+					$.when(calculated_costs_indirect()).done(function() {
+						$.when(calculated_productions_and_costs()).done(function() {
+							$('.decimal_numbers_2').number( true, 0 );
+							$('.number-two-decimals').number( true, 2 );
+							$('.fixed_table').DataTable({
+								bInfo:          false,
+								searching:      false,
+								bSort:          false,
+								paging:         false,
+								scrollY:        "500px",
+								scrollX:        true,
+								scrollCollapse: true,
+								fixedColumns:   {
+									leftColumns: 1
+								},
+								dom: 'Bfrtip',
+								buttons: [{
+									extend: 'excelHtml5',
+									exportOptions: {
+										columns: ':visible',
+										format: {
+											body: function (data, row, column, node) {
+												var local_data = $(data).html().replace(/,/g, '');
+												if ( $.isNumeric(local_data) ) {
+													return parseFloat(local_data);
+												} else {
+													return $(data).html();
+												}
+											}
+										}
+									},
+									title: 'Tabla de Analisis',
+									action: function(e, dt, node, config) {
+										var $thisbtn = this;
+										$.when($('.decimal_numbers_2').number(true, 0, '.', '')).done(function (){
+											$.when($.fn.DataTable.ext.buttons.excelHtml5.action.call(this, e, dt, node, config)).done(function (){
+												$('.decimal_numbers_2').number( true, 0 );
+											});
+										});
+									}
+								}]
+							});
+						});
+					});
+				});
+			});
+		});
+	</script>
+<% end %>

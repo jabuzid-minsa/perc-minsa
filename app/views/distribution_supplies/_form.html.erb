@@ -1,0 +1,41 @@
+<%= form_for(@distribution_supply) do |f| %>
+  <% if @distribution_supply.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@distribution_supply.errors.count, "error") %> prohibited this distribution_supply from being saved:</h2>
+
+      <ul>
+      <% @distribution_supply.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :year %><br>
+    <%= f.number_field :year %>
+  </div>
+  <div class="field">
+    <%= f.label :month %><br>
+    <%= f.number_field :month %>
+  </div>
+  <div class="field">
+    <%= f.label :value %><br>
+    <%= f.text_field :value %>
+  </div>
+  <div class="field">
+    <%= f.label :supply_id %><br>
+    <%= f.text_field :supply_id %>
+  </div>
+  <div class="field">
+    <%= f.label :cost_center_id %><br>
+    <%= f.text_field :cost_center_id %>
+  </div>
+  <div class="field">
+    <%= f.label :entity_id %><br>
+    <%= f.text_field :entity_id %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

@@ -1,0 +1,13 @@
+es:
+  activerecord:
+    models:
+      income_definition:
+        one: Definición de Facturación
+        other: Definiciones de Facturación
+    attributes:
+      income_definition:
+        invoice: Factura?
+        cost_center_id: Centro de Costo
+        entity_id: Entidad
+        created_at: Fecha Creación
+        updated_at: Ultima Actualización

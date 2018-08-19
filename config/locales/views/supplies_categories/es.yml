@@ -1,0 +1,16 @@
+es:
+  activerecord:
+    models:
+      supplies_category:
+        one: Categoría de Insumo
+        other: Categorías de Insumos
+    attributes:
+      supplies_category:
+        code: Código
+        description: Descripción
+        definition: Definición
+        geography_id: País
+        language_id: Idioma
+        state: Estado
+        created_at: Fecha Creación
+        updated_at: Ultima Actualización

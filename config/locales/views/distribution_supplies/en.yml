@@ -1,0 +1,16 @@
+en:
+  activerecord:
+    models:
+      distribution_supply:
+        one: Distribution Supply
+        other: Distribution Supplies
+    attributes:
+      distribution_supply:
+        year: Year
+        month: Month
+        value: Value
+        entity_id: Entity
+        cost_center_id: Cost Center
+        supply_id: Supply
+        created_at: Created at
+        updated_at: Updated at

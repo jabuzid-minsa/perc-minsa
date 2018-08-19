@@ -1,0 +1,1 @@
+json.array! @production_units, partial: 'production_units/production_unit', as: :production_unit

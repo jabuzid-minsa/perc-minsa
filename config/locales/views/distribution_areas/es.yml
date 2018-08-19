@@ -1,0 +1,15 @@
+es:
+  activerecord:
+    models:
+      distribution_area:
+        one: Centro de Producción
+        other: Centros de Producción
+    attributes:
+      distribution_area:
+        year: Año
+        month: Mes
+        meters: Metros
+        entity_id: Entidad
+        cost_center_id: Centro de Costo
+        created_at: Fecha Creación
+        updated_at: Ultima Actualización

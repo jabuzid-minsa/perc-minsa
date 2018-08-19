@@ -1,0 +1,1 @@
+json.array! @distribution_costs, partial: 'distribution_costs/distribution_cost', as: :distribution_cost

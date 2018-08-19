@@ -1,0 +1,1 @@
+//= require dualListbox/jquery.bootstrap-duallistbox.js

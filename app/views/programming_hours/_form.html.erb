@@ -1,0 +1,49 @@
+<%= form_for(@programming_hour) do |f| %>
+  <% if @programming_hour.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@programming_hour.errors.count, "error") %> prohibited this programming_hour from being saved:</h2>
+
+      <ul>
+      <% @programming_hour.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :year %><br>
+    <%= f.number_field :year %>
+  </div>
+  <div class="field">
+    <%= f.label :month %><br>
+    <%= f.number_field :month %>
+  </div>
+  <div class="field">
+    <%= f.label :total %><br>
+    <%= f.number_field :total %>
+  </div>
+  <div class="field">
+    <%= f.label :paid %><br>
+    <%= f.text_field :paid %>
+  </div>
+  <div class="field">
+    <%= f.label :hours %><br>
+    <%= f.text_field :hours %>
+  </div>
+  <div class="field">
+    <%= f.label :entity_id %><br>
+    <%= f.text_field :entity_id %>
+  </div>
+  <div class="field">
+    <%= f.label :cost_center_id %><br>
+    <%= f.text_field :cost_center_id %>
+  </div>
+  <div class="field">
+    <%= f.label :payroll_id %><br>
+    <%= f.text_field :payroll_id %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

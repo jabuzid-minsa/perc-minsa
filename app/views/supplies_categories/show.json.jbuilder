@@ -1,0 +1,1 @@
+json.partial! "supplies_categories/supplies_category", supplies_category: @supplies_category

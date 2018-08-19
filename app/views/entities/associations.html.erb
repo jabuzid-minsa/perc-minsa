@@ -1,0 +1,262 @@
+<% content_for :stylesheet do %>
+    <%# Stylesheet for Dual Select %>
+    <%= stylesheet_link_tag 'dual-select', media: 'screen', 'data-turbolinks-track' => true %>
+<% end %>
+
+<% content_for :breadcrumb_title do %><%= Entity.model_name.human %><% end %>
+<% content_for :breadcrumb_list do %>
+    <li><%= link_to "#{t('app.texts.list_of', element: Entity.model_name.human(:count => 2))}", entities_path %></li>
+    <li class="active">
+      <strong><%= t('app.texts.associations', element: Entity.model_name.human(:count => 1)) %></strong>
+      -
+      <small><%= @entity.abbreviation %></small>
+    </li>
+<% end %>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-title">
+          <h5>
+            <%= t('app.texts.associations_detail', element: @entity.description) %>
+          </h5>
+        </div>
+        <div class="ibox-content">
+          <%= form_for(@entity) do |f| %>
+              <div class="form-group">
+                <div class="row">
+                  <div class="col-md-8">
+                    <h1> <%= @entity.abbreviation %>
+                      <small><span class="label label-primary"><%= "#{t('located_in')} #{@entity.geography.description}" %></span></small>
+                    </h1>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="col-md-4">
+                      <% if @entity.present? %>
+                          <span><%= link_to t('app.buttons.back'), edit_entity_path(@entity), class: 'btn btn-outline btn-success' %></span>
+                      <% end %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="tabs-container">
+                <ul class="nav nav-tabs">
+                  <li class="service_entity active" data-model="cost_center" data-function="<%= CostCenter.functions[:final] %>">
+                    <a data-toggle="tab" href="#tab-1"><%= t("app.cost_centers.abbreviated_functions.final") %></a>
+                  </li>
+                  <li class="service_entity" data-model="cost_center" data-function="<%= CostCenter.functions[:care_support] %>">
+                    <a data-toggle="tab" href="#tab-2"><%= t("app.cost_centers.abbreviated_functions.care_support") %></a>
+                  </li>
+                  <li class="service_entity" data-model="cost_center" data-function="<%= CostCenter.functions[:logistical_support] %>">
+                    <a data-toggle="tab" href="#tab-3"><%= t("app.cost_centers.abbreviated_functions.logistical_support") %></a>
+                  </li>
+                  <li class="service_entity" data-model="cost_center" data-function="<%= CostCenter.functions[:administrative_support] %>">
+                    <a data-toggle="tab" href="#tab-4"><%= t("app.cost_centers.abbreviated_functions.administrative_support") %></a>
+                  </li>
+                  <li class="" data-model="supply" data-function="insumos">
+                    <a data-toggle="tab" href="#tab-5"><%= Supply.model_name.human(:count => 2) %></a>
+                  </li>
+                  <li class="" data-model="staff" data-function="personal">
+                    <a data-toggle="tab" href="#tab-6"><%= Staff.model_name.human(:count => 2) %></a>
+                  </li>
+                </ul>
+                <div class="tab-content">
+                  <div id="tab-1" class="tab-pane active">
+                    <div class="panel-body">
+                      <div class="form-group">
+                        <label for="">Centros de producción - función <%= t("app.cost_centers.abbreviated_functions.final") %></label>
+                        <%= f.select(:cost_center_ids,
+                                     get_selectable_cost_centers_per_function(@entity.id, CostCenter.functions[:final], get_country_for_element(@entity)).collect {
+                                         |p| [ "#{p.code} - #{p.description.capitalize}", p.id, {'data-function' => CostCenter.functions[:final]} ]
+                                     }, {},
+                                     {class: 'form-control multi-select', id: "function_#{CostCenter.functions[:final]}", data: {url: '/cost_centers/final'}, multiple: 'true'}) %>
+                      </div>
+                    </div>
+                  </div>
+                  <div id="tab-2" class="tab-pane">
+                    <div class="panel-body">
+                      <div class="form-group">
+                        <label for="">Centros de producción - función <%= t("app.cost_centers.functions.care_support") %></label>
+                        <%= f.select(:cost_center_ids,
+                                     get_selectable_cost_centers_per_function(@entity.id, CostCenter.functions[:care_support], get_country_for_element(@entity)).collect {
+                                         |p| [ "#{p.code} - #{p.description.capitalize}", p.id, {'data-function' => CostCenter.functions[:care_support]} ]
+                                     }, {},
+                                     {class: 'form-control multi-select', id: "function_#{CostCenter.functions[:care_support]}", data: {url: '/cost_centers/care_support'}, multiple: 'true'}) %>
+                      </div>
+                    </div>
+                  </div>
+                  <div id="tab-3" class="tab-pane">
+                    <div class="panel-body">
+                      <div class="form-group">
+                        <label for="">Centros de producción - función <%= t("app.cost_centers.functions.logistical_support") %></label>
+                        <%= f.select(:cost_center_ids,
+                                     get_selectable_cost_centers_per_function(@entity.id, CostCenter.functions[:logistical_support], get_country_for_element(@entity)).collect {
+                                         |p| [ "#{p.code} - #{p.description.capitalize}", p.id, {'data-function' => CostCenter.functions[:logistical_support]} ]
+                                     }, {},
+                                     {class: 'form-control multi-select', id: "function_#{CostCenter.functions[:logistical_support]}", multiple: 'true'}) %>
+                      </div>
+                    </div>
+                  </div>
+                  <div id="tab-4" class="tab-pane">
+                    <div class="panel-body">
+                      <div class="form-group">
+                        <label for="">Centros de producción - función <%= t("app.cost_centers.functions.administrative_support") %></label>
+                        <%= f.select(:cost_center_ids,
+                                     get_selectable_cost_centers_per_function(@entity.id, CostCenter.functions[:administrative_support], get_country_for_element(@entity)).collect {
+                                         |p| [ "#{p.code} - #{p.description.capitalize}", p.id, {'data-function' => CostCenter.functions[:administrative_support]} ]
+                                     }, {},
+                                     {class: 'form-control multi-select', id: "function_#{CostCenter.functions[:administrative_support]}", multiple: 'true'}) %>
+                      </div>
+                    </div>
+                  </div>
+                  <div id="tab-5" class="tab-pane">
+                    <div class="panel-body">
+                      <div class="form-group">
+                        <label for=""><%= Supply.model_name.human(:count => 2) %></label>
+                        <%= f.select(:supply_ids, Supply.active.selectable.available_for_country(get_available_country(@entity)).collect {|p| [ "#{p.code} - #{p.description.capitalize}", p.id ] }, {},
+                                     {class: 'form-control multi-select', id: 'supplies', multiple: 'true'}) %>
+                      </div>
+                    </div>
+                  </div>
+                  <div id="tab-6" class="tab-pane">
+                    <div class="panel-body">
+                      <div class="form-group">
+                        <label for=""><%= Staff.model_name.human(:count => 2) %></label>
+                        <%# Valid available_for_country(get_available_country(@entity)) for Staff model %>
+                        <%= f.select(:staff_ids, Staff.active.selectable.collect {|p| [ "#{p.code} - #{p.description.capitalize}", p.id ] }, {},
+                                     {class: 'form-control multi-select', id: 'supplies', multiple: 'true'}) %>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% content_for :javascript do %>
+    <%# Stylesheet for Dual Select %>
+    <%= javascript_include_tag 'dual-select', 'data-turbolinks-track' => true %>
+    <script type="text/javascript">
+      $(function () {
+        var input_search_multi_select = '<input type="text" class="form-control search-input" autocomplete="off" placeholder="<%= t('app.dual_select.multi_select.filter_place_holder') %>">',
+            selectable_header = '<label for=""><%= t('app.dual_select.multi_select.non_selected_list_label') %></label>' + input_search_multi_select,
+            selection_header = '<label for=""><%= t('app.dual_select.multi_select.selected_list_label') %></label>' + input_search_multi_select;
+
+        $('.multi-select').multiSelect({
+          selectableHeader: selectable_header,
+          selectionHeader: selection_header,
+          afterInit: function(ms){
+            var that = this,
+                $selectableSearch = that.$selectableUl.prev(),
+                $selectionSearch = that.$selectionUl.prev(),
+                selectableSearchString = '#'+that.$container.attr('id')+' .ms-elem-selectable:not(.ms-selected)',
+                selectionSearchString = '#'+that.$container.attr('id')+' .ms-elem-selection.ms-selected';
+
+            that.qs1 = $selectableSearch.quicksearch(selectableSearchString)
+                .on('keydown', function(e){
+                  if (e.which === 40){
+                    that.$selectableUl.focus();
+                    return false;
+                  }
+                });
+
+            that.qs2 = $selectionSearch.quicksearch(selectionSearchString)
+                .on('keydown', function(e){
+                  if (e.which == 40){
+                    that.$selectionUl.focus();
+                    return false;
+                  }
+                });
+          },
+          afterSelect: function(value, text){
+            this.qs1.cache();
+            this.qs2.cache();
+            var url_ajax = "<%= create_entity_association_path %>";
+            var data = {
+              entity_id: <%= @entity.id %>,
+              relation_id: value[0],
+              model: $(".tabs-container").find("li.active").data("model"),
+              function_service: $(".tabs-container").find("li.active").data("function")
+            };
+            var id_select = "#"+$(".tabs-container").find("li.active").data("function");
+            ajax_select_elements(url_ajax, data, id_select, "selected", value[0]);
+          },
+          afterDeselect: function(value, text){
+            this.qs1.cache();
+            this.qs2.cache();
+            var url_ajax = "<%= destroy_entity_association_path %>";
+            var data = {
+              entity_id: <%= @entity.id %>,
+              relation_id: value[0],
+              model: $(".tabs-container").find("li.active").data("model"),
+              function_service: $(".tabs-container").find("li.active").data("function")
+            };
+            var id_select = "#"+$(".tabs-container").find("li.active").data("function");
+            ajax_select_elements(url_ajax, data, id_select, "", value[0]);
+          }
+        });
+
+        /*$(".service_entity").click(function () {
+          var id_select = "#function_"+$(".tabs-container").find("li.active").data("function");
+          console.log('llamada click');
+          change_tab(id_select, this);
+        });*/
+      });
+
+      function change_tab(id_select, tab_active) {
+        $.ajax({
+          url: "<%= cost_centers_available_to_relate_path %>",
+          type: "GET",
+          dataType: "json",
+          data: {
+            current_country_id: <%= get_current_country_id %>,
+            entity_id: <%= @entity.id %>,
+            function_service: $(tab_active).data("function")
+          },
+          contentType: "application/json; charset=utf-8",
+          success: function(data) {
+            $("select option:not(:selected)").remove();
+            $.each(data, function (index, val) {
+              $(id_select).append('<option value="'+val.id+'">'+val.code+" "+val.description+'</option>');
+            });
+            $(id_select).multiSelect('refresh');
+          },
+          error: function(xhr,exception,status) {
+            console.log("error");
+            console.log(xhr);
+            console.log(exception);
+            console.log(status);
+          }
+        });
+      }
+
+      function ajax_select_elements(url, parameters, id_select, selected, option_value) {
+        $.ajax({
+          url: url,
+          type: "GET",
+          dataType: "json",
+          data: parameters,
+          contentType: "application/json; charset=utf-8",
+          success: function(data) {
+            var find_option = "option[value='"+option_value+"']"
+            if (selected == "") {
+              $(id_select).find(find_option).removeAttr("selected")
+            } else {
+              $(id_select).find(find_option).attr("selected", "selected")
+            }
+          },
+          error: function(xhr,exception,status) {
+            console.log("error");
+            console.log(xhr);
+            console.log(exception);
+            console.log(status);
+          }
+        });
+      }
+    </script>
+<% end %>

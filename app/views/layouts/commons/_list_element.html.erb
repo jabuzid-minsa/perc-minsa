@@ -1,0 +1,25 @@
+<table class="table table-striped table-bordered table-hover list_of_model_elements">
+  <thead>
+    <tr>
+      <% table_titles.each do |title| %>
+        <th><%= title %></th>
+      <% end %>
+      <% if view_actions %>
+        <th><%= t('javascript.data_tables.header_action') %></th>
+      <% end %>
+    </tr>
+  </thead>
+  <tbody>
+    <%= yield %>
+  </tbody>
+  <tfoot>
+    <tr>
+      <% table_titles.each do |title| %>
+        <th><%= title %></th>
+      <% end %>
+      <% if view_actions %>
+        <th><%= t('javascript.data_tables.header_action') %></th>
+      <% end %>
+    </tr>
+  </tfoot>
+</table>

@@ -1,0 +1,29 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Code:</strong>
+  <%= @supplies_category.code %>
+</p>
+
+<p>
+  <strong>Description:</strong>
+  <%= @supplies_category.description %>
+</p>
+
+<p>
+  <strong>Geography:</strong>
+  <%= @supplies_category.geography %>
+</p>
+
+<p>
+  <strong>Language:</strong>
+  <%= @supplies_category.language %>
+</p>
+
+<p>
+  <strong>State:</strong>
+  <%= @supplies_category.state %>
+</p>
+
+<%= link_to 'Edit', edit_supplies_category_path(@supplies_category) %> |
+<%= link_to 'Back', supplies_categories_path %>

@@ -1,0 +1,17 @@
+es:
+  activerecord:
+    models:
+      staff:
+        one: Estandar Personal
+        other: Estandares de Personal
+    attributes:
+      staff:
+        code: Código
+        description: Descripción
+        definition: Definición
+        staff_id: Estandar Principal
+        geography_id: País
+        language_id: Idioma
+        state: Estado
+        created_at: Fecha Creación
+        updated_at: Ultima Actualización

@@ -1,0 +1,34 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Code:</strong>
+  <%= @entity.code %>
+</p>
+
+<p>
+  <strong>Abbreviation:</strong>
+  <%= @entity.abbreviation %>
+</p>
+
+<p>
+  <strong>Description:</strong>
+  <%= @entity.description %>
+</p>
+
+<p>
+  <strong>Care level:</strong>
+  <%= @entity.care_level %>
+</p>
+
+<p>
+  <strong>Geography:</strong>
+  <%= @entity.geography %>
+</p>
+
+<p>
+  <strong>State:</strong>
+  <%= @entity.state %>
+</p>
+
+<%= link_to 'Edit', edit_entity_path(@entity) %> |
+<%= link_to 'Back', entities_path %>

@@ -1,0 +1,20 @@
+es:
+  activerecord:
+    models:
+      entity:
+        one: Entidad
+        other: Entidades
+    attributes:
+      entity:
+        code: Código
+        abbreviation: Abreviatura
+        description: Descripción
+        payroll_type: Tipo de Nomina
+        care_level_id: Nivel de Complejidad
+        geography_id: Ubicación
+        state: Estado
+        created_at: Fecha Creación
+        updated_at: Ultima Actualización
+  change_entity: Entidad cambiada exitosamente
+  entity_associations: Relaciones de la entidad
+  located_in: Ubicada en
