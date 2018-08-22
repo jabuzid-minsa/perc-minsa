@@ -16,6 +16,7 @@
 !/log/.keep
 /tmp
 
-#
+# Ignore Config production
 /config/database.yml
 /config/secrest.yml
+/config/enviroments/production.rb

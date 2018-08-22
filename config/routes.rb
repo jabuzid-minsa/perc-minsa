@@ -134,41 +134,42 @@ Rails.application.routes.draw do
 
   # Parametrization paths for the app.
   scope 'parametrization', prefix: 'parametrization' do
-	# Routes scaffold for Cost Centers
-	resources :cost_centers, except: [:show, :destroy]
-	# Routes scaffold for Staffs
-	resources :staffs, except: [:show, :destroy]
-	# Routes scaffold for Supplies
-	resources :supplies, except: [:show, :destroy]	
-	# Routes scaffold for Production Units
-	resources :production_units, except: [:show, :destroy]
-	# Routes scaffold for Care Levels
-	resources :care_levels, except: [:show, :destroy]
-	# Routes scaffold for Cost Distributions
-	resources :cost_distributions, except: [:show, :destroy]
-	# Routes scaffold for Supplies Categories
-	resources :supplies_categories, except: [:show, :destroy]
-	# Validate unique code
-	get 'geographies/validate_unique_code' => 'geographies#validate_unique_code', as: 'validate_geography_unique_code'
-	# Create levels of geography
-	get 'geographies/create_level/second_level' => 'geographies#create_second_level', as: 'create_geography_second_level'
-	get 'geographies/create_level/third_level' => 'geographies#create_third_level', as: 'create_geography_third_level'
-	get 'geographies/create_level/fourth_level' => 'geographies#create_fourth_level', as: 'create_geography_fourth_level'
-	get 'geographies/create_level/fifth_level' => 'geographies#create_fifth_level', as: 'create_geography_fifth_level'
-	# Get levels of Geography
-	get 'geographies/third_level' => 'geographies#get_third_level', as: 'get_geographies_third_level'
-	get 'geographies/fourth_level' => 'geographies#get_fourth_level', as: 'get_geographies_fourth_level'
-	get 'geographies/fifth_level' => 'geographies#get_fifth_level', as: 'get_geographies_fifth_level'
-	# Routes scaffold for Geographies
-	resources :geographies, except: [:show, :destroy]
-	# Configuration paths for the gem Devise.
-	devise_for :users, controllers: {
-		registrations: 'devise_user/registrations',
-		sessions: 'devise_user/sessions',
-		passwords: 'devise_user/passwords'
-	}
-	# Routes scaffold for Users, additional features to devise
-	resources :users, only: [:index, :edit, :update]
+  	put 'users/:id/reset_password', to: 'users#reset_password', as: 'users_reset_password'
+		# Routes scaffold for Cost Centers
+		resources :cost_centers, except: [:show, :destroy]
+		# Routes scaffold for Staffs
+		resources :staffs, except: [:show, :destroy]
+		# Routes scaffold for Supplies
+		resources :supplies, except: [:show, :destroy]	
+		# Routes scaffold for Production Units
+		resources :production_units, except: [:show, :destroy]
+		# Routes scaffold for Care Levels
+		resources :care_levels, except: [:show, :destroy]
+		# Routes scaffold for Cost Distributions
+		resources :cost_distributions, except: [:show, :destroy]
+		# Routes scaffold for Supplies Categories
+		resources :supplies_categories, except: [:show, :destroy]
+		# Validate unique code
+		get 'geographies/validate_unique_code' => 'geographies#validate_unique_code', as: 'validate_geography_unique_code'
+		# Create levels of geography
+		get 'geographies/create_level/second_level' => 'geographies#create_second_level', as: 'create_geography_second_level'
+		get 'geographies/create_level/third_level' => 'geographies#create_third_level', as: 'create_geography_third_level'
+		get 'geographies/create_level/fourth_level' => 'geographies#create_fourth_level', as: 'create_geography_fourth_level'
+		get 'geographies/create_level/fifth_level' => 'geographies#create_fifth_level', as: 'create_geography_fifth_level'
+		# Get levels of Geography
+		get 'geographies/third_level' => 'geographies#get_third_level', as: 'get_geographies_third_level'
+		get 'geographies/fourth_level' => 'geographies#get_fourth_level', as: 'get_geographies_fourth_level'
+		get 'geographies/fifth_level' => 'geographies#get_fifth_level', as: 'get_geographies_fifth_level'
+		# Routes scaffold for Geographies
+		resources :geographies, except: [:show, :destroy]
+		# Configuration paths for the gem Devise.
+		devise_for :users, controllers: {
+			registrations: 'devise_user/registrations',
+			sessions: 'devise_user/sessions',
+			passwords: 'devise_user/passwords'
+		}
+		# Routes scaffold for Users, additional features to devise
+		resources :users, only: [:index, :edit, :update]
   end
 
   # Configuration paths for the app.

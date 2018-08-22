@@ -47,6 +47,10 @@
                       <%= link_to edit_user_path(user) do %>
                           <i class="fa fa-pencil text-navy text-warning"></i>
                       <% end %>
+                       | 
+                      <%= link_to users_reset_password_path(user), remote: true, 'data-method': 'put' do %> 
+                        <i class='fa fa-undo'></i>
+                      <% end %>                      
                     </td>
                   </tr>
               <% end %>
