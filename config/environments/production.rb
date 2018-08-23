@@ -78,7 +78,7 @@ Rails.application.configure do
   config.active_record.dump_schema_after_migration = false
 
   # SMTP
-  config.action_mailer.default_url_options = { :host => 'perc.paho.org' }
+  config.action_mailer.default_url_options = { :host => 'perc.paho.org', protocol: 'https' }
   config.action_mailer.delivery_method = :smtp #:sendmail
   config.action_mailer.raise_delivery_errors = false
   config.action_mailer.perform_deliveries = true

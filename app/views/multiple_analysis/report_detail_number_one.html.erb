@@ -137,9 +137,12 @@
 									title: 'Tabla de Analisis',
 									action: function(e, dt, node, config) {
 										var $thisbtn = this;
-										$.when($('.decimal_numbers_2').number(true, 0, '.', '')).done(function (){
-											$.when($.fn.DataTable.ext.buttons.excelHtml5.action.call(this, e, dt, node, config)).done(function (){
-												$('.decimal_numbers_2').number( true, 0 );
+										$.when($('.decimal_numbers_2').number(true, 0, '.', '')).done(function() {
+											$.when($('.number-two-decimals').number(true, 2, '.', '')).done(function() {
+												$.when($.fn.DataTable.ext.buttons.excelHtml5.action.call($thisbtn, e, dt, node, config)).done(function() {
+													$('.decimal_numbers_2').number( true, 0 );
+													$('.number-two-decimals').number( true, 2 );
+												});
 											});
 										});
 									}
