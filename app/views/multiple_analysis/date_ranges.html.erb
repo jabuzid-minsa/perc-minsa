@@ -25,9 +25,9 @@
 									<div class="form-group">
 										<h2 class="font-noraml"><%= t('app.analysis_tables.multiple_months.selection_months.selection_range') %></h2>
 										<div class="input-daterange input-group"  id="datepicker">
-											<input type="text" class="input-sm form-control" name="date[start]" value="<%= session[:date_start] %>" required="required" />
+											<input type="text" class="input-sm form-control" name="date[start]" value="<%= session[:date_start] %>" required="required" autocomplete="off" />
 											<span class="input-group-addon"><%= t('app.analysis_tables.multiple_months.selection_months.to') %></span>
-											<input type="text" class="input-sm form-control" name="date[end]" value="<%= session[:date_end] %>" required="required" />
+											<input type="text" class="input-sm form-control" name="date[end]" value="<%= session[:date_end] %>" required="required" autocomplete="off" />
 										</div>										
 									</div>
 								</div>

@@ -1,6 +1,12 @@
 Rails.application.routes.draw do
+	scope 'analysis_network' do
+		post '/filter_entities', to: 'analysis_networks#analysis_entities', as: 'analysis_entities_analysis_networks'
+		get '/filter_entities/network', to: 'analysis_networks#filter_entities_network', as: 'filter_entities_network_analysis_networks'
+		get '/filter_entities/country', to: 'analysis_networks#filter_entities_country', as: 'filter_entities_country_analysis_networks'
+		get '/filter_entities', to: 'analysis_networks#filter_analysis', as: 'filter_entities_analysis_networks'
+	end
 	#
-	scope 'multiple_months', prefix: 'multiple_months' do		
+	scope 'multiple_months', prefix: 'multiple_months' do
 		post 'analysis/consumption_centers_support', to: 'multiple_analysis#data_consumption', as: 'multiple_data_consumption'
 		get 'analysis/consumption_centers_support', to: 'multiple_analysis#consumption_centers_support', as: 'multiple_consumption_support'
 

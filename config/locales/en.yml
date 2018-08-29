@@ -196,8 +196,16 @@ en:
       minimum_caracters: minimal characters
     sections:
       analysis_and_graphs: Analysis and Graphics
+      analysis_networks: 
+        title: Network Analysis
+        filter: Filter to select the institutions you want to analyze
+        loading: Carrying out calculations and final processes, the report is finished soon
+        menu:
+          main: Analysis Network
+          filter_analysis: Filter Entities
       cost_tool: Costs
       local_parametrization: Local Parameterization
+      menu_multiple_months_analysis: Multiple Months
       multiple_months_analysis: Multiple Months Analysis
       parametrization: Parameterization
       settings: Configuration

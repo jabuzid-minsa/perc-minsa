@@ -196,8 +196,16 @@ es:
       minimum_caracters: caracteres minimo
     sections:
       analysis_and_graphs: Análisis y Gráficos
+      analysis_networks: 
+        title: Análisis de Red
+        filter: Filtre para seleccionar las instituciones que desea analizar
+        loading: Realizando calculos y procesos finales, En breve se terminara de generar el informe
+        menu:
+          main: Análisis Red
+          filter_analysis: Filtrar Entidades
       cost_tool: Costos
       local_parametrization: Parametrización Local
+      menu_multiple_months_analysis: Multiples Meses
       multiple_months_analysis: Análisis Múltiples Meses
       parametrization: Parametrización
       settings: Configuración

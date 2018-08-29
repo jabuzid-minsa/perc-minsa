@@ -1,4 +1,5 @@
 class Geography < ActiveRecord::Base
+  has_many :entities
 
   # Model validations
   validates :numerical_code, presence: true, numericality: { only_integer: true }

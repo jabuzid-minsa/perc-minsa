@@ -1,0 +1,183 @@
+<% content_for :stylesheet do %>
+  <%= stylesheet_link_tag 'dual-select', media: 'screen', 'data-turbolinks-track' => true %>
+<% end %>
+
+<% content_for :breadcrumb_title do %><%= t('app.sections.analysis_networks.title') %><% end %>
+<% content_for :breadcrumb_list do %>
+    <li class="active"><strong><%= t('app.sections.analysis_networks.title') %></strong></li>
+<% end %>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-title">
+          <h5><%= t('app.sections.analysis_networks.filter') %></h5>
+          <div class="ibox-tools">
+            <a class="collapse-link">
+              <i class="fa fa-chevron-up"></i>
+            </a>
+          </div>
+        </div>
+        <div class="ibox-content">
+          <%= form_tag(analysis_entities_analysis_networks_url, method: 'post', html: { class: 'p-w-md' }) do  %>
+            <div class="row">
+              <div class="col-md-8 col-md-offset-2 text-center">
+                <h2 class="font-noraml"><%= t('app.analysis_tables.multiple_months.selection_months.selection_range') %></h2>
+                <div class="input-daterange input-group margin-auto" id="datepicker">
+                  <input type="text" class="input-sm form-control" name="analysis_networks[date_start]" required="required" autocomplete="off" />
+                  <span class="input-group-addon"><%= t('app.analysis_tables.multiple_months.selection_months.to') %></span>
+                  <input type="text" class="input-sm form-control" name="analysis_networks[date_end]" required="required" autocomplete="off" />
+                </div>
+              </div>
+            </div>
+            <div class="row margin-top-40">
+              <div class="col-md-4 col-md-offset-2">
+                <%= analysis_networks_geographies(@countries) %>
+              </div>
+              <div class="col-md-4">
+                <%= select_tag 'networks', options_for_select(@networks.collect{|u| [u.description, u.id] }),
+                  class: 'form-control select2', id: 'networks_analysis_networks', include_blank: true %>
+              </div>
+            </div>
+            <div class="row margin-top-40">
+              <div class="col-md-12">
+                <%= select_tag 'analysis_networks[entities][]', options_for_select(@entities.collect{|u| [u.description, u.id] }),
+                  class: 'form-control multi-select', id: 'entities_analysis_networks', multiple: 'true', required: true %>
+                <div class="text-center margin-top-10">
+                  <button type="button" class="btn btn-info change_select_multiselect" data-change="select_all">
+                    <i class="fa fa-angle-double-right fa-2x"></i>
+                  </button>
+                  &nbsp;&nbsp;
+                  <button type="button" class="btn btn-warning change_select_multiselect" data-change="deselect_all">
+                    <i class="fa fa-angle-double-left fa-2x"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 text-left">
+                <%= submit_tag t('app.analysis_tables.multiple_months.selection_months.button_analyze'), class: 'btn btn-primary font-size-2' %>
+              </div>
+            </div>
+          <% end %>
+        </div>    
+      </div>
+    </div>
+  </div>
+</div>
+
+<% content_for :javascript do %>
+  <%= javascript_include_tag 'dual-select', 'data-turbolinks-track' => true %>
+  <script type="text/javascript">
+    $(document).ready(function() {
+      var input_search_multi_select = '<input type="text" class="form-control search-input" autocomplete="off" placeholder="<%= t('app.dual_select.multi_select.filter_place_holder') %>">',
+          selectable_header = '<label for=""><%= t('app.dual_select.multi_select.non_selected_list_label') %></label>' + input_search_multi_select,
+          selection_header = '<label for=""><%= t('app.dual_select.multi_select.selected_list_label') %></label>' + input_search_multi_select;
+
+      $('.multi-select').multiSelect({
+        selectableHeader: selectable_header,
+        selectionHeader: selection_header,
+        afterInit: function(ms){
+          var that = this,
+              $selectableSearch = that.$selectableUl.prev(),
+              $selectionSearch = that.$selectionUl.prev(),
+              selectableSearchString = '#'+that.$container.attr('id')+' .ms-elem-selectable:not(.ms-selected)',
+              selectionSearchString = '#'+that.$container.attr('id')+' .ms-elem-selection.ms-selected';
+
+          that.qs1 = $selectableSearch.quicksearch(selectableSearchString)
+              .on('keydown', function(e){
+                if (e.which === 40){
+                  that.$selectableUl.focus();
+                  return false;
+                }
+              });
+
+          that.qs2 = $selectionSearch.quicksearch(selectionSearchString)
+              .on('keydown', function(e){
+                if (e.which == 40){
+                  that.$selectionUl.focus();
+                  return false;
+                }
+              });
+        }
+      });
+      $('.change_select_multiselect').click(function() {
+        var action = $(this).data('change');
+
+        $('#entities_analysis_networks').multiSelect(action);
+      });
+
+      $('.input-daterange').datepicker({
+        format: "mm/yyyy",
+        minViewMode: 1,
+        autoclose: true
+      });
+
+      $('#countries_analysis_networks').change(function() {
+        $.ajax({
+          url: "<%= filter_entities_country_analysis_networks_path %>",
+          method: 'GET',
+          data: {
+            country: $(this).val()
+          },
+          beforeSend: function() {
+            $(this).prop('disabled', true);
+          }
+        }).done(function(data) {
+          updateNetworks(data.networks);
+          updateEntities(data.entities);
+        }).fail(function(xhr, text, error) {
+          alert('Ocurrio un error al realizar el filtro por pais, ententelo de nuevo');
+        }).always(function() {
+          $(this).prop('disabled', false);
+        });
+      });
+
+      $('#networks_analysis_networks').change(function() {
+        $.ajax({
+          url: "<%= filter_entities_network_analysis_networks_path %>",
+          method: 'GET',
+          data: {
+            country: $('#countries_analysis_networks').val(),
+            network: $(this).val()
+          },
+          beforeSend: function() {
+            $(this).prop('disabled', true);
+          }
+        }).done(function(data) {
+          console.log(data);
+          updateEntities(data);
+        }).fail(function(xhr, text, error) {
+          alert('Ocurrio un error al realizar el filtro por pais, ententelo de nuevo');
+        }).always(function() {
+          $(this).prop('disabled', false);
+        });
+      });
+    });
+
+    function updateNetworks(networks) {
+      var html_options = '<option value></option>';
+
+      $(networks).each(function(i, v) {
+        html_options += '<option value="' + v.id + '">' + v.description + '</option>';
+      });
+
+      $('#networks_analysis_networks').empty();
+      $('#networks_analysis_networks').append(html_options);
+      $('#networks_analysis_networks').select2();
+    }
+
+    function updateEntities(entities) {
+      var html_options = '';
+
+      $(entities).each(function(i, v) {
+        html_options += '<option value="' + v.id + '">' + v.description + '</option>';
+      });
+
+      $('#entities_analysis_networks').empty();
+      $('#entities_analysis_networks').append(html_options);
+      $('#entities_analysis_networks').multiSelect('refresh');
+    }
+  </script>
+<% end %>

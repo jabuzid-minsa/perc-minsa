@@ -172,7 +172,7 @@
           <li class="<%= is_active_prefix('multiple_months') %>">
             <a>
               <i class="fa fa-pie-chart"></i>
-              <span class="nav-label" data-i18n="nav.dashboard">Multiples Meses</span>
+              <span class="nav-label" data-i18n="nav.dashboard"><%= t 'app.sections.menu_multiple_months_analysis' %></span>
               <span class="fa arrow"></span>
             </a>
             <ul class="nav nav-second-level collapse <%= is_active_prefix('multiple_months') %>">
@@ -183,6 +183,21 @@
               <li class="<%= is_active_action('consumption_centers_support') %>"><%= link_to 'Consumos CPA', multiple_consumption_support_path %></li>
             </ul>
           </li>
+      <% end %>
+
+      <% if can? :access_analysis_networks, :analysis_networks %>
+        <li class="<%= is_active_controller('analysis_networks') %>">
+          <a>
+              <i class="fa fa-pie-chart"></i>
+              <span class="nav-label" data-i18n="nav.dashboard"><%= t 'app.sections.analysis_networks.menu.main' %></span>
+              <span class="fa arrow"></span>
+            </a>
+            <ul class="nav nav-second-level collapse <%= is_active_controller('analysis_networks') %>">
+              <li class="<%= is_active_action('filter_analysis') or is_active_action('analysis_entities') %>">
+                <%= link_to t('app.sections.analysis_networks.menu.filter_analysis'), filter_entities_analysis_networks_path %>
+              </li>
+            </ul>
+        </li>
       <% end %>
 		</ul>
 	</div>

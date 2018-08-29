@@ -1,0 +1,118 @@
+<div class="ibox float-e-margins">
+	<div class="ibox-title">
+		<h5><%= t('app.analysis_tables.two.third_panel.title') %></h5>
+		<div class="ibox-tools">
+			<a class="collapse-link">
+				<i class="fa fa-chevron-up"></i>
+			</a>
+		</div>
+	</div>
+	<div class="ibox-content">
+		<div class="row">
+			<div class="col-md-12">
+				<table class="table table-bordered dataTable no-footer fixed_table" cellspacing="0" id="production_centers">
+					<thead>
+						<tr>
+							<td></td>
+							<% @supported_cost_centers.each do |cost_center| %>
+									<td data-cost-center="<%= cost_center.description %>" data-function="<%= cost_center.function %>">
+										<label for=""><%= cost_center.description %></label>
+									</td>
+							<% end %>
+						</tr>
+					</thead>
+					<tbody>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+
+<% content_for :javascript do %>
+	<script type="text/javascript">
+		/** ---------------------- Variables ---------------------- **/
+		var production_centers = <%= @production_centers_data.to_json.html_safe %>,
+				direct_cost_table = $('#summary_table'),
+				indirect_cost_table = $('#indirect_costs_table'),
+				production_table = $('#production_centers'),
+				name_row_production = [
+					"<%= t('app.analysis_tables.two.third_panel.production_unit') %>"+' 1',
+					"<%= t('app.analysis_tables.two.third_panel.production_unit') %>"+' 2',
+					"<%= t('app.analysis_tables.two.third_panel.production_unit') %>"+' 3',
+					"<%= t('app.analysis_tables.two.third_panel.production_unit') %>"+' 4',
+					"<%= t('app.analysis_tables.two.third_panel.production_unit') %>"+' 5',
+					"<%= t('app.analysis_tables.two.third_panel.production_unit') %>"+' N. Camas',
+				],
+				name_row_unit_cost = [
+					"<%= t('app.analysis_tables.two.third_panel.unit_cost_production') %>"+' 1',
+					"<%= t('app.analysis_tables.two.third_panel.unit_cost_production') %>"+' 2',
+					"<%= t('app.analysis_tables.two.third_panel.unit_cost_production') %>"+' 3',
+					"<%= t('app.analysis_tables.two.third_panel.unit_cost_production') %>"+' 4',
+					"<%= t('app.analysis_tables.two.third_panel.unit_cost_production') %>"+' 5',
+					"<%= t('app.analysis_tables.two.third_panel.unit_cost_production') %>"+' N. Camas',
+				];
+		/** ---------------------- Functions ---------------------- **/
+		//
+		function create_records_data(production_unit, html) {
+			$.when(production_table.find('tbody').append('<tr data-production-unit="'+production_unit+'" data-value="production">'+html+'</tr>')).done(
+				function() {
+					html = html.replace(/class="decimal_numbers_2"/g, 'class="number-two-decimals"');
+					production_table.find('tbody').append('<tr data-production-unit="'+production_unit+'" data-value="unit_cost">'+html+'</tr>');
+				}
+			);
+		}
+		//
+		function calculated_total_per_center() {
+			var total_direct, total_indirect, 
+					html = '<tr><td><label>'+"<%= t('app.analysis_tables.two.third_panel.total_cost_center') %>"+'</label></td>';
+			direct_cost_table.find('tbody tr[data-summary="total"] td').not(':first').not(':last').each(function(index, value) {
+				total_direct = clean_number_mask($(value).find('label').html());
+				total_indirect = clean_number_mask(indirect_cost_table.find('tr[data-indirect="total"] td[data-cost-center="'+$(value).data('cost-center')+'"] label').html());
+				html += '<td class="text-right" data-cost-center="'+$(value).data('cost-center')+'">'+
+								'<label class="decimal_numbers_2">'+(total_direct + total_indirect).toFixed(2)+'</label></td>';
+			});
+			
+			html += '</tr>';
+
+			$.when(production_table.find('tbody').append(html)).done(function() {
+				html = production_table.find('tbody tr:eq(0)').html().trim();
+				$([1,2,3,4,5,6]).each(function(index, value) {					
+					$.when(create_records_data(value, html)).done(function() {
+						production_table.find('tbody tr[data-production-unit="'+value+'"] td label').html('');
+					});
+				});
+			});
+		}
+		//
+		function calculate_units_costs() {
+			var html_production, html_unit_cost, data_filter, total_cost;
+
+			$([1,2,3,4,5,6]).each(function(index, value) {
+				production_table.find('tbody tr[data-production-unit="'+value+'"][data-value="production"] td:first label').html(name_row_production[value-1]);
+				production_table.find('tbody tr[data-production-unit="'+value+'"][data-value="unit_cost"] td:first label').html(name_row_unit_cost[value-1]);
+
+				data_filter = production_centers.filter(function(data) { return data.production_units == value });
+
+				$(data_filter).each(function(ind, val) {
+					total_cost = clean_number_mask(production_table.find('tbody tr:eq(0) td[data-cost-center="'+val.cost_center_id+'"] label').html());
+					production_table.find('tbody tr[data-production-unit="'+value+'"][data-value="production"] td[data-cost-center="'+val.cost_center_id+'"] label').html(val.value);
+					if (val.equivalence > 0) {
+						cost_per_unit = total_cost/val.total_center;
+						converted_cost = val.convert_value * cost_per_unit;
+						html_unit_cost = converted_cost/val.value;
+					} else {
+						html_unit_cost = total_cost/parseFloat(val.value);
+					}
+					production_table.find('tbody tr[data-production-unit="'+value+'"][data-value="unit_cost"] td[data-cost-center="'+val.cost_center_id+'"] label').html(html_unit_cost);
+				});
+			});
+		}
+		//
+		function calculated_productions_and_costs() {
+			$.when(calculated_total_per_center()).done(function() {
+				calculate_units_costs();		
+			});	
+		}
+	</script>
+<% end %>;
