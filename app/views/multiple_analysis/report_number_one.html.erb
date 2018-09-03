@@ -16,8 +16,14 @@
 <div class="wrapper wrapper-content animated fadeInRight">
 	<div class="row">
 		<div class="col-lg-12">
-			<h2><%= @entity.description %></h2>
-			<br>
+			<div class="ibox float-e-margins">
+				<div class="ibox-title">
+				</div>
+				<div class="ibox-content" id="content-control-panel">
+					<h2 class="text-center"><%= @entity.description %></h2>
+				</div>
+			</div>
+				
 			<%= render 'multiple_analysis/partials/control_panel' %>
 
 			<%= render 'multiple_analysis/partials/concepts_by_date' %>
