@@ -26,7 +26,7 @@ class AnalysisGraphsController < ApplicationController
 
     @osteosinthesis_material = DistributionSupply.where(year: session[:year], month: session[:month], entity_id: session[:entity_id], supply_id: 16).select('ROUND(SUM(value),0) AS total')
 
-    @total_beds = ProductionCostCenter.where(year: session[:year], month: session[:month], entity_id: session[:entity_id], production_units: 6).select('ROUND(SUM(value),0) AS total')
+    @total_beds = ProductionCostCenter.joins('INNER JOIN entity_cost_centers ON entity_cost_centers.entity_id = production_cost_centers.entity_id AND entity_cost_centers.cost_center_id = production_cost_centers.cost_center_id').where(year: session[:year], month: session[:month], entity_id: session[:entity_id], production_units: 6).select('ROUND(SUM(value),0) AS total')
 
     @support_themselves = ActiveRecord::Base.connection.select_all("CALL validate_support_themselves(#{session[:year]},#{session[:month]}, #{session[:entity_id]})").to_hash
     ActiveRecord::Base.clear_active_connections!
