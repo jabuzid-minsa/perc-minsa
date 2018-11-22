@@ -111,6 +111,7 @@ class PayrollsController < ApplicationController
     ActiveRecord::Base.clear_active_connections!
 
     message = Payroll.import(params[:file], session[:year], session[:month], session['entity_id'], session['country_id'], Entity.find(session[:entity_id]).payroll_type)
+
     redirect_to payrolls_url, notice: message
   end
 

@@ -59,6 +59,9 @@ class ProgrammingHoursController < ApplicationController
 		end
 
 		ProgrammingHour.import(params[:file], session[:year], session[:month], session[:entity_id])
+		
+		GenerateReportJob.perform_later(1, session[:year], session[:month], session['entity_id'])
+
 		redirect_to programming_hours_url, notice: "Archivo Importado."
 	end
 

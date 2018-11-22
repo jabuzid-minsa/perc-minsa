@@ -1,4 +1,8 @@
+require 'sidekiq/web'
+
 Rails.application.routes.draw do
+	mount Sidekiq::Web => '/sidekiq'
+
 	scope 'analysis_network' do
 		post '/filter_entities', to: 'analysis_networks#analysis_entities', as: 'analysis_entities_analysis_networks'
 		get '/filter_entities/network', to: 'analysis_networks#filter_entities_network', as: 'filter_entities_network_analysis_networks'

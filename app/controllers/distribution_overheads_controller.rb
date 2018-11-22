@@ -62,6 +62,9 @@ class DistributionOverheadsController < ApplicationController
     end
 
     DistributionOverhead.import(params[:file], session[:year], session[:month], session[:entity_id])
+
+    GenerateReportJob.perform_later(2, session[:year], session[:month], session['entity_id'])
+
     redirect_to distribution_overheads_url, notice: "Archivo Importado."
   end
 

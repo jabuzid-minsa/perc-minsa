@@ -13,20 +13,22 @@ class DistributionSupply < ActiveRecord::Base
     (2..spreadsheet.last_row).each do |i|
       row = spreadsheet.row(i)
       cost_center = row[0].split('-')[0]
-      for column in 1..(row.length-1)        
-      	supply = spreadsheet.row(1)[column].split('-')[0]
-        distribution_supply = find_by(year: year, month: month, entity_id: entity, cost_center_id: cost_center, supply_id: supply) || new
-        distribution_supply.year = year
-        distribution_supply.month = month
-        distribution_supply.entity_id = entity
-        distribution_supply.supply_id = supply
-        distribution_supply.cost_center_id = cost_center
-        distribution_supply.value = row[column].present? ? row[column] : 0
-        begin
-          distribution_supply.save!
-        rescue Exception => e  
-          return "Error con el archivo, solo se importo hasta la linea #{i-1}, error: #{e}."
-        end
+      for column in 1..(row.length-1) 
+        if row[column].present? and row[column] > 0
+        	supply = spreadsheet.row(1)[column].split('-')[0]
+          distribution_supply = find_by(year: year, month: month, entity_id: entity, cost_center_id: cost_center, supply_id: supply) || new
+          distribution_supply.year = year
+          distribution_supply.month = month
+          distribution_supply.entity_id = entity
+          distribution_supply.supply_id = supply
+          distribution_supply.cost_center_id = cost_center
+          distribution_supply.value = row[column]
+          begin
+            distribution_supply.save!
+          rescue Exception => e  
+            return "Error con el archivo, solo se importo hasta la linea #{i-1}, error: #{e}."
+          end
+        end        
       end
     end
     return "Archivo Importado."

@@ -41,6 +41,10 @@ class DistributionCostsController < ApplicationController
     end
 
     message = DistributionCost.import(params[:file], session[:year], session[:month], session[:entity_id])
+    
+    GenerateReportJob.perform_later(4, session[:year], session[:month], session['entity_id'])
+    GenerateReportJob.perform_later(5, session[:year], session[:month], session['entity_id'])
+
     redirect_to distribution_costs_url, notice: message
   end
   

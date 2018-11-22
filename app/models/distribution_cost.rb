@@ -15,19 +15,21 @@ class DistributionCost < ActiveRecord::Base
 			cost_center = row[0].split('-')[0].split('_')[0]
 			unit_production = row[0].split('-')[0].split('_')[1]
 			for column in 1..(row.length-1)
-				support_cost_center = spreadsheet.row(1)[column].split('-')[0]
-				distribution_cost = find_by(year: year, month: month, entity_id: entity, cost_center_id: cost_center, supported_cost_center_id: support_cost_center, production_units: unit_production) || new
-				distribution_cost.year = year
-				distribution_cost.month = month
-				distribution_cost.entity_id = entity
-				distribution_cost.cost_center_id = cost_center
-				distribution_cost.supported_cost_center_id = support_cost_center
-				distribution_cost.production_units = unit_production
-				distribution_cost.value = row[column].present? ? row[column] : 0				
-				begin
-					distribution_cost.save!
-				rescue Exception => e  
-					return "Error con el archivo, solo se importo hasta la linea #{i-1}, error: #{e}."
+				if row[column].present? and row[column] > 0
+					support_cost_center = spreadsheet.row(1)[column].split('-')[0]
+					distribution_cost = find_by(year: year, month: month, entity_id: entity, cost_center_id: cost_center, supported_cost_center_id: support_cost_center, production_units: unit_production) || new
+					distribution_cost.year = year
+					distribution_cost.month = month
+					distribution_cost.entity_id = entity
+					distribution_cost.cost_center_id = cost_center
+					distribution_cost.supported_cost_center_id = support_cost_center
+					distribution_cost.production_units = unit_production
+					distribution_cost.value = row[column]
+					begin
+						distribution_cost.save!
+					rescue Exception => e  
+						return "Error con el archivo, solo se importo hasta la linea #{i-1}, error: #{e}."
+					end
 				end
 			end
 		end

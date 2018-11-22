@@ -40,6 +40,9 @@ class DistributionSuppliesController < ApplicationController
     end
 
     DistributionSupply.import(params[:file], session[:year], session[:month], session[:entity_id])
+
+    GenerateReportJob.perform_later(3, session[:year], session[:month], session['entity_id'])
+
     redirect_to distribution_supplies_url, notice: "Archivo Importado."
   end
 

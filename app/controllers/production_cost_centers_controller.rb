@@ -38,6 +38,9 @@ class ProductionCostCentersController < ApplicationController
     end
 
     message = ProductionCostCenter.import(params[:file], session[:year], session[:month], session['entity_id'])
+
+    GenerateReportJob.perform_later(5, session[:year], session[:month], session['entity_id'])
+
     redirect_to production_cost_centers_url, notice: message
   end
 

@@ -1,5 +1,11 @@
 source 'https://rubygems.org'
 
+# Clean ruby syntax for writing and deploying cron jobs.
+gem 'whenever', '~> 0.10.0'
+
+# Simple, efficient background processing for Ruby.
+gem 'sidekiq', '~> 4.2', '>= 4.2.10'
+
 # Audited Tables
 gem 'audited', '~> 4.7', '>= 4.7.1'
 
@@ -80,4 +86,3 @@ group :development do
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
 end
-
