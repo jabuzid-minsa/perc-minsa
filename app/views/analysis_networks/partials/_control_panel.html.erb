@@ -1,0 +1,131 @@
+<div class="ibox float-e-margins">
+  <div class="ibox-title">
+    <h5><%= t('app.analysis_tables.one.first_panel.title') %></h5>
+    <div class="ibox-tools">
+      <a class="collapse-link">
+        <i class="fa fa-chevron-up"></i>
+      </a>
+    </div>
+  </div>
+  <div class="ibox-content" id="content-control-panel">
+    <p>
+      <strong><%= t('app.analysis_tables.one.first_panel.month') %>: </strong><span id="month-current-human"></span>
+    </p>
+    <div class="row">
+      <div class="col-md-4"></div>
+      <div class="col-md-4">
+        <div class="dropdown">
+          <button class="btn btn-default dropdown-toggle" type="button" id="elements_cp2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+            <%= t('app.analysis_tables.one.first_panel.select_items') %>
+            <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="elements_cp2">
+            <li><label style="padding: 0px 5px;"><input class="cp2_change_display" type="checkbox" data-target="#cp2_item_1"> <%= t('app.analysis_tables.one.first_panel.hospitalization') %></label></li>
+            <li><label style="padding: 0px 5px;"><input class="cp2_change_display" type="checkbox" data-target="#cp2_item_2"> <%= t('app.analysis_tables.one.first_panel.intensive_care_unit') %></label></li>
+            <li><label style="padding: 0px 5px;"><input class="cp2_change_display" type="checkbox" data-target="#cp2_item_3"> <%= t('app.analysis_tables.one.first_panel.quirofanos') %></label></li>
+            <li><label style="padding: 0px 5px;"><input class="cp2_change_display" type="checkbox" data-target="#cp2_item_4"> <%= t('app.analysis_tables.one.first_panel.emergencies') %></label></li>
+            <li><label style="padding: 0px 5px;"><input class="cp2_change_display" type="checkbox" data-target="#cp2_item_5"> <%= t('app.analysis_tables.one.first_panel.consultation') %></label></li>
+            <li><label style="padding: 0px 5px;"><input class="cp2_change_display" type="checkbox" data-target="#cp2_item_6"> <%= t('app.analysis_tables.one.first_panel.extramural_services') %></label></li>
+            <li><label style="padding: 0px 5px;"><input class="cp2_change_display" type="checkbox" data-target="#cp2_item_7"> <%= t('app.analysis_tables.one.first_panel.clinic') %></label></li>
+            <li><label style="padding: 0px 5px;"><input class="cp2_change_display" type="checkbox" data-target="#cp2_item_8"> <%= t('app.analysis_tables.one.first_panel.promotion_prevention') %></label></li>
+            <li><label style="padding: 0px 5px;"><input class="cp2_change_display" type="checkbox" data-target="#cp2_item_9"> <%= t('app.analysis_tables.one.first_panel.primary_health') %></label></li>
+            <li><label style="padding: 0px 5px;"><input class="cp2_change_display" type="checkbox" data-target="#cp2_item_10"> <%= t('app.analysis_tables.one.first_panel.basic_plan') %></label></li>
+            <li><label style="padding: 0px 5px;"><input class="cp2_change_display" type="checkbox" data-target="#cp2_item_11"> <%= t('app.analysis_tables.one.first_panel.other_services') %></label></li>
+            <li><label style="padding: 0px 5px;"><input class="cp2_change_display" type="checkbox" data-target="#cp2_item_12"> <%= t('app.analysis_tables.one.first_panel.administration') %></label></li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-md-4"></div>
+    </div>
+    <div class="row">
+      <div class="col-md-4">
+        <table class="table table-bordered no-footer" cellspacing="0" id="control_panel_1">
+          <thead>
+            <tr>
+              <td></td>
+              <td><%= t('app.analysis_tables.common.total') %></td>
+              <td><%= t('app.analysis_tables.common.percentage') %></td>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><%= t('app.analysis_tables.common.total_cost') %></td>
+            </tr>
+            <tr>
+              <td><%= t('app.analysis_tables.common.human_resource') %></td>
+            </tr>
+            <tr>
+              <td><%= t('app.analysis_tables.common.overheads') %></td>
+            </tr>
+            <tr>
+              <td><%= t('app.analysis_tables.common.supplies') %></td>
+            </tr>            
+          </tbody>
+        </table>
+        <table class="table table-bordered no-footer" cellspacing="0" id="control_panel_1p5">
+          <thead>
+            <tr>
+              <td></td>
+              <td><%= t('app.analysis_tables.common.total') %></td>
+              <td><%= t('app.analysis_tables.common.percentage') %></td>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><%= t('app.analysis_tables.one.first_panel.medicines') %></td>
+              <td class="text-right"><label class="decimal_numbers_2"></label></td>
+              <td class="text-right"><label class="decimal_numbers_2"></label></td>
+            </tr>
+            <tr>
+              <td><%= t('app.analysis_tables.one.first_panel.op_material') %></td>
+              <td class="text-right"><label class="decimal_numbers_2"></label></td>
+              <td class="text-right"><label class="decimal_numbers_2"></label></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="col-md-4">
+        <table class="table table-bordered dataTable no-footer" cellspacing="0" id="control_panel_2">
+          <thead>
+          <tr>
+            <td></td>
+            <td><%= t('app.analysis_tables.common.total') %></td>
+            <td><%= t('app.analysis_tables.common.percentage') %></td>
+          </tr>
+          </thead>
+          <tbody>
+            <tr id="#cp2_item_1" style="display: none;"><td><label><%= t('app.analysis_tables.one.first_panel.hospitalization') %></label></td></tr>
+            <tr id="#cp2_item_2" style="display: none;"><td><label><%= t('app.analysis_tables.one.first_panel.intensive_care_unit') %></label></td></tr>
+            <tr id="#cp2_item_3" style="display: none;"><td><label><%= t('app.analysis_tables.one.first_panel.quirofanos') %></label></td></tr>
+            <tr id="#cp2_item_4" style="display: none;"><td><label><%= t('app.analysis_tables.one.first_panel.emergencies') %></label></td></tr>
+            <tr id="#cp2_item_5" style="display: none;"><td><label><%= t('app.analysis_tables.one.first_panel.consultation') %></label></td></tr>
+            <tr id="#cp2_item_6" style="display: none;"><td><label><%= t('app.analysis_tables.one.first_panel.extramural_services') %></label></td></tr>
+            <tr id="#cp2_item_7" style="display: none;"><td><label><%= t('app.analysis_tables.one.first_panel.clinic') %></label></td></tr>
+            <tr id="#cp2_item_8" style="display: none;"><td><label><%= t('app.analysis_tables.one.first_panel.promotion_prevention') %></label></td></tr>
+            <tr id="#cp2_item_9" style="display: none;"><td><label><%= t('app.analysis_tables.one.first_panel.primary_health') %></label></td></tr>
+            <tr id="#cp2_item_10" style="display: none;"><td><label><%= t('app.analysis_tables.one.first_panel.basic_plan') %></label></td></tr>
+            <tr id="#cp2_item_11" style="display: none;"><td><label><%= t('app.analysis_tables.one.first_panel.other_services') %></label></td></tr>
+            <tr id="#cp2_item_12" style="display: none;"><td><label><%= t('app.analysis_tables.one.first_panel.administration') %></label></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="col-md-4">
+        <table class="table table-bordered dataTable no-footer" cellspacing="0" id="control_panel_3">
+          <thead>
+          <tr>
+            <td></td>
+            <td><%= t('app.analysis_tables.common.quantity') %></td>
+            <td><%= t('app.analysis_tables.common.average_cost') %></td>
+          </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><label><%= t('app.analysis_tables.one.first_panel.beds') %></label></td>
+              <td class="text-right"><label class="decimal_numbers_2"></label></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

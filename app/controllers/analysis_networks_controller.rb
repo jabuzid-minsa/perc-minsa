@@ -64,8 +64,15 @@ class AnalysisNetworksController < ApplicationController
   # POST /filter_entities
   def analysis_entities
     filters = analysis_entities_params()
-    commons_parameters = "'#{filters[:string_entities]}', #{filters[:start_year]}, #{filters[:start_month]}, #{filters[:final_year]}, #{filters[:final_month]}"
-    
+    @date_parameters = "#{filters[:start_year]}_#{filters[:final_year]}_#{filters[:start_month]}_#{filters[:final_month]}"
+    @entities_parameters = "#{filters[:string_entities]}"
+
+    if current_user.global_administrator?
+      @entities = Entity.where(id: filters[:entities]).select('id, code, abbreviation, description')
+    else
+      @entities = Entity.for_users(current_user.id).where(id: filters[:entities]).select('id, code, abbreviation, description')
+    end
+=begin
     # Headers Direct Costs
     @cost_centers = CostCenter.joins(:entity_cost_centers).where(:entity_cost_centers => { entity_id: filters[:entities] }).order_priority.order(:code).distinct
     @supplies_heads = Supply.joins(:entities).where(:entities_supplies => { entity_id: filters[:entities] } ).where('supplies.supplies_category_id = 1').order(:code).distinct
@@ -86,6 +93,34 @@ class AnalysisNetworksController < ApplicationController
     ActiveRecord::Base.clear_active_connections!
     @production_centers_data = ActiveRecord::Base.connection.select_all("CALL mm_mul_unit_costs_per_production(#{commons_parameters})").to_hash
     ActiveRecord::Base.clear_active_connections!
+=end
+  end
+
+  # /network/human_resource
+  def get_human_resource
+    dates = params[:dates].gsub! '_', ','
+    human_resource = ActiveRecord::Base.connection.select_all("CALL hs_calc_human_resource(#{dates},'#{params[:entities]}',4)").to_hash
+    ActiveRecord::Base.clear_active_connections!
+
+    render json: human_resource, status: :ok
+  end
+
+  # /network/overheads
+  def get_overheads
+    dates = params[:dates].gsub! '_', ','
+    overheads = ActiveRecord::Base.connection.select_all("CALL hs_calc_overheads(#{dates},'#{params[:entities]}',4)").to_hash
+    ActiveRecord::Base.clear_active_connections!
+
+    render json: overheads, status: :ok
+  end
+
+  # /network/supplies
+  def get_supplies
+    dates = params[:dates].gsub! '_', ','
+    supplies = ActiveRecord::Base.connection.select_all("CALL hs_calc_supplies(#{dates},'#{params[:entities]}',4)").to_hash
+    ActiveRecord::Base.clear_active_connections!
+
+    render json: supplies, status: :ok
   end
 
   private

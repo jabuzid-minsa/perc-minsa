@@ -4,6 +4,10 @@ Rails.application.routes.draw do
 	mount Sidekiq::Web => '/sidekiq'
 
 	scope 'analysis_network' do
+		get '/network/human_resource', to: 'analysis_networks#get_human_resource', as: 'get_human_resource_analysis_networks'
+		get '/network/overheads', to: 'analysis_networks#get_overheads', as: 'get_overheads_analysis_networks'
+		get '/network/supplies', to: 'analysis_networks#get_supplies', as: 'get_supplies_analysis_networks'
+
 		post '/filter_entities', to: 'analysis_networks#analysis_entities', as: 'analysis_entities_analysis_networks'
 		get '/filter_entities/network', to: 'analysis_networks#filter_entities_network', as: 'filter_entities_network_analysis_networks'
 		get '/filter_entities/country', to: 'analysis_networks#filter_entities_country', as: 'filter_entities_country_analysis_networks'

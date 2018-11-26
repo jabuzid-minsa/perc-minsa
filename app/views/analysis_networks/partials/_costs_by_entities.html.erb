@@ -1,0 +1,169 @@
+<div class="ibox float-e-margins">
+  <div class="ibox-title">
+    <h5>Costos por Institución</h5>
+    <div class="ibox-tools">
+      <a class="collapse-link">
+        <i class="fa fa-chevron-up"></i>
+      </a>
+    </div>
+  </div>
+  <div class="ibox-content" id="section_costs_by_entities">    
+    <!-- Graph -->
+    <div class="row">
+      <div class="col-md-12">
+        <canvas id="graph_costs_by_entities" width="100%" height="" style="display: none;"></canvas>        
+      </div>
+    </div>
+    <!-- Table -->
+    <div class="row">
+      <div class="col-md-12">        
+        <table class="table table-bordered dataTable no-footer" cellspacing="0" id="costs_by_entities">
+          <thead>
+            <tr>
+              <th></th>
+              <% @entities.each do |entity| %>
+                <th data-entity="<%= entity.id %>">
+                  <label data-toggle="popover" data-placement="auto top" data-content="<%= entity.description %>">Inst. <%= entity.code %></label>
+                </th>
+              <% end %>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>            
+            <tr>
+              <td><%= t('app.analysis_tables.common.human_resource') %></td>
+            </tr>
+            <tr>
+              <td><%= t('app.analysis_tables.common.overheads') %></td>
+            </tr>
+            <tr>
+              <td><%= t('app.analysis_tables.common.supplies') %></td>
+            </tr>
+            <tr>
+              <td><%= t('app.analysis_tables.common.total_cost') %></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+    $(document).ready(function() {      
+      $.when(create_init_info()).done(function() {
+        get_human_resource();
+      });
+    });
+
+    function create_init_info() {
+      var tot_entities = $('#costs_by_entities thead th').length - 1;
+
+      for (i = 0; i < tot_entities; i++) {
+        $('#costs_by_entities tbody tr:eq(0)').append('<td class="currency text-right"><label class="decimal_numbers_2">0</label></td>');
+        $('#costs_by_entities tbody tr:eq(1)').append('<td class="currency text-right"><label class="decimal_numbers_2">0</label></td>');
+        $('#costs_by_entities tbody tr:eq(2)').append('<td class="currency text-right"><label class="decimal_numbers_2">0</label></td>');
+        $('#costs_by_entities tbody tr:eq(3)').append('<td class="currency text-right"><label class="decimal_numbers_2">0</label></td>');
+      }
+    }
+
+    function update_data_entity(data, row) {
+      var element, pos;
+      $(data).each(function(k, v) {
+        element = $('#costs_by_entities thead th[data-entity="' + v.entity_id + '"]');
+        pos = $('#costs_by_entities thead th').index(element);
+
+        $('#costs_by_entities tbody tr:eq(' + row + ') td:eq(' + pos + ') label').html(v.total);
+      });
+    }
+
+    function get_data_items(url, row_update, msg, callback) {
+      $.ajax({
+        url: url,
+        contentType: 'application/json; charset=utf-8',        
+        method: 'GET',
+        cache: false,
+        data: {
+          dates: $('#analysis_networks_date_parameters').val(),
+          entities: $('#analysis_networks_entities_parameters').val()
+        }
+      }).done(function(data) {
+        update_data_entity(data, row_update);
+        callback();
+      }).fail(function(xhr, text, error) {
+        alert(msg);
+      });
+    }
+
+    function get_human_resource() {
+      var url = "<%= get_human_resource_analysis_networks_path %>",
+          row_update = 0,
+          msg = 'Ocurrio un error al consutlar el recurso humano, intentelo de nuevo';
+      
+      get_data_items(url, row_update, msg, get_overheads);
+    }
+
+    function get_overheads() {
+      var url = "<%= get_overheads_analysis_networks_path %>",
+          row_update = 1,
+          msg = 'Ocurrio un error al consutlar los gastos, intentelo de nuevo';
+      
+      get_data_items(url, row_update, msg, get_supplies);      
+    }
+
+    function get_supplies() {
+      var url = "<%= get_supplies_analysis_networks_path %>",
+          row_update = 2,
+          msg = 'Ocurrio un error al consutlar los insumos, intentelo de nuevo';
+      
+      get_data_items(url, row_update, msg, calc_totals_by_entity);      
+    }
+
+    function calc_totals_by_entity() {
+      var hr, ov, sp;
+
+      $('#costs_by_entities tbody tr:last td:not(:first-child)').each(function(k, v){
+        hr = parseFloat(String($('#costs_by_entities tbody tr:eq(0) td:eq(' + (k + 1) + ') label').html()).replace(/,/g, ""));
+        ov = parseFloat(String($('#costs_by_entities tbody tr:eq(1) td:eq(' + (k + 1) + ') label').html()).replace(/,/g, ""));
+        sp = parseFloat(String($('#costs_by_entities tbody tr:eq(2) td:eq(' + (k + 1) + ') label').html()).replace(/,/g, ""));
+
+        $(v).find('label').html((hr + ov + sp));
+      });
+
+      calc_totals_by_entity_item();
+    }
+
+    function calc_totals_by_entity_item() {
+      var sum;
+      $('#costs_by_entities tbody tr').each(function(k, v){
+        sum = 0;
+        $(v).find('td:not(:first-child)').each(function(key, val){
+          sum += parseFloat(String($(val).find('label').html()).replace(/,/g, ""));
+        });
+
+        $(v).find('td:last label').html(sum);
+      });
+
+      update_cp_1();
+    }
+
+    function update_cp_1() {
+      var total = parseFloat(String($('#costs_by_entities tbody tr:eq(3) td:last label').html()).replace(/,/g, "")),
+          hr = parseFloat(String($('#costs_by_entities tbody tr:eq(0) td:last label').html()).replace(/,/g, "")),
+          ov = parseFloat(String($('#costs_by_entities tbody tr:eq(1) td:last label').html()).replace(/,/g, "")),
+          sp = parseFloat(String($('#costs_by_entities tbody tr:eq(2) td:last label').html()).replace(/,/g, ""));
+      $('#control_panel_1 tbody tr:eq(0)').append('<td class="currency text-right"><label class="decimal_numbers_2">'+total+'</label></td>');
+      $('#control_panel_1 tbody tr:eq(0)').append('<td class="currency text-right"><label class="">100%</label></td>');
+
+      $('#control_panel_1 tbody tr:eq(1)').append('<td class="currency text-right"><label class="decimal_numbers_2">'+hr+'</label></td>');
+      $('#control_panel_1 tbody tr:eq(1)').append('<td class="currency text-right"><label class="">'+((hr/total)*100).toFixed(2)+'%</label></td>');
+
+      $('#control_panel_1 tbody tr:eq(2)').append('<td class="currency text-right"><label class="decimal_numbers_2">'+ov+'</label></td>');
+      $('#control_panel_1 tbody tr:eq(2)').append('<td class="currency text-right"><label class="">'+((ov/total)*100).toFixed(2)+'%</label></td>');
+
+      $('#control_panel_1 tbody tr:eq(3)').append('<td class="currency text-right"><label class="decimal_numbers_2">'+sp+'</label></td>');
+      $('#control_panel_1 tbody tr:eq(3)').append('<td class="currency text-right"><label class="">'+((sp/total)*100).toFixed(2)+'%</label></td>');
+    }
+  </script>
+<% end %>
