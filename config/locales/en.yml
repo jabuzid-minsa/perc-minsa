@@ -20,6 +20,7 @@ en:
         title: Compare Information
     analysis_tables:
       common:
+        all_human_resource: Human Resource,Salary,Bonuses,Benefits
         average_cost: Average cost
         benefits: Benefits
         bonuses: Bonuses

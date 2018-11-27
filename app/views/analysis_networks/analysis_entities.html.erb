@@ -8,7 +8,7 @@
 <% end %>
 
 <div class="wrapper wrapper-content animated fadeInRight">
-  <div class="row display-none" id="loading_div">
+  <div class="row" id="loading_div">
     <div class="col-lg-12">
       <div class="ibox float-e-margins">
         <div class="ibox-title">          
@@ -31,13 +31,19 @@
       </div>
     </div>
   </div>
-  <div class="row" id="analysis_networks_div">
+  <div class="row display-none" id="analysis_networks_div">
     <div class="col-lg-12">
       <%= hidden_field(:analysis_networks, :date_parameters, value: @date_parameters) %>
       <%= hidden_field(:analysis_networks, :entities_parameters, value: @entities_parameters) %>
       <%= render 'analysis_networks/partials/control_panel' %>
       
       <%= render 'analysis_networks/partials/costs_by_entities' %>
+
+      <%= render 'analysis_networks/partials/production_cost_centers' %>
+
+      <%= render 'analysis_networks/partials/indirect_costs' %>
+
+      <%= render 'analysis_networks/partials/unit_production_centers' %>
     </div>
   </div>
 </div>

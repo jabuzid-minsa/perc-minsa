@@ -18,7 +18,7 @@ default: &default
 development:
   <<: *default
   #database: perc_development
-  database: perc
+  database: perc_development
   username: root
   password: abcd1234
 

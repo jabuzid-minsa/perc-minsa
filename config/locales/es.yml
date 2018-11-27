@@ -20,6 +20,7 @@ es:
         title: Comparar Información
     analysis_tables:
       common:
+        all_human_resource: Recurso Humano,Salarios,Bonus,Beneficios
         average_cost: Costo Promedio
         benefits: Benefits
         bonuses: Bonuses

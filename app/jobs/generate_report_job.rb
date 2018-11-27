@@ -16,6 +16,12 @@ class GenerateReportJob < ActiveJob::Base
       if DistributionCost.where(year: year, month: month, entity_id: entity).limit(1).size == 1
         generate_production_unit(year, month, entity)
       end
+    elsif type == 6
+      generate_payrolls(year, month, entity)
+      generate_overheads(year, month, entity)
+      generate_supplies(year, month, entity)
+      generate_distribution_costs(year, month, entity)
+      generate_production_unit(year, month, entity)
     end
 
     if validate_state_info(year, month, entity)

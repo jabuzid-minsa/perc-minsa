@@ -1,0 +1,364 @@
+<div class="ibox float-e-margins">
+  <div class="ibox-title">
+    <h5><%= t('app.analysis_graphs.details.cost_production_center') %></h5>
+    <div class="ibox-tools">
+      <a class="collapse-link">
+        <i class="fa fa-chevron-up"></i>
+      </a>
+    </div>
+  </div>
+  <div class="ibox-content">
+    <div class="row">
+      <div class="col-md-12">
+        <table class="table table-bordered no-footer dataTable fixed_table" cellspacing="0" id="operating_costs_table">
+          <thead>
+            <tr>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody data-hs="<%= t('app.analysis_tables.common.all_human_resource') %>" data-ov='<%= t('app.analysis_tables.common.overheads') %>', data-sp="<%= t('app.analysis_tables.common.supplies') %>">
+          </tbody>
+        </table>
+      </div>
+    </div>    
+  </div>
+</div>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+    $(document).ready(function($) {
+      get_cost_centers('#operating_costs_table', get_operating_costs);
+    });
+
+    function get_operating_costs(table) {
+      $.ajax({
+        url: "<%= get_costs_ccenter_analysis_networks_path %>",
+        contentType: 'application/json; charset=utf-8',        
+        method: 'GET',
+        cache: false,
+        data: {
+          dates: $('#analysis_networks_date_parameters').val(),
+          entities: $('#analysis_networks_entities_parameters').val()
+        }
+      }).done(function(data) {
+        add_operating_costs(data, table);
+        calc_totals_operating_costs(table);
+        copy_header_centers('#operating_costs_table', '#indirect_costs_table');
+        get_support_centers('#indirect_costs_table');
+      }).fail(function(xhr, text, error) {
+        alert('Ocurrio un error al buscar los centros de costos.');
+      });
+    }
+
+    function calc_totals_operating_costs(table) {
+      var current = 0, total = 0, total_entity = 0, html_row = '';
+
+      $(table + ' tbody tr').each(function(k, v) {
+        total = 0;
+        $(this).find('td:not(:first)').each(function(key, val) {
+          current = parseFloat(String($(this).find('label').html()).replace(/,/g, ""));
+          total += isNaN(current) ? 0 : current;
+        });
+        $(this).find('td:last label').html(total);
+      });
+
+      html_row = $(table + ' tbody tr:last').html();
+      $(table + ' tbody').append('<tr class="pcc_total">' + html_row + '</tr>');
+
+      $(table + ' tbody tr:last td:first').html('Total');
+      $(table + ' tbody tr:last td:not(first)').each(function(k,v) {
+        total = 0;
+        total += parseFloat(String($(table + ' tbody tr.human_resource.header td[data-id="'+ $(this).data('id') +'"] label').html()).replace(/,/g, ""));
+        total += parseFloat(String($(table + ' tbody tr.overheads.header td[data-id="'+ $(this).data('id') +'"] label').html()).replace(/,/g, ""));
+        total += parseFloat(String($(table + ' tbody tr.supplies.header td[data-id="'+ $(this).data('id') +'"] label').html()).replace(/,/g, ""));
+
+        $(this).find('label').html(total);
+        total_entity +=  isNaN(total) ? 0 : total;
+      });
+
+      $(table + ' tbody tr:last td:last label').html(total_entity);
+    }
+
+    function add_operating_costs(data, table) {
+      var total = 0, current = 0;
+      $(data.human_resource).each(function(k, v) {
+        total = parseFloat(v.salary) + parseFloat(v.bonuses) + parseFloat(v.benefits);
+        $(table + ' tbody tr.human_resource.header td[data-id="'+ v.cost_center_id +'"] label').html(total);
+        $(table + ' tbody tr:eq(1) td[data-id="'+ v.cost_center_id +'"] label').html(isNaN(v.salary) ? 0 : v.salary);
+        $(table + ' tbody tr:eq(2) td[data-id="'+ v.cost_center_id +'"] label').html(isNaN(v.bonuses) ? 0 : v.bonuses);
+        $(table + ' tbody tr:eq(3) td[data-id="'+ v.cost_center_id +'"] label').html(isNaN(v.benefits) ? 0 : v.benefits);
+      });
+
+      $(data.overheads).each(function(k, v) {
+        $(table + ' tbody tr.overheads.children[data-item_id="'+ v.supply_id +'"] td[data-id="'+ v.cost_center_id +'"] label').html(isNaN(v.value) ? 0 : v.value);
+      });
+
+      $(data.supplies).each(function(k, v) {
+        $(table + ' tbody tr.supplies.children[data-item_id="'+ v.supply_id +'"] td[data-id="'+ v.cost_center_id +'"] label').html(isNaN(v.value) ? 0 : v.value);
+      });
+
+      $(table + ' tbody tr.overheads.header td:not(:first)').each(function(k,v) {
+        total = 0;
+        $(table + ' tbody tr.overheads.children td[data-id="'+ $(v).data('id') +'"]').each(function(key, val) {
+          current = parseFloat(String($(this).find('label').html()).replace(/,/g, ""));
+          total += isNaN(current) ? 0 : current;
+        });
+        $(this).find('label').html(total);
+      });
+
+      $(table + ' tbody tr.supplies.header td:not(:first)').each(function(k,v) {
+        total = 0;
+        $(table + ' tbody tr.supplies.children td[data-id="'+ $(v).data('id') +'"]').each(function(key, val) {
+          current = parseFloat(String($(this).find('label').html()).replace(/,/g, ""));
+          total += isNaN(current) ? 0 : current;
+        });
+        $(this).find('label').html(total);
+      });
+    }
+
+    function get_cost_centers(table, callback) {
+      $.ajax({
+        url: "<%= get_cost_centers_analysis_networks_path %>",
+        contentType: 'application/json; charset=utf-8',        
+        method: 'GET',
+        cache: false,
+        data: {
+          entities: $('#analysis_networks_entities_parameters').val()
+        }
+      }).done(function(data) {
+        add_cost_centers_cols(data, table);
+        callback(table);
+      }).fail(function(xhr, text, error) {
+        alert('Ocurrio un error al buscar los centros de costos.');
+      });
+    }
+
+    function add_cost_centers_cols(data, table) {
+      var html = '', html_body = '';
+      $(data.cost_centers).each(function(k, v) {
+        html += '<th class="cost_center" data-id="'+ v.id +'">'+ v.description +'</th>';
+        html_body += '<td class="value_cost_center text-right" data-id="'+ v.id +'"><label class="integer_numbers">0</label></td>';
+      });
+      html += '<th>Total</th>';
+      html_body += '<td class="text-right"><label class="integer_numbers">0</label></td>';
+      $(table + ' thead tr:first').append(html);
+
+      $(table + ' tbody').append('<tr class="human_resource header"><td>'+ $(table + ' tbody').data('hs').split(',')[0] +'</td>' + html_body + '</tr>');
+      $(table + ' tbody').append('<tr class="human_resource"><td>'+ $(table + ' tbody').data('hs').split(',')[1] +'</td>' + html_body + '</tr>');
+      $(table + ' tbody').append('<tr class="human_resource"><td>'+ $(table + ' tbody').data('hs').split(',')[2] +'</td>' + html_body + '</tr>');
+      $(table + ' tbody').append('<tr class="human_resource"><td>'+ $(table + ' tbody').data('hs').split(',')[3] +'</td>' + html_body + '</tr>');
+
+      html = ''
+      $(table + ' tbody').append('<tr class="overheads header"><td>'+ $(table + ' tbody').data('ov') +'</td>' + html_body + '</tr>');
+      $(data.overheads).each(function(k, v) {
+        html += '<tr  class="overheads children" data-item_id="'+ v.id +'"><td>'+ v.description +'</td>' + html_body + '</tr>';
+      });
+      $(table + ' tbody').append(html);
+
+      html = ''
+      $(table + ' tbody').append('<tr class="supplies header"><td>'+ $(table + ' tbody').data('sp') +'</td>' + html_body + '</tr>');
+      $(data.supplies).each(function(k, v) {
+        html += '<tr  class="supplies children" data-item_id="'+ v.id +'"><td>'+ v.description +'</td>' + html_body + '</tr>';
+      });
+      $(table + ' tbody').append(html);      
+    }
+
+    /* Indirect costs */
+    function copy_header_centers(table_references, table) {
+      $(table + ' thead tr').html($(table_references + ' thead tr').html());
+    }
+
+    function get_support_centers(table) {
+      $.ajax({
+        url: "<%= get_support_cc_analysis_networks_path %>",
+        contentType: 'application/json; charset=utf-8',        
+        method: 'GET',
+        cache: false,
+        data: {
+          entities: $('#analysis_networks_entities_parameters').val()
+        }
+      }).done(function(data) {
+        add_support_cost_centers_rows(data, table);
+      }).fail(function(xhr, text, error) {
+        alert('Ocurrio un error al buscar los centros de costos.');
+      });
+    }
+
+    function add_support_cost_centers_rows(data, table) {
+      var html = '';
+      $(table + ' thead tr:first th:not(:first)').each(function(k,v) {
+        html += '<td class="text-right" data-id="'+ $(v).data('id') +'"><label class="integer_numbers">0</label></td>';
+      });
+      
+      $(data).each(function(k,v){
+        $(table + ' tbody').append('<tr data-cost_support="'+ v.id +'"><td>'+ v.description +'</td>'+ html +'</tr>');
+      });
+      $(table + ' tbody').append('<tr class="remaining_costs"><td>Remanentes</td>'+ html +'</tr>');
+
+      get_indirect_costs(table);
+    }
+
+    function get_indirect_costs(table) {
+      $.ajax({
+        url: "<%= get_indirect_costs_analysis_networks_path %>",
+        contentType: 'application/json; charset=utf-8',        
+        method: 'GET',
+        cache: false,
+        data: {
+          dates: $('#analysis_networks_date_parameters').val(),
+          entities: $('#analysis_networks_entities_parameters').val()
+        }
+      }).done(function(data) {
+        add_indirect_costs(data, table);
+      }).fail(function(xhr, text, error) {
+        alert('Ocurrio un error al buscar los centros de costos.');
+      });
+    }
+
+    function add_indirect_costs(data, table) {
+      $(data).each(function(k, v) {
+        $(table + ' tbody tr[data-cost_support="'+ v.support_center_id +'"] td[data-id="'+ v.cost_center_id +'"] label').html(v.value_support);
+      });
+
+      calc_totals_indirects(table);
+    }
+
+    function calc_totals_indirects(table) {
+      var total;
+      $(table + ' tbody tr').each(function(k,v) {
+        total = 0;
+        $(v).find('td:not(:first) label').each(function(key,val) {
+          total += parseFloat(String($(val).html()).replace(/,/g, ""));
+        });
+        $(this).find('td:last label').html(total);
+      });
+
+      $(table + ' tbody').append('<tr>' + $(table + ' tbody tr:last').html() + '</tr>');
+      $(table + ' tbody tr:last td:first').html('Total');
+
+      $(table + ' tbody tr:last td:not(:first)').each(function(k,v) {
+        total = 0;
+        $(table + ' tbody tr').children('td:nth-child(' + (k + 2) + ')').each(function(key,val) {
+          total += parseFloat(String($(val).find('label').html()).replace(/,/g, ""));
+        });
+        $(this).find('label').html(total);
+      });
+
+      distribute_remaining_costs(table);
+    }
+
+    function distribute_remaining_costs(table) {
+      $.ajax({
+        url: "<%= get_remaining_costs_analysis_networks_path %>",
+        contentType: 'application/json; charset=utf-8',        
+        method: 'GET',
+        cache: false,
+        data: {
+          dates: $('#analysis_networks_date_parameters').val(),
+          entities: $('#analysis_networks_entities_parameters').val()
+        }
+      }).done(function(data) {
+        add_remnant_costs(data, table, '#operating_costs_table');
+      }).fail(function(xhr, text, error) {
+        alert('Ocurrio un error al buscar los costos remanentes.');
+      });
+    }
+
+    function add_remnant_costs(data, table, opcost_table) {
+      var total_entity = parseFloat(String($(opcost_table + ' tbody tr:last td:last label').html()).replace(/,/g, "")),
+          op_cost = 0,
+          in_cost = 0,
+          percent = 0,
+          total_indirect = 0,
+          remnant = parseFloat(data.remnant[0].total);
+
+      $(data.cost_centers).each(function(k,v) {
+        op_cost = parseFloat(String($(opcost_table + ' tbody tr:last td[data-id="'+ v.id +'"] label').html()).replace(/,/g, ""));
+        in_cost = parseFloat(String($(table + ' tbody tr:last td[data-id="'+ v.id +'"] label').html()).replace(/,/g, ""));
+        percent = ((op_cost + in_cost) / total_entity);
+        
+        $(table + ' tbody tr.remaining_costs td[data-id="'+ v.id +'"] label').html((remnant * percent));
+        
+        total_indirect = parseFloat(String($(table + ' tbody tr:last td[data-id="'+ v.id +'"] label').html()).replace(/,/g, ""));
+        $(table + ' tbody tr:last td[data-id="'+ v.id +'"] label').html(total_indirect + (remnant * percent));
+      });
+
+      $(table + ' tbody tr.remaining_costs td:last label').html(remnant);
+
+      $('.integer_numbers').number( true, 0 );
+
+      copy_header_centers('#operating_costs_table', '#production_centers');
+      copy_totals_centers('#operating_costs_table', '#indirect_costs_table', '#production_centers');
+    }
+
+    /* Production Units */
+    function copy_totals_centers(table_opcost, table_incost, table) {
+      var op_cost = 0, in_cost = 0, html = '', html_body = '';
+      $(table + ' thead tr:first th:last').remove();
+      $(table + ' thead tr:first th:last').remove();
+      $(table + ' thead tr:first th:not(:first)').each(function(k,v) {
+        op_cost = parseFloat(String($(table_opcost + ' tbody tr:last td[data-id="'+ $(v).data('id') +'"] label').html()).replace(/,/g, ""));
+        in_cost = parseFloat(String($(table_incost + ' tbody tr:last td[data-id="'+ $(v).data('id') +'"] label').html()).replace(/,/g, ""));
+        html += '<td class="text-right" data-id="'+ $(v).data('id') +'"><label class="integer_numbers">'+ (op_cost + in_cost) +'</label></td>';
+        html_body += '<td class="text-right" data-id="'+ $(v).data('id') +'"><label class="decimal_numbers_2">0</label></td>';
+      });
+
+      $(table + ' tbody tr:first').append(html);
+      $(table + ' tbody tr:eq(1)').append(html_body);
+      $(table + ' tbody tr:eq(2)').append(html_body);
+      $(table + ' tbody tr:eq(3)').append(html_body);
+      $(table + ' tbody tr:eq(4)').append(html_body);
+      $(table + ' tbody tr:eq(5)').append(html_body);
+      $(table + ' tbody tr:eq(6)').append(html_body);
+      $(table + ' tbody tr:eq(7)').append(html_body);
+      $(table + ' tbody tr:eq(8)').append(html_body);
+      $(table + ' tbody tr:eq(9)').append(html_body);
+      $(table + ' tbody tr:eq(10)').append(html_body);
+      $(table + ' tbody tr:eq(11)').append(html_body);
+      $(table + ' tbody tr:eq(12)').append(html_body);
+
+      get_production_unit(table);
+    }
+
+    function get_production_unit(table) {
+      var pos_pu = [1,3,5,7,9,11];
+
+      $.ajax({
+        url: "<%= get_production_unit_analysis_networks_path %>",
+        contentType: 'application/json; charset=utf-8',        
+        method: 'GET',
+        cache: false,
+        data: {
+          dates: $('#analysis_networks_date_parameters').val(),
+          entities: $('#analysis_networks_entities_parameters').val()
+        }
+      }).done(function(data) {
+        add_production_units(data, pos_pu, table);
+      }).fail(function(xhr, text, error) {
+        alert('Ocurrio un error al buscar los centros de costos.');
+      });
+    }
+
+    function add_production_units(data, positions, table) {
+      var val_cc = 0, current_prod = 0, cost_unit = 0, val_row = 0;
+      
+      $(data).each(function(k,v) {
+        current_prod = parseFloat(isNaN(v.total_center) ? 0 : v.total_center);
+        val_cc = parseFloat(String($(table + ' tbody tr:first td[data-id="'+ v.cost_center_id +'"] label').html()).replace(/,/g, ""));
+        cost_unit = parseFloat(current_prod == 0 ? 0 : (val_cc / current_prod));
+
+        $(table + ' tbody tr:eq('+ positions[v.production_units - 1] +') td[data-id="'+ v.cost_center_id +'"] label').html(v.value);
+        $(table + ' tbody tr:eq('+ (positions[v.production_units - 1] + 1) +') td[data-id="'+ v.cost_center_id +'"] label').html(cost_unit);
+      });
+
+      $('#loading_div').hide('slow');
+      $('#analysis_networks_div').show('slow');
+      
+      $('.integer_numbers').number( true, 0 );
+      $('.decimal_numbers_2').number( true, 2 );
+      $('#operating_costs_table').DataTable({ bInfo: false, searching: false, bSort: false, scrollY: "500px", scrollX: true, scrollCollapse: true, paging: false, fixedColumns: { leftColumns: 1 }, dom: 'Bfrtip', buttons: [{ extend: 'excelHtml5', title: 'Costos Operativos' }]});
+      $('#indirect_costs_table').DataTable({ bInfo: false, searching: false, bSort: false, scrollY: "500px", scrollX: true, scrollCollapse: true, paging: false, fixedColumns: { leftColumns: 1 }, dom: 'Bfrtip', buttons: [{ extend: 'excelHtml5', title: 'Costos Indirectos' }]});
+      $(table).DataTable({ bInfo: false, searching: false, bSort: false, scrollY: "500px", scrollX: true, scrollCollapse: true, paging: false, fixedColumns: { leftColumns: 1 }, dom: 'Bfrtip', buttons: [{ extend: 'excelHtml5', title: 'Produccion Unitaria' }]});
+    }
+  </script>
+<% end %>

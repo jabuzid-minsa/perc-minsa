@@ -8,9 +8,12 @@
 		</div>
 	</div>
 	<div class="ibox-content" id="content-control-panel" style="display: none;">
+		<p class="text-right">
+			<%= link_to 'Generar Historico', generate_historic_entities_path, method: :post, class: 'btn btn-info' %>
+		</p>
 		<p>
 			<strong><%= t('app.analysis_tables.one.first_panel.month') %>: </strong><span id="month-current-human"></span>
-		</p>
+		</p>		
 		<div class="row">
 			<div class="col-md-4"></div>
 			<div class="col-md-4">

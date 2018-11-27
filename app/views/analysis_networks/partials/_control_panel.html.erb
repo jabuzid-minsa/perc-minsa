@@ -11,32 +11,7 @@
     <p>
       <strong><%= t('app.analysis_tables.one.first_panel.month') %>: </strong><span id="month-current-human"></span>
     </p>
-    <div class="row">
-      <div class="col-md-4"></div>
-      <div class="col-md-4">
-        <div class="dropdown">
-          <button class="btn btn-default dropdown-toggle" type="button" id="elements_cp2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-            <%= t('app.analysis_tables.one.first_panel.select_items') %>
-            <span class="caret"></span>
-          </button>
-          <ul class="dropdown-menu" aria-labelledby="elements_cp2">
-            <li><label style="padding: 0px 5px;"><input class="cp2_change_display" type="checkbox" data-target="#cp2_item_1"> <%= t('app.analysis_tables.one.first_panel.hospitalization') %></label></li>
-            <li><label style="padding: 0px 5px;"><input class="cp2_change_display" type="checkbox" data-target="#cp2_item_2"> <%= t('app.analysis_tables.one.first_panel.intensive_care_unit') %></label></li>
-            <li><label style="padding: 0px 5px;"><input class="cp2_change_display" type="checkbox" data-target="#cp2_item_3"> <%= t('app.analysis_tables.one.first_panel.quirofanos') %></label></li>
-            <li><label style="padding: 0px 5px;"><input class="cp2_change_display" type="checkbox" data-target="#cp2_item_4"> <%= t('app.analysis_tables.one.first_panel.emergencies') %></label></li>
-            <li><label style="padding: 0px 5px;"><input class="cp2_change_display" type="checkbox" data-target="#cp2_item_5"> <%= t('app.analysis_tables.one.first_panel.consultation') %></label></li>
-            <li><label style="padding: 0px 5px;"><input class="cp2_change_display" type="checkbox" data-target="#cp2_item_6"> <%= t('app.analysis_tables.one.first_panel.extramural_services') %></label></li>
-            <li><label style="padding: 0px 5px;"><input class="cp2_change_display" type="checkbox" data-target="#cp2_item_7"> <%= t('app.analysis_tables.one.first_panel.clinic') %></label></li>
-            <li><label style="padding: 0px 5px;"><input class="cp2_change_display" type="checkbox" data-target="#cp2_item_8"> <%= t('app.analysis_tables.one.first_panel.promotion_prevention') %></label></li>
-            <li><label style="padding: 0px 5px;"><input class="cp2_change_display" type="checkbox" data-target="#cp2_item_9"> <%= t('app.analysis_tables.one.first_panel.primary_health') %></label></li>
-            <li><label style="padding: 0px 5px;"><input class="cp2_change_display" type="checkbox" data-target="#cp2_item_10"> <%= t('app.analysis_tables.one.first_panel.basic_plan') %></label></li>
-            <li><label style="padding: 0px 5px;"><input class="cp2_change_display" type="checkbox" data-target="#cp2_item_11"> <%= t('app.analysis_tables.one.first_panel.other_services') %></label></li>
-            <li><label style="padding: 0px 5px;"><input class="cp2_change_display" type="checkbox" data-target="#cp2_item_12"> <%= t('app.analysis_tables.one.first_panel.administration') %></label></li>
-          </ul>
-        </div>
-      </div>
-      <div class="col-md-4"></div>
-    </div>
+    
     <div class="row">
       <div class="col-md-4">
         <table class="table table-bordered no-footer" cellspacing="0" id="control_panel_1">
@@ -73,13 +48,13 @@
           <tbody>
             <tr>
               <td><%= t('app.analysis_tables.one.first_panel.medicines') %></td>
-              <td class="text-right"><label class="decimal_numbers_2"></label></td>
-              <td class="text-right"><label class="decimal_numbers_2"></label></td>
+              <td class="text-right"><label class="integer_numbers"></label></td>
+              <td class="text-right"><label class=""></label></td>
             </tr>
             <tr>
               <td><%= t('app.analysis_tables.one.first_panel.op_material') %></td>
-              <td class="text-right"><label class="decimal_numbers_2"></label></td>
-              <td class="text-right"><label class="decimal_numbers_2"></label></td>
+              <td class="text-right"><label class="integer_numbers"></label></td>
+              <td class="text-right"><label class=""></label></td>
             </tr>
           </tbody>
         </table>
@@ -121,7 +96,7 @@
           <tbody>
             <tr>
               <td><label><%= t('app.analysis_tables.one.first_panel.beds') %></label></td>
-              <td class="text-right"><label class="decimal_numbers_2"></label></td>
+              <td class="text-right"><label class="integer_numbers"></label></td>
             </tr>
           </tbody>
         </table>

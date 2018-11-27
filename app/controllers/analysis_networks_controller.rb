@@ -72,28 +72,6 @@ class AnalysisNetworksController < ApplicationController
     else
       @entities = Entity.for_users(current_user.id).where(id: filters[:entities]).select('id, code, abbreviation, description')
     end
-=begin
-    # Headers Direct Costs
-    @cost_centers = CostCenter.joins(:entity_cost_centers).where(:entity_cost_centers => { entity_id: filters[:entities] }).order_priority.order(:code).distinct
-    @supplies_heads = Supply.joins(:entities).where(:entities_supplies => { entity_id: filters[:entities] } ).where('supplies.supplies_category_id = 1').order(:code).distinct
-    @supplies_overheads = Supply.joins(:entities).where(:entities_supplies => { entity_id: filters[:entities] } ).where('supplies.supplies_category_id = 2').order(:code).distinct
-    # Direct Costs
-    @human_resource = ActiveRecord::Base.connection.select_all("CALL mm_calculate_humanresource(#{commons_parameters}, TRUE)").to_hash
-    ActiveRecord::Base.clear_active_connections!
-    @supplies = ActiveRecord::Base.connection.select_all("CALL mm_calculate_supplies(#{commons_parameters}, TRUE, FALSE)").to_hash
-    ActiveRecord::Base.clear_active_connections!
-    @overheads = ActiveRecord::Base.connection.select_all("CALL mm_calculate_overhead(#{commons_parameters}, TRUE, FALSE)").to_hash
-    ActiveRecord::Base.clear_active_connections!
-    
-    # Headers Indirect Costs
-    @production_cost_centers = CostCenter.for_entity(filters[:entities]).where.not(function: 3).order_distribution.distinct
-    @supported_cost_centers = CostCenter.for_entity(filters[:entities]).order_priority.order(:code).distinct
-    # Indirect Costs
-    @distribution_processed = ActiveRecord::Base.connection.select_all("CALL mm_calculate_distribution_processed(#{commons_parameters}, FALSE)").to_hash
-    ActiveRecord::Base.clear_active_connections!
-    @production_centers_data = ActiveRecord::Base.connection.select_all("CALL mm_mul_unit_costs_per_production(#{commons_parameters})").to_hash
-    ActiveRecord::Base.clear_active_connections!
-=end
   end
 
   # /network/human_resource
@@ -121,6 +99,91 @@ class AnalysisNetworksController < ApplicationController
     ActiveRecord::Base.clear_active_connections!
 
     render json: supplies, status: :ok
+  end
+
+  # /network/special_values
+  def get_special_values
+    dates = params[:dates].gsub! '_', ','
+    special = ActiveRecord::Base.connection.select_all("CALL hs_calc_specialvalues(#{dates},'#{params[:entities]}')").to_hash
+    ActiveRecord::Base.clear_active_connections!
+
+    render json: special, status: :ok
+  end
+
+  # /network/parent_values
+  def get_parents_values
+    dates = params[:dates].gsub! '_', ','
+    parents = ActiveRecord::Base.connection.select_all("CALL hs_calc_parent_groups(#{dates},'#{params[:entities]}')").to_hash
+    ActiveRecord::Base.clear_active_connections!
+
+    render json: parents, status: :ok
+  end
+
+  # /network/cost_centers
+  def get_cost_centers
+    cost_centers = CostCenter.joins(:entity_cost_centers).where(entity_cost_centers: { entity_id: params[:entities].split(",") })
+                              .select('cost_centers.id, cost_centers.code, cost_centers.description').order_priority.order(:code).distinct
+
+    overheads = Supply.joins(:entities).where(supplies_category_id: 2).where(entities: { id: params[:entities].split(",") })
+                              .select('supplies.id, supplies.code, supplies.description').order(:code).distinct
+
+    supplies = Supply.joins(:entities).where(supplies_category_id: 1).where(entities: { id: params[:entities].split(",") })
+                              .select('supplies.id, supplies.code, supplies.description').order(:code).distinct
+
+    render json: { cost_centers: cost_centers, overheads: overheads, supplies: supplies }, status: :ok
+  end
+
+  # /network/costs_per_production_center
+  def get_costs_per_production_center
+    dates = params[:dates].gsub! '_', ','
+    hs = ActiveRecord::Base.connection.select_all("CALL hs_calc_human_resource(#{dates},'#{params[:entities]}',3)").to_hash
+    ActiveRecord::Base.clear_active_connections!
+
+    ov = ActiveRecord::Base.connection.select_all("CALL hs_calc_overheads(#{dates},'#{params[:entities]}',3)").to_hash
+    ActiveRecord::Base.clear_active_connections!
+
+    sp = ActiveRecord::Base.connection.select_all("CALL hs_calc_supplies(#{dates},'#{params[:entities]}',3)").to_hash
+    ActiveRecord::Base.clear_active_connections!
+
+    render json: { human_resource: hs, overheads: ov, supplies: sp }, status: :ok
+  end
+
+  # /network/support_cost_centers
+  def get_support_cost_centers
+    cost_centers = CostCenter.joins(:entity_cost_centers).where.not(function: 3).where(entity_cost_centers: { entity_id: params[:entities].split(",") })
+                              .select('cost_centers.id, cost_centers.code, cost_centers.description').order_distribution.distinct
+
+    render json: cost_centers, status: :ok
+  end
+
+  # /network/remaining_costs
+  def get_remaining_costs
+    dates = params[:dates].gsub! '_', ','
+    cost_centers = CostCenter.joins(:entity_cost_centers).where(function: 3).where(entity_cost_centers: { entity_id: params[:entities].split(",") })
+                              .select('cost_centers.id, cost_centers.code, cost_centers.description').order(:code).distinct
+
+    remnant = ActiveRecord::Base.connection.select_all("CALL hs_calc_indirect_remnants(#{dates},'#{params[:entities]}')").to_hash
+    ActiveRecord::Base.clear_active_connections!
+
+    render json: { cost_centers: cost_centers, remnant: remnant }, status: :ok
+  end
+
+  # /network/indirect_costs
+  def get_indirect_costs
+    dates = params[:dates].gsub! '_', ','
+    indirect_costs = ActiveRecord::Base.connection.select_all("CALL hs_calc_indirect_costs(#{dates},'#{params[:entities]}',3)").to_hash
+    ActiveRecord::Base.clear_active_connections!
+
+    render json: indirect_costs, status: :ok
+  end
+
+  # /network/production_unit
+  def get_production_unit
+    dates = params[:dates].gsub! '_', ','
+    production_unit = ActiveRecord::Base.connection.select_all("CALL hs_calc_production_unit(#{dates},'#{params[:entities]}')").to_hash
+    ActiveRecord::Base.clear_active_connections!
+
+    render json: production_unit, status: :ok
   end
 
   private

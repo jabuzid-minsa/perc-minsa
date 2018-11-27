@@ -168,6 +168,13 @@ class EntitiesController < ApplicationController
     render :json => entities.to_json, :status => 200
   end
 
+  #
+  def generate_historic
+    GenerateReportJob.perform_later(6, session[:year], session[:month], session['entity_id'])
+
+    redirect_to analysis_graphs_management_number_one_path, notice: 'Se inicio el proceso de generacion de historico, esto puede tardar unos minutos en terminar.'
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_entity

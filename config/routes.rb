@@ -7,6 +7,14 @@ Rails.application.routes.draw do
 		get '/network/human_resource', to: 'analysis_networks#get_human_resource', as: 'get_human_resource_analysis_networks'
 		get '/network/overheads', to: 'analysis_networks#get_overheads', as: 'get_overheads_analysis_networks'
 		get '/network/supplies', to: 'analysis_networks#get_supplies', as: 'get_supplies_analysis_networks'
+		get '/network/special_values', to: 'analysis_networks#get_special_values', as: 'get_special_values_analysis_networks'
+		get '/network/parent_values', to: 'analysis_networks#get_parents_values', as: 'get_parents_values_analysis_networks'
+		get '/network/costs_per_production_center', to: 'analysis_networks#get_costs_per_production_center', as: 'get_costs_ccenter_analysis_networks'
+		get '/network/cost_centers', to: 'analysis_networks#get_cost_centers', as: 'get_cost_centers_analysis_networks'
+		get '/network/support_cost_centers', to: 'analysis_networks#get_support_cost_centers', as: 'get_support_cc_analysis_networks'
+		get '/network/indirect_costs', to: 'analysis_networks#get_indirect_costs', as: 'get_indirect_costs_analysis_networks'
+		get '/network/remaining_costs', to: 'analysis_networks#get_remaining_costs', as: 'get_remaining_costs_analysis_networks'
+		get '/network/production_unit', to: 'analysis_networks#get_production_unit', as: 'get_production_unit_analysis_networks'
 
 		post '/filter_entities', to: 'analysis_networks#analysis_entities', as: 'analysis_entities_analysis_networks'
 		get '/filter_entities/network', to: 'analysis_networks#filter_entities_network', as: 'filter_entities_network_analysis_networks'
@@ -143,7 +151,9 @@ Rails.application.routes.draw do
 	# Route for associations models per Entities
 	get 'entities/:id/associations' => 'entities#associations', as: 'entity_associations'
 	# Routes scaffold for Entities
-	resources :entities, except: [:show, :destroy]
+	resources :entities, except: [:show, :destroy] do
+		collection { post :generate_historic }
+	end
   end
 
   # Parametrization paths for the app.

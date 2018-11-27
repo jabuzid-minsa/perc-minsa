@@ -61,10 +61,10 @@
       var tot_entities = $('#costs_by_entities thead th').length - 1;
 
       for (i = 0; i < tot_entities; i++) {
-        $('#costs_by_entities tbody tr:eq(0)').append('<td class="currency text-right"><label class="decimal_numbers_2">0</label></td>');
-        $('#costs_by_entities tbody tr:eq(1)').append('<td class="currency text-right"><label class="decimal_numbers_2">0</label></td>');
-        $('#costs_by_entities tbody tr:eq(2)').append('<td class="currency text-right"><label class="decimal_numbers_2">0</label></td>');
-        $('#costs_by_entities tbody tr:eq(3)').append('<td class="currency text-right"><label class="decimal_numbers_2">0</label></td>');
+        $('#costs_by_entities tbody tr:eq(0)').append('<td class="currency text-right"><label class="integer_numbers">0</label></td>');
+        $('#costs_by_entities tbody tr:eq(1)').append('<td class="currency text-right"><label class="integer_numbers">0</label></td>');
+        $('#costs_by_entities tbody tr:eq(2)').append('<td class="currency text-right"><label class="integer_numbers">0</label></td>');
+        $('#costs_by_entities tbody tr:eq(3)').append('<td class="currency text-right"><label class="integer_numbers">0</label></td>');
       }
     }
 
@@ -132,6 +132,8 @@
       });
 
       calc_totals_by_entity_item();
+      update_cp_specials();
+      update_cp_parent_values();      
     }
 
     function calc_totals_by_entity_item() {
@@ -153,17 +155,76 @@
           hr = parseFloat(String($('#costs_by_entities tbody tr:eq(0) td:last label').html()).replace(/,/g, "")),
           ov = parseFloat(String($('#costs_by_entities tbody tr:eq(1) td:last label').html()).replace(/,/g, "")),
           sp = parseFloat(String($('#costs_by_entities tbody tr:eq(2) td:last label').html()).replace(/,/g, ""));
-      $('#control_panel_1 tbody tr:eq(0)').append('<td class="currency text-right"><label class="decimal_numbers_2">'+total+'</label></td>');
+      $('#control_panel_1 tbody tr:eq(0)').append('<td class="currency text-right"><label class="integer_numbers">'+total+'</label></td>');
       $('#control_panel_1 tbody tr:eq(0)').append('<td class="currency text-right"><label class="">100%</label></td>');
 
-      $('#control_panel_1 tbody tr:eq(1)').append('<td class="currency text-right"><label class="decimal_numbers_2">'+hr+'</label></td>');
+      $('#control_panel_1 tbody tr:eq(1)').append('<td class="currency text-right"><label class="integer_numbers">'+hr+'</label></td>');
       $('#control_panel_1 tbody tr:eq(1)').append('<td class="currency text-right"><label class="">'+((hr/total)*100).toFixed(2)+'%</label></td>');
 
-      $('#control_panel_1 tbody tr:eq(2)').append('<td class="currency text-right"><label class="decimal_numbers_2">'+ov+'</label></td>');
+      $('#control_panel_1 tbody tr:eq(2)').append('<td class="currency text-right"><label class="integer_numbers">'+ov+'</label></td>');
       $('#control_panel_1 tbody tr:eq(2)').append('<td class="currency text-right"><label class="">'+((ov/total)*100).toFixed(2)+'%</label></td>');
 
-      $('#control_panel_1 tbody tr:eq(3)').append('<td class="currency text-right"><label class="decimal_numbers_2">'+sp+'</label></td>');
+      $('#control_panel_1 tbody tr:eq(3)').append('<td class="currency text-right"><label class="integer_numbers">'+sp+'</label></td>');
       $('#control_panel_1 tbody tr:eq(3)').append('<td class="currency text-right"><label class="">'+((sp/total)*100).toFixed(2)+'%</label></td>');
+    }
+
+    function update_cp_specials() {
+      $.ajax({
+        url: "<%= get_special_values_analysis_networks_path %>",
+        contentType: 'application/json; charset=utf-8',        
+        method: 'GET',
+        cache: false,
+        data: {
+          dates: $('#analysis_networks_date_parameters').val(),
+          entities: $('#analysis_networks_entities_parameters').val()
+        }
+      }).done(function(data) {
+        update_special_values(data);
+      }).fail(function(xhr, text, error) {
+        alert('Ocurrio un error al buscar los valores especiales.');
+      });
+    }
+
+    function update_special_values(data) {
+      var beeds = data[0].total,
+          medicines = data[1].total,
+          op_material = data[2].total,
+          total_entity = parseFloat(String($('#control_panel_1 tbody tr:first td:eq(1) label').html()).replace(/,/g, ""));
+
+      $('#control_panel_3 tbody tr:first td:eq(1) label').html(beeds);
+      $('#control_panel_3 tbody tr:first').append('<td class="currency text-right"><label class="integer_numbers">' + (total_entity / beeds).toFixed(2) + '</label></td>');
+
+      $('#control_panel_1p5 tbody tr:first td:eq(1) label').html(medicines);
+      $('#control_panel_1p5 tbody tr:first td:eq(2) label').html(((medicines / total_entity)*100).toFixed(2) + '%');
+
+      $('#control_panel_1p5 tbody tr:eq(1) td:eq(1) label').html(op_material);
+      $('#control_panel_1p5 tbody tr:eq(1) td:eq(2) label').html(((op_material / total_entity)*100).toFixed(2) + '%');
+    }
+
+    function update_cp_parent_values() {
+      $.ajax({
+        url: "<%= get_parents_values_analysis_networks_path %>",
+        contentType: 'application/json; charset=utf-8',        
+        method: 'GET',
+        cache: false,
+        data: {
+          dates: $('#analysis_networks_date_parameters').val(),
+          entities: $('#analysis_networks_entities_parameters').val()
+        }
+      }).done(function(data) {
+        update_parent_values(data);
+        $('.integer_numbers').number( true, 0 );
+      }).fail(function(xhr, text, error) {
+        alert('Ocurrio un error al buscar los valores de los centros padres.');
+      });
+    }
+
+    function update_parent_values(data) {
+      var total_entity = parseFloat(String($('#control_panel_1 tbody tr:first td:eq(1) label').html()).replace(/,/g, ""));
+
+      $(data).each(function(k,v){
+        $('#control_panel_2 tbody tr:eq('+ (v.type_group - 1) +')').append('<td class="currency text-right"><label class="integer_numbers">' + v.total + '</label></td><td class="currency text-right"><label class="">' + ((v.total / total_entity) * 100).toFixed(2) + '%</label></td>').show();
+      });
     }
   </script>
 <% end %>
