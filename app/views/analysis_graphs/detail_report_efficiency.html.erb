@@ -109,8 +109,7 @@
           sarta += '</tr>';
           $('#information_table tbody').append(sarta);
 
-          // Adicion de los centros que apoyan y sus valores con calculos
-          console.log(data.distribution_costs);
+          // Adicion de los centros que apoyan y sus valores con calculos          
           $.each(data.cost_centers, function(i, v) {
             sarta = '<tr><td><label for="">'+v.description+'</label></td><td><label for="">'+((v.name_production_unit == null) ? 'Sin Asignar' : v.name_production_unit)+'</label></td>';
             auxiliary_sarta = '<tr><td><label for="">'+v.description+'</label></td><td><label for="">'+((v.name_production_unit == null) ? 'Sin Asignar' : v.name_production_unit)+' x UP</label></td>';

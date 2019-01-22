@@ -80,8 +80,10 @@
 				$("form#filter_info").on('ajax:success', function(event, data, status, xhr) {
 					reset_data_table(table);
 
-					add_staffing_hours(data.hours, data.production[0].cost_center);
-					add_staffing_production(data.production);
+					if (Array.isArray(data.production) && data.production.length > 0) {
+						add_staffing_hours(data.hours, data.production[0].cost_center);
+						add_staffing_production(data.production);
+					}
 
 					create_datatable();
 				});
