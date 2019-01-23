@@ -48,6 +48,11 @@
   <%= javascript_include_tag 'datatable', 'data-turbolinks-track' => true %>
 
   <script type="text/javascript">
-    
+    $(document).ready(function() {      
+      $.when(create_init_info()).done(function() {
+        get_human_resource();
+        get_production_data();
+      });
+    });
   </script>
 <% end %>

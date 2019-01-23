@@ -51,12 +51,6 @@
 
 <% content_for :javascript do %>
   <script type="text/javascript">
-    $(document).ready(function() {      
-      $.when(create_init_info()).done(function() {
-        get_human_resource();
-      });
-    });
-
     function create_init_info() {
       var tot_entities = $('#costs_by_entities thead th').length - 1;
 

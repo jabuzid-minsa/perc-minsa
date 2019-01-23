@@ -113,7 +113,7 @@ class AnalysisNetworksController < ApplicationController
   # /network/parent_values
   def get_parents_values
     dates = params[:dates].gsub! '_', ','
-    parents = ActiveRecord::Base.connection.select_all("CALL hs_calc_parent_groups(#{dates},'#{params[:entities]}')").to_hash
+    parents = ActiveRecord::Base.connection.select_all("CALL hscalc_direct_total_gparent(#{dates},'#{params[:entities]}')").to_hash
     ActiveRecord::Base.clear_active_connections!
 
     render json: parents, status: :ok
@@ -134,19 +134,19 @@ class AnalysisNetworksController < ApplicationController
   end
 
   # /network/costs_per_production_center
-  def get_costs_per_production_center
-    dates = params[:dates].gsub! '_', ','
-    hs = ActiveRecord::Base.connection.select_all("CALL hs_calc_human_resource(#{dates},'#{params[:entities]}',3)").to_hash
-    ActiveRecord::Base.clear_active_connections!
+  # def get_costs_per_production_center
+  #   dates = params[:dates].gsub! '_', ','
+  #   hs = ActiveRecord::Base.connection.select_all("CALL hs_calc_human_resource(#{dates},'#{params[:entities]}',3)").to_hash
+  #   ActiveRecord::Base.clear_active_connections!
 
-    ov = ActiveRecord::Base.connection.select_all("CALL hs_calc_overheads(#{dates},'#{params[:entities]}',3)").to_hash
-    ActiveRecord::Base.clear_active_connections!
+  #   ov = ActiveRecord::Base.connection.select_all("CALL hs_calc_overheads(#{dates},'#{params[:entities]}',3)").to_hash
+  #   ActiveRecord::Base.clear_active_connections!
 
-    sp = ActiveRecord::Base.connection.select_all("CALL hs_calc_supplies(#{dates},'#{params[:entities]}',3)").to_hash
-    ActiveRecord::Base.clear_active_connections!
+  #   sp = ActiveRecord::Base.connection.select_all("CALL hs_calc_supplies(#{dates},'#{params[:entities]}',3)").to_hash
+  #   ActiveRecord::Base.clear_active_connections!
 
-    render json: { human_resource: hs, overheads: ov, supplies: sp }, status: :ok
-  end
+  #   render json: { human_resource: hs, overheads: ov, supplies: sp }, status: :ok
+  # end
 
   # /network/support_cost_centers
   def get_support_cost_centers
@@ -180,10 +180,12 @@ class AnalysisNetworksController < ApplicationController
   # /network/production_unit
   def get_production_unit
     dates = params[:dates].gsub! '_', ','
+    total_centers = ActiveRecord::Base.connection.select_all("CALL hscalc_total_centers(#{dates},'#{params[:entities]}')").to_hash
+    ActiveRecord::Base.clear_active_connections!
     production_unit = ActiveRecord::Base.connection.select_all("CALL hs_calc_production_unit(#{dates},'#{params[:entities]}')").to_hash
     ActiveRecord::Base.clear_active_connections!
 
-    render json: production_unit, status: :ok
+    render json: { production: production_unit, totals: total_centers}, status: :ok
   end
 
   private

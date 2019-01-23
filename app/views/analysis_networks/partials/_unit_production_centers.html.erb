@@ -13,6 +13,7 @@
         <table class="table table-bordered dataTable no-footer fixed_table" cellspacing="0" id="production_centers">
           <thead>
             <tr>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -61,3 +62,72 @@
     </div>
   </div>
 </div>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+    function get_production_data() {
+      var pos_pu = [1,3,5,7,9,11];
+
+      $.ajax({
+        url: "<%= get_production_unit_analysis_networks_path %>",
+        contentType: 'application/json; charset=utf-8',        
+        method: 'GET',
+        cache: false,
+        data: {
+          dates: $('#analysis_networks_date_parameters').val(),
+          entities: $('#analysis_networks_entities_parameters').val()
+        }
+      }).done(function(data) {
+        $.when(create_headers(data.totals, '#production_centers')).done(function() {
+          add_production_units(data.production, pos_pu, '#production_centers');  
+        });
+      }).fail(function(xhr, text, error) {
+        alert('Ocurrio un error al buscar los centros de costos.');
+      });
+    }
+
+    function create_headers(data, table) {
+      var html = '', html_totals = '', html_empty = '';
+      $(data).each(function(k, v) {
+        html += '<th data-id="'+ v.id +'">' + v.description + '</th>';
+        html_totals += '<td data-id="'+ v.id +'"><label class="integer_numbers">' + v.total + '</label></td>';
+        html_empty += '<td data-id="'+ v.id +'"><label class="decimal_numbers_2"></label></td>';
+      });
+
+      $(table + ' thead tr:first').append(html);
+      $(table + ' tbody tr:first').append(html_totals);
+      $(table + ' tbody tr:eq(1)').append(html_empty);
+      $(table + ' tbody tr:eq(2)').append(html_empty);
+      $(table + ' tbody tr:eq(3)').append(html_empty);
+      $(table + ' tbody tr:eq(4)').append(html_empty);
+      $(table + ' tbody tr:eq(5)').append(html_empty);
+      $(table + ' tbody tr:eq(6)').append(html_empty);
+      $(table + ' tbody tr:eq(7)').append(html_empty);
+      $(table + ' tbody tr:eq(8)').append(html_empty);
+      $(table + ' tbody tr:eq(9)').append(html_empty);
+      $(table + ' tbody tr:eq(10)').append(html_empty);
+      $(table + ' tbody tr:eq(11)').append(html_empty);
+      $(table + ' tbody tr:eq(12)').append(html_empty);
+    }
+
+    function add_production_units(data, positions, table) {
+      var val_cc = 0, current_prod = 0, cost_unit = 0, val_row = 0;
+      
+      $(data).each(function(k,v) {
+        current_prod = parseFloat(isNaN(v.total_center) ? 0 : v.total_center);
+        val_cc = parseFloat(String($(table + ' tbody tr:first td[data-id="'+ v.cost_center_id +'"] label').html()).replace(/,/g, ""));
+        cost_unit = parseFloat(current_prod == 0 ? 0 : (val_cc / current_prod));
+
+        $(table + ' tbody tr:eq('+ positions[v.production_units - 1] +') td[data-id="'+ v.cost_center_id +'"] label').html(v.value);
+        $(table + ' tbody tr:eq('+ (positions[v.production_units - 1] + 1) +') td[data-id="'+ v.cost_center_id +'"] label').html(cost_unit);
+      });
+
+      $('#loading_div').hide('slow');
+      $('#analysis_networks_div').show('slow');
+      
+      $('.integer_numbers').number( true, 0 );
+      $('.decimal_numbers_2').number( true, 2 );
+      $(table).DataTable({ bInfo: false, searching: false, bSort: false, scrollY: "500px", scrollX: true, scrollCollapse: true, paging: false, fixedColumns: { leftColumns: 1 }, dom: 'Bfrtip', buttons: [{ extend: 'excelHtml5', title: 'Produccion Unitaria' }]});
+    }
+  </script>
+<% end %>
