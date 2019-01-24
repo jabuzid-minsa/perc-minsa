@@ -83,7 +83,7 @@
           entities: $('#analysis_networks_entities_parameters').val()
         }
       }).done(function(data) {
-        update_data_entity(data, row_update);
+        update_data_entity(data, row_update);        
         callback();
       }).fail(function(xhr, text, error) {
         alert(msg);
@@ -111,7 +111,7 @@
           row_update = 2,
           msg = 'Ocurrio un error al consutlar los insumos, intentelo de nuevo';
       
-      get_data_items(url, row_update, msg, calc_totals_by_entity);      
+      get_data_items(url, row_update, msg, calc_totals_by_entity);
     }
 
     function calc_totals_by_entity() {
@@ -125,9 +125,10 @@
         $(v).find('label').html((hr + ov + sp));
       });
 
-      calc_totals_by_entity_item();
+      calc_totals_by_entity_item();      
       update_cp_specials();
-      update_cp_parent_values();      
+      update_cp_parent_values();
+      generate_graph();
     }
 
     function calc_totals_by_entity_item() {

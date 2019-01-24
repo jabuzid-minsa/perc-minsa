@@ -67,9 +67,7 @@
   <script type="text/javascript">
     $(document).ready(function() {      
       $.when(create_init_info()).done(function() {
-        $.when(get_human_resource()).done(function() {
-          generate_graph();  
-        });
+        get_human_resource();
         get_production_data();
       });
     });
