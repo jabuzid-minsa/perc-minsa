@@ -10,8 +10,8 @@
   <div class="ibox-content" id="section_costs_by_entities">    
     <!-- Graph -->
     <div class="row">
-      <div class="col-md-12">
-        <canvas id="graph_costs_by_entities" width="100%" height="" style="display: none;"></canvas>        
+      <div class="col-md-12">        
+        <div id="graph_costs_by_entities"></div>
       </div>
     </div>
     <!-- Table -->
@@ -228,22 +228,21 @@
     function generate_graph() {
       var $data_table = $('#costs_by_entities'),
           id_graph = '#graph_costs_by_entities',
+          name_hr = $data_table.find('tbody tr:eq(0) td:eq(0)').html().trim(),
+          name_ov = $data_table.find('tbody tr:eq(1) td:eq(0)').html().trim(),
+          name_sp = $data_table.find('tbody tr:eq(2) td:eq(0)').html().trim(),
           c3_options = {
             bindto: id_graph,
             data: {
               x: 'x',
               columns: [
                 ['x'],
-                ["<%= t('app.analysis_tables.common.human_resource') %>"],
-                ["<%= t('app.analysis_tables.common.overheads') %>"],
-                ["<%= t('app.analysis_tables.common.supplies') %>"],
+                [name_hr],
+                [name_ov],
+                [name_sp],
               ],
               type: 'bar',
-              groups: [[              
-                "<%= t('app.analysis_tables.common.human_resource') %>",
-                "<%= t('app.analysis_tables.common.overheads') %>",
-                "<%= t('app.analysis_tables.common.supplies') %>"
-              ]]
+              groups: [[name_hr,name_ov,name_sp]]
             }
           };
 
@@ -253,7 +252,7 @@
         c3_options.data.columns[2].push(clean_number_mask($data_table.find('tbody tr:eq(1) td:eq('+ (k + 1) +') label').html()));
         c3_options.data.columns[3].push(clean_number_mask($data_table.find('tbody tr:eq(2) td:eq('+ (k + 1) +') label').html()));
       });
-      console.log(c3_options);
+      
       c3.generate(c3_options);
     }
   </script>
