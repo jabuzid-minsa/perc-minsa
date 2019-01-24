@@ -68,6 +68,7 @@
     $(document).ready(function() {      
       $.when(create_init_info()).done(function() {
         get_human_resource();
+        generate_graph();
         get_production_data();
       });
     });

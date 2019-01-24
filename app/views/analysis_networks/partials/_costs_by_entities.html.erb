@@ -69,9 +69,7 @@
         pos = $('#costs_by_entities thead th').index(element);
 
         $('#costs_by_entities tbody tr:eq(' + row + ') td:eq(' + pos + ') label').html(v.total);
-      });
-
-      generate_graph();
+      });      
     }
 
     function get_data_items(url, row_update, msg, callback) {
@@ -251,9 +249,9 @@
 
       $data_table.find('thead tr:first th').not(':first').not(':last').each(function(k,v) {
         c3_options.data.columns[0].push($(v).find('label').html().trim());
-        c3_options.data.columns[1].push(clean_number_mask($data_table.find('tbody tr:eq(0) td:eq('+ k +') label').html()));
-        c3_options.data.columns[2].push(clean_number_mask($data_table.find('tbody tr:eq(1) td:eq('+ k +') label').html()));
-        c3_options.data.columns[3].push(clean_number_mask($data_table.find('tbody tr:eq(2) td:eq('+ k +') label').html()));
+        c3_options.data.columns[1].push(clean_number_mask($data_table.find('tbody tr:eq(0) td:eq('+ (k + 1) +') label').html()));
+        c3_options.data.columns[2].push(clean_number_mask($data_table.find('tbody tr:eq(1) td:eq('+ (k + 1) +') label').html()));
+        c3_options.data.columns[3].push(clean_number_mask($data_table.find('tbody tr:eq(2) td:eq('+ (k + 1) +') label').html()));
       });
       console.log(c3_options);
       c3.generate(c3_options);
