@@ -70,6 +70,8 @@
 
         $('#costs_by_entities tbody tr:eq(' + row + ') td:eq(' + pos + ') label').html(v.total);
       });
+
+      generate_graph();
     }
 
     function get_data_items(url, row_update, msg, callback) {
@@ -219,6 +221,68 @@
       $(data).each(function(k,v){
         $('#control_panel_2 tbody tr:eq('+ (v.type_group - 1) +')').append('<td class="currency text-right"><label class="integer_numbers">' + v.total + '</label></td><td class="currency text-right"><label class="">' + ((v.total / total_entity) * 100).toFixed(2) + '%</label></td>').show();
       });
+    }
+
+    function clean_number_mask(number) {
+        return parseFloat(String(number).replace(/,/g, ""));
+      }
+
+    function generate_graph() {
+      var $data_table = $('#costs_by_entities'),
+          id_graph = '#graph_costs_by_entities',
+          c3_options = {
+            bindto: id_graph;
+            data: {
+              x: 'x',
+              columns: [
+                ['x'],
+                ["<%= t('app.analysis_tables.common.human_resource') %>"],
+                ["<%= t('app.analysis_tables.common.overheads') %>"],
+                ["<%= t('app.analysis_tables.common.supplies') %>"],
+              ],
+              type: 'bar',
+              groups: [
+                "<%= t('app.analysis_tables.common.human_resource') %>",
+                "<%= t('app.analysis_tables.common.overheads') %>",
+                "<%= t('app.analysis_tables.common.supplies') %>"
+              ]
+            },
+            zoom: {
+              enabled: true
+            },
+            tooltip: {
+              format: {
+                value: function(value) {
+                  return d3.format(",.2f")(value)
+                }
+              }
+            },
+            axis: {
+              y : {
+                tick: {
+                  format: d3.format(",.2f")
+                }
+              },
+              x: {
+                type: 'category',
+                tick: {
+                  rotate: 90,
+                  multiline: true,
+                  width: 140
+                },
+                height: 200
+              }
+            }
+          };
+
+      $data_table.find('thead tr:first th').not(':first').not(':last').each(function(k,v) {
+        c3_options.data.columns[0].push($(v).find('label').html().trim());
+        c3_options.data.columns[1].push(clean_number_mask($data_table.find('tbody tr:eq(0) td:eq('+ k +') label').html()));
+        c3_options.data.columns[2].push(clean_number_mask($data_table.find('tbody tr:eq(1) td:eq('+ k +') label').html()));
+        c3_options.data.columns[3].push(clean_number_mask($data_table.find('tbody tr:eq(2) td:eq('+ k +') label').html()));
+      });
+
+      c3.generate(c3_options);
     }
   </script>
 <% end %>
