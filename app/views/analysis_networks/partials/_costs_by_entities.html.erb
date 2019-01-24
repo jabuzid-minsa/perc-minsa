@@ -246,32 +246,6 @@
                 "<%= t('app.analysis_tables.common.overheads') %>",
                 "<%= t('app.analysis_tables.common.supplies') %>"
               ]]
-            },
-            zoom: {
-              enabled: true
-            },
-            tooltip: {
-              format: {
-                value: function(value) {
-                  return d3.format(",.2f")(value)
-                }
-              }
-            },
-            axis: {
-              y : {
-                tick: {
-                  format: d3.format(",.2f")
-                }
-              },
-              x: {
-                type: 'category',
-                tick: {
-                  rotate: 90,
-                  multiline: true,
-                  width: 140
-                },
-                height: 200
-              }
             }
           };
 
@@ -281,7 +255,7 @@
         c3_options.data.columns[2].push(clean_number_mask($data_table.find('tbody tr:eq(1) td:eq('+ k +') label').html()));
         c3_options.data.columns[3].push(clean_number_mask($data_table.find('tbody tr:eq(2) td:eq('+ k +') label').html()));
       });
-
+      console.log(c3_options);
       c3.generate(c3_options);
     }
   </script>
