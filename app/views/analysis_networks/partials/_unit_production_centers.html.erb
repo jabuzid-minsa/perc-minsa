@@ -90,8 +90,8 @@
       var html = '', html_totals = '', html_empty = '';
       $(data).each(function(k, v) {
         html += '<th data-id="'+ v.id +'">' + v.description + '</th>';
-        html_totals += '<td data-id="'+ v.id +'"><label class="integer_numbers">' + v.total + '</label></td>';
-        html_empty += '<td data-id="'+ v.id +'"><label class="decimal_numbers_2"></label></td>';
+        html_totals += '<td data-id="'+ v.id +'"><label class="integer_numbers text-right">' + v.total + '</label></td>';
+        html_empty += '<td data-id="'+ v.id +'"><label class="decimal_numbers_2 text-right"></label></td>';
       });
 
       $(table + ' thead tr:first').append(html);
