@@ -227,12 +227,11 @@
 
     function generate_graph() {
       var $data_table = $('#costs_by_entities'),
-          id_graph = '#graph_costs_by_entities',
           name_hr = $data_table.find('tbody tr:eq(0) td:eq(0)').html().trim(),
           name_ov = $data_table.find('tbody tr:eq(1) td:eq(0)').html().trim(),
           name_sp = $data_table.find('tbody tr:eq(2) td:eq(0)').html().trim(),
           c3_options = {
-            bindto: id_graph,
+            bindto: '#graph_costs_by_entities',
             data: {
               x: 'x',
               columns: [
@@ -243,6 +242,32 @@
               ],
               type: 'bar',
               groups: [[name_hr,name_ov,name_sp]]
+            },
+            zoom: {
+              enabled: true
+            },
+            tooltip: {
+              format: {
+                value: function(value) {
+                  return d3.format(",.2f")(value)
+                }
+              }
+            },
+            axis: {
+              y : {
+                tick: {
+                  format: d3.format(",.2f")
+                }
+              },
+              x: {
+                type: 'category',
+                tick: {
+                  rotate: 90,
+                  multiline: true,
+                  width: 140
+                },
+                height: 200
+              }
             }
           };
 
