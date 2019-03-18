@@ -29,7 +29,15 @@ Rails.application.routes.draw do
 		post 'analysis/management_number_two', to: 'multiple_analysis#filter_efficiency_staff', as: 'multiple_filter_efficiency_staff_two'
 		get 'analysis/management_number_two', to: 'multiple_analysis#report_number_two', as: 'multiple_report_number_two'
 
+		get '/management_number_one/tf_production_info', to: 'multiple_analysis#tf_production_info', as: 'mrrnod_production_info'
+		get '/management_number_one/tf_indirect_costs', to: 'multiple_analysis#tf_indirect_costs', as: 'mrrnod_total_indirects'
+		get '/management_number_one/tf_direct_costs', to: 'multiple_analysis#tf_direct_costs', as: 'mrrnod_total_directs'
 		get 'analysis/detail_report_cost_production_center', to: 'multiple_analysis#report_detail_number_one', as: 'multiple_report_detail_number_one'
+		
+		get '/management_number_one/total_indirects', to: 'multiple_analysis#total_indirects', as: 'mrrno_total_indirects'
+		get '/management_number_one/total_per_cost_center', to: 'multiple_analysis#total_per_cost_center', as: 'mrrno_total_per_cost_center'
+		get '/management_number_one/total_per_month', to: 'multiple_analysis#total_per_month', as: 'mrrno_total_per_month'
+		get '/management_number_one/control_panel', to: 'multiple_analysis#rno_control_panel', as: 'mrrno_control_panel'
 		get 'analysis/management_number_one', to: 'multiple_analysis#report_number_one', as: 'multiple_report_number_one'
 
 		post 'analysis/create_range', to: 'multiple_analysis#set_date_ranges', as: 'multiple_set_range_dates'

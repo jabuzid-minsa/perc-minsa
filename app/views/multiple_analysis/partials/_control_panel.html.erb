@@ -1,286 +1,151 @@
 <div class="ibox float-e-margins">
-	<div class="ibox-title">
-		<h5><%= t('app.analysis_tables.one.first_panel.title') %></h5>
-		<div class="ibox-tools">
-			<a class="collapse-link">
-				<i class="fa fa-chevron-up"></i>
-			</a>
-		</div>
-	</div>
-	<div class="ibox-content" id="content-control-panel" style="display: none;">
-		<p>
-			<strong><%= t('app.analysis_tables.one.first_panel.month') %>: </strong><span id="month-current-human"></span>
-		</p>
-		<div class="row">
-			<div class="col-md-4"></div>
-			<div class="col-md-4">
-				<div class="dropdown">
-					<button class="btn btn-default dropdown-toggle" type="button" id="elements_cp2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-						<%= t('app.analysis_tables.one.first_panel.select_items') %>
-						<span class="caret"></span>
-					</button>
-					<ul class="dropdown-menu" aria-labelledby="elements_cp2">
-						<li><label style="padding: 0px 5px;"><input class="cp2_change_display" type="checkbox" data-target="#cp2_item_1"> <%= t('app.analysis_tables.one.first_panel.hospitalization') %></label></li>
-						<li><label style="padding: 0px 5px;"><input class="cp2_change_display" type="checkbox" data-target="#cp2_item_2"> <%= t('app.analysis_tables.one.first_panel.intensive_care_unit') %></label></li>
-						<li><label style="padding: 0px 5px;"><input class="cp2_change_display" type="checkbox" data-target="#cp2_item_3"> <%= t('app.analysis_tables.one.first_panel.quirofanos') %></label></li>
-						<li><label style="padding: 0px 5px;"><input class="cp2_change_display" type="checkbox" data-target="#cp2_item_4"> <%= t('app.analysis_tables.one.first_panel.emergencies') %></label></li>
-						<li><label style="padding: 0px 5px;"><input class="cp2_change_display" type="checkbox" data-target="#cp2_item_5"> <%= t('app.analysis_tables.one.first_panel.consultation') %></label></li>
-						<li><label style="padding: 0px 5px;"><input class="cp2_change_display" type="checkbox" data-target="#cp2_item_6"> <%= t('app.analysis_tables.one.first_panel.extramural_services') %></label></li>
-						<li><label style="padding: 0px 5px;"><input class="cp2_change_display" type="checkbox" data-target="#cp2_item_7"> <%= t('app.analysis_tables.one.first_panel.clinic') %></label></li>
-						<li><label style="padding: 0px 5px;"><input class="cp2_change_display" type="checkbox" data-target="#cp2_item_8"> <%= t('app.analysis_tables.one.first_panel.promotion_prevention') %></label></li>
-						<li><label style="padding: 0px 5px;"><input class="cp2_change_display" type="checkbox" data-target="#cp2_item_9"> <%= t('app.analysis_tables.one.first_panel.primary_health') %></label></li>
-						<li><label style="padding: 0px 5px;"><input class="cp2_change_display" type="checkbox" data-target="#cp2_item_10"> <%= t('app.analysis_tables.one.first_panel.basic_plan') %></label></li>
-						<li><label style="padding: 0px 5px;"><input class="cp2_change_display" type="checkbox" data-target="#cp2_item_11"> <%= t('app.analysis_tables.one.first_panel.other_services') %></label></li>
-						<li><label style="padding: 0px 5px;"><input class="cp2_change_display" type="checkbox" data-target="#cp2_item_12"> <%= t('app.analysis_tables.one.first_panel.administration') %></label></li>
-					</ul>
-				</div>
-			</div>
-			<div class="col-md-4"></div>
-		</div>
-		<div class="row">
-			<div class="col-md-4">
-				<table class="table table-bordered dataTable no-footer" cellspacing="0" id="control_panel_1">
-					<thead>
-						<tr>
-							<td></td>
-							<td><%= t('app.analysis_tables.common.total') %></td>
-							<td><%= t('app.analysis_tables.common.percentage') %></td>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td><%= t('app.analysis_tables.common.total_cost') %></td>
-						</tr>
-						<tr>
-							<td><%= t('app.analysis_tables.common.human_resource') %></td>
-						</tr>
-						<tr>
-							<td><%= t('app.analysis_tables.common.overheads') %></td>
-						</tr>
-						<tr>
-							<td><%= t('app.analysis_tables.common.supplies') %></td>
-						</tr>
-						<tr>
-							<td><%= t('app.analysis_tables.one.first_panel.medicines') %></td>
-							<td class="text-right"><label class="decimal_numbers_2"><%= @medicines[0].total.present? ? @medicines[0].total : 0 %></label></td>
-						</tr>
-						<tr>
-							<td><%= t('app.analysis_tables.one.first_panel.op_material') %></td>
-							<td class="text-right"><label class="decimal_numbers_2"><%= @osteosinthesis_material[0].total.present? ? @osteosinthesis_material[0].total : 0 %></label></td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-			<div class="col-md-4">
-				<table class="table table-bordered dataTable no-footer" cellspacing="0" id="control_panel_2">
-					<thead>
-					<tr>
-						<td></td>
-						<td><%= t('app.analysis_tables.common.total') %></td>
-						<td><%= t('app.analysis_tables.common.percentage') %></td>
-					</tr>
-					</thead>
-					<tbody>
-						<tr id="#cp2_item_1" style="display: none;"><td><label><%= t('app.analysis_tables.one.first_panel.hospitalization') %></label></td></tr>
-						<tr id="#cp2_item_2" style="display: none;"><td><label><%= t('app.analysis_tables.one.first_panel.intensive_care_unit') %></label></td></tr>
-						<tr id="#cp2_item_3" style="display: none;"><td><label><%= t('app.analysis_tables.one.first_panel.quirofanos') %></label></td></tr>
-						<tr id="#cp2_item_4" style="display: none;"><td><label><%= t('app.analysis_tables.one.first_panel.emergencies') %></label></td></tr>
-						<tr id="#cp2_item_5" style="display: none;"><td><label><%= t('app.analysis_tables.one.first_panel.consultation') %></label></td></tr>
-						<tr id="#cp2_item_6" style="display: none;"><td><label><%= t('app.analysis_tables.one.first_panel.extramural_services') %></label></td></tr>
-						<tr id="#cp2_item_7" style="display: none;"><td><label><%= t('app.analysis_tables.one.first_panel.clinic') %></label></td></tr>
-						<tr id="#cp2_item_8" style="display: none;"><td><label><%= t('app.analysis_tables.one.first_panel.promotion_prevention') %></label></td></tr>
-						<tr id="#cp2_item_9" style="display: none;"><td><label><%= t('app.analysis_tables.one.first_panel.primary_health') %></label></td></tr>
-						<tr id="#cp2_item_10" style="display: none;"><td><label><%= t('app.analysis_tables.one.first_panel.basic_plan') %></label></td></tr>
-						<tr id="#cp2_item_11" style="display: none;"><td><label><%= t('app.analysis_tables.one.first_panel.other_services') %></label></td></tr>
-						<tr id="#cp2_item_12" style="display: none;"><td><label><%= t('app.analysis_tables.one.first_panel.administration') %></label></td></tr>
-					</tbody>
-				</table>
-			</div>
-			<div class="col-md-4">
-				<table class="table table-bordered dataTable no-footer" cellspacing="0" id="control_panel_3">
-					<thead>
-					<tr>
-						<td></td>
-						<td><%= t('app.analysis_tables.common.quantity') %></td>
-						<td><%= t('app.analysis_tables.common.average_cost') %></td>
-					</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td><label><%= t('app.analysis_tables.one.first_panel.beds') %></label></td>
-							<td class="text-right"><label class="decimal_numbers_2"><%= @total_beds %></label></td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-		</div>
-	</div>
+  <div class="ibox-title">
+    <h5><%= t('app.analysis_tables.one.first_panel.title') %></h5>
+    <div class="ibox-tools">
+      <a class="collapse-link">
+        <i class="fa fa-chevron-up"></i>
+      </a>
+    </div>
+  </div>
+  <div class="ibox-content" id="content-control-panel">
+    <p>
+      <strong><%= t('app.analysis_tables.one.first_panel.month') %>: </strong><span id="month-current-human"></span>
+    </p>
+    
+    <div class="row">
+      <div class="col-md-4">
+        <table class="table table-bordered no-footer" cellspacing="0" id="control_panel_1">
+          <thead>
+            <tr>
+              <td></td>
+              <td><%= t('app.analysis_tables.common.total') %></td>
+              <td><%= t('app.analysis_tables.common.percentage') %></td>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><%= t('app.analysis_tables.common.total_cost') %></td>
+            </tr>
+            <tr>
+              <td><%= t('app.analysis_tables.common.human_resource') %></td>
+            </tr>
+            <tr>
+              <td><%= t('app.analysis_tables.common.overheads') %></td>
+            </tr>
+            <tr>
+              <td><%= t('app.analysis_tables.common.supplies') %></td>
+            </tr>            
+          </tbody>
+        </table>
+        <table class="table table-bordered no-footer" cellspacing="0" id="control_panel_1p5">
+          <thead>
+            <tr>
+              <td></td>
+              <td><%= t('app.analysis_tables.common.total') %></td>
+              <td><%= t('app.analysis_tables.common.percentage') %></td>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><%= t('app.analysis_tables.one.first_panel.medicines') %></td>
+            </tr>
+            <tr>
+              <td><%= t('app.analysis_tables.one.first_panel.op_material') %></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="col-md-4">
+        <table class="table table-bordered dataTable no-footer" cellspacing="0" id="control_panel_2">
+          <thead>
+          <tr>
+            <td></td>
+            <td><%= t('app.analysis_tables.common.total') %></td>
+            <td><%= t('app.analysis_tables.common.percentage') %></td>
+          </tr>
+          </thead>
+          <tbody>
+            <tr id="#cp2_item_1" style="display: none;"><td><label><%= t('app.analysis_tables.one.first_panel.hospitalization') %></label></td></tr>
+            <tr id="#cp2_item_2" style="display: none;"><td><label><%= t('app.analysis_tables.one.first_panel.intensive_care_unit') %></label></td></tr>
+            <tr id="#cp2_item_3" style="display: none;"><td><label><%= t('app.analysis_tables.one.first_panel.quirofanos') %></label></td></tr>
+            <tr id="#cp2_item_4" style="display: none;"><td><label><%= t('app.analysis_tables.one.first_panel.emergencies') %></label></td></tr>
+            <tr id="#cp2_item_5" style="display: none;"><td><label><%= t('app.analysis_tables.one.first_panel.consultation') %></label></td></tr>
+            <tr id="#cp2_item_6" style="display: none;"><td><label><%= t('app.analysis_tables.one.first_panel.extramural_services') %></label></td></tr>
+            <tr id="#cp2_item_7" style="display: none;"><td><label><%= t('app.analysis_tables.one.first_panel.clinic') %></label></td></tr>
+            <tr id="#cp2_item_8" style="display: none;"><td><label><%= t('app.analysis_tables.one.first_panel.promotion_prevention') %></label></td></tr>
+            <tr id="#cp2_item_9" style="display: none;"><td><label><%= t('app.analysis_tables.one.first_panel.primary_health') %></label></td></tr>
+            <tr id="#cp2_item_10" style="display: none;"><td><label><%= t('app.analysis_tables.one.first_panel.basic_plan') %></label></td></tr>
+            <tr id="#cp2_item_11" style="display: none;"><td><label><%= t('app.analysis_tables.one.first_panel.other_services') %></label></td></tr>
+            <tr id="#cp2_item_12" style="display: none;"><td><label><%= t('app.analysis_tables.one.first_panel.administration') %></label></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="col-md-4">
+        <table class="table table-bordered dataTable no-footer" cellspacing="0" id="control_panel_3">
+          <thead>
+          <tr>
+            <td></td>
+            <td><%= t('app.analysis_tables.common.quantity') %></td>
+            <td><%= t('app.analysis_tables.common.average_cost') %></td>
+          </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><label><%= t('app.analysis_tables.one.first_panel.beds') %></label></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 </div>
 
 <% content_for :javascript do %>
-	<script type="text/javascript">
-		var monthsHuman = {
-					1: "<%= t('app.analysis_tables.common.months.january') %>", 
-					2: "<%= t('app.analysis_tables.common.months.february') %>", 
-					3: "<%= t('app.analysis_tables.common.months.march') %>", 
-					4: "<%= t('app.analysis_tables.common.months.april') %>", 
-					5: "<%= t('app.analysis_tables.common.months.may') %>", 
-					6: "<%= t('app.analysis_tables.common.months.june') %>", 
-					7: "<%= t('app.analysis_tables.common.months.july') %>", 
-					8: "<%= t('app.analysis_tables.common.months.august') %>", 
-					9: "<%= t('app.analysis_tables.common.months.september') %>", 
-					10: "<%= t('app.analysis_tables.common.months.october') %>", 
-					11: "<%= t('app.analysis_tables.common.months.november') %>", 
-					12: "<%= t('app.analysis_tables.common.months.december') %>" 
-				};
-		/** ---------------------- Functions ---------------------- **/
-		//
-		function toggle_cpelements(checkbox) {
-			$('#control_panel_2 tbody tr[id="'+$(checkbox).data('target')+'"]').toggle('slow');
-		}
-		//
-		function set_month_current() {
-			var starting_date = "<%= session[:date_start] %>", final_date = "<%= session[:date_end] %>";
+  <script type="text/javascript">
+    function print_parent_centers_analysis(data, total) {
+      var current_total = 0;
 
-			$('span#month-current-human').html(starting_date+' '+"<%= t('app.analysis_tables.multiple_months.selection_months.to') %>"+' '+final_date);
-		}
-		//
-		function copy_calculated_values() {
-			var totalEntity = clean_number_mask($('#consolidated_table tbody tr:last td#total_entity label').html()), valRh, valOv, valSp, valMd, valOm;
+      $(data).each(function(k, v) {
+        current_total = parseFloat(v.total);
+        $('#control_panel_2 tbody tr:eq(' + (v.type_group - 1) +')').append('<td class="currency text-right"><label class="integer_numbers">'+ current_total +'</label></td><td class="currency text-right"><label class="">'+ ( (current_total / total) * 100 ).toFixed(2) +'%</label></td>').show();
+      });
+    }
+    
+    function print_special_values(data, total) {
+      var med = parseFloat(data[1].total),
+          mmo = parseFloat(data[2].total),
+          beeds = parseFloat(data[0].total);
+      $('#control_panel_1p5 tbody tr:eq(0)').append('<td class="text-right"><label class="integer_numbers">'+ med +'</label></td><td class="text-right"><label class="">'+ ( (med / total) * 100 ).toFixed(2) +'%</label></td>');
+      $('#control_panel_1p5 tbody tr:eq(1)').append('<td class="text-right"><label class="integer_numbers">'+ mmo +'</label></td><td class="text-right"><label class="">'+ ( (mmo / total) * 100 ).toFixed(2) +'%</label></td>');
 
-			$('table#control_panel_1 tbody tr:eq(0)').append('<td class="text-right">'+$('#consolidated_table tbody tr:last td#total_entity').html().trim()+'</td><td class="text-right"><label>100.00%</label></td>');
+      $('#control_panel_3 tbody tr:first').append('<td class="text-right"><label class="integer_numbers">'+ beeds +'</label></td><td class="currency text-right"><label class="integer_numbers">' + (total / beeds).toFixed(2) + '</label></td>');
+    }
 
-			valRh = clean_number_mask($('#consolidated_table tbody tr[data-summary="human_resource"] td:eq(1) label').html());
-			$('table#control_panel_1 tbody tr:eq(1)').append('<td class="text-right">'+$('#consolidated_table tbody tr[data-summary="human_resource"] td:eq(1)').html().trim()+'</td><td class="text-right"><label>'+((valRh/totalEntity)*100).toFixed(2)+'%</label></td>');
+    function print_totals(data) {
+      var hs = parseFloat(data.hs[0].total),
+          ov = parseFloat(data.ov[0].total),
+          sp = parseFloat(data.sp[0].total),
+          total = hs + ov + sp;
 
-			valOv = clean_number_mask($('#consolidated_table tbody tr[data-summary="overheads"] td:eq(1) label').html());
-			$('table#control_panel_1 tbody tr:eq(2)').append('<td class="text-right">'+$('#consolidated_table tbody tr[data-summary="overheads"] td:eq(1)').html().trim()+'</td><td class="text-right"><label>'+((valOv/totalEntity)*100).toFixed(2)+'%</label></td>');
+      $('#control_panel_1 tbody tr:eq(0)').append('<td class="currency text-right"><label class="integer_numbers">'+ total +'</label></td><td class="currency text-right"><label class="">100%</label></td>');
+      $('#control_panel_1 tbody tr:eq(1)').append('<td class="currency text-right"><label class="integer_numbers">'+ hs +'</label></td><td class="currency text-right"><label class="">'+ ( (hs / total) * 100 ).toFixed(2) +'%</label></td>');
+      $('#control_panel_1 tbody tr:eq(2)').append('<td class="currency text-right"><label class="integer_numbers">'+ ov +'</label></td><td class="currency text-right"><label class="">'+ ( (ov / total) * 100 ).toFixed(2) +'%</label></td>');
+      $('#control_panel_1 tbody tr:eq(3)').append('<td class="currency text-right"><label class="integer_numbers">'+ sp +'</label></td><td class="currency text-right"><label class="">'+ ( (sp / total) * 100 ).toFixed(2) +'%</label></td>');
+      
+      return total;
+    }
 
-			valSp = clean_number_mask($('#consolidated_table tbody tr[data-summary="supplies"] td:eq(1) label').html());
-			$('table#control_panel_1 tbody tr:eq(3)').append('<td class="text-right">'+$('#consolidated_table tbody tr[data-summary="supplies"] td:eq(1)').html().trim()+'</td><td class="text-right"><label>'+((valSp/totalEntity)*100).toFixed(2)+'%</label></td>');
-
-			valMd = clean_number_mask($('table#control_panel_1 tbody tr:eq(4) td:eq(1) label').html());
-			$('table#control_panel_1 tbody tr:eq(4)').append('<td class="text-right"><label>'+((valMd/totalEntity)*100).toFixed(2)+'%</label></td>');
-
-			valOm = clean_number_mask($('table#control_panel_1 tbody tr:eq(5) td:eq(1) label').html());
-			$('table#control_panel_1 tbody tr:eq(5)').append('<td class="text-right"><label>'+((valOm/totalEntity)*100).toFixed(2)+'%</label></td>');
-		}
-		//
-		function calculated_cp_2() {
-			var dataElement = $('#concepts_by_cost_centers tbody tr#total_concept'), totalEntity = clean_number_mask($('#consolidated_table tbody tr:last td#total_entity label').html()), acum = 0;
-			
-			dataElement.find('td[data-codecc^="01"], td[data-codecc^="02"]').each(function(index, value) {
-				acum += clean_number_mask($(value).find('label').html());
-			});
-
-			$('table#control_panel_2 tbody tr:eq(0)').append('<td class="text-right"><label class="decimal_numbers_2">'+acum+'<label></td><td class="text-right"><label>'+((acum/totalEntity)*100).toFixed(2)+'%</label></td>');
-
-			acum = 0;
-
-			dataElement.find('td[data-codecc^="05"]').each(function(index, value) {
-				acum += clean_number_mask($(value).find('label').html());
-			});
-
-			$('table#control_panel_2 tbody tr:eq(1)').append('<td class="text-right"><label class="decimal_numbers_2">'+acum+'<label></td><td class="text-right"><label>'+((acum/totalEntity)*100).toFixed(2)+'%</label></td>');
-
-			acum = 0;
-
-			dataElement.find('td[data-codecc^="33"]').each(function(index, value) {
-				acum += clean_number_mask($(value).find('label').html());
-			});
-
-			$('table#control_panel_2 tbody tr:eq(2)').append('<td class="text-right"><label class="decimal_numbers_2">'+acum+'<label></td><td class="text-right"><label>'+((acum/totalEntity)*100).toFixed(2)+'%</label></td>');
-
-			acum = 0;
-
-			dataElement.find('td[data-codecc^="10"], td[data-codecc^="11"]').each(function(index, value) {
-				acum += clean_number_mask($(value).find('label').html());
-			});
-
-			$('table#control_panel_2 tbody tr:eq(3)').append('<td class="text-right"><label class="decimal_numbers_2">'+acum+'<label></td><td class="text-right"><label>'+((acum/totalEntity)*100).toFixed(2)+'%</label></td>');
-
-			acum = 0;
-
-			dataElement.find('td[data-codecc^="15"]').each(function(index, value) {
-				acum += clean_number_mask($(value).find('label').html());
-			});
-
-			$('table#control_panel_2 tbody tr:eq(4)').append('<td class="text-right"><label class="decimal_numbers_2">'+acum+'<label></td><td class="text-right"><label>'+((acum/totalEntity)*100).toFixed(2)+'%</label></td>');
-
-			acum = 0;
-
-			dataElement.find('td[data-codecc^="16"]').each(function(index, value) {
-				acum += clean_number_mask($(value).find('label').html());
-			});
-
-			$('table#control_panel_2 tbody tr:eq(5)').append('<td class="text-right"><label class="decimal_numbers_2">'+acum+'<label></td><td class="text-right"><label>'+((acum/totalEntity)*100).toFixed(2)+'%</label></td>');
-
-			acum = 0;
-
-			dataElement.find('td[data-codecc^="17"]').each(function(index, value) {
-				acum += clean_number_mask($(value).find('label').html());
-			});
-
-			$('table#control_panel_2 tbody tr:eq(6)').append('<td class="text-right"><label class="decimal_numbers_2">'+acum+'<label></td><td class="text-right"><label>'+((acum/totalEntity)*100).toFixed(2)+'%</label></td>');
-
-			acum = 0;
-
-			dataElement.find('td[data-codecc^="181"]').each(function(index, value) {
-				acum += clean_number_mask($(value).find('label').html());
-			});
-
-			$('table#control_panel_2 tbody tr:eq(7)').append('<td class="text-right"><label class="decimal_numbers_2">'+acum+'<label></td><td class="text-right"><label>'+((acum/totalEntity)*100).toFixed(2)+'%</label></td>');
-
-			acum = 0;
-
-			dataElement.find('td[data-codecc^="185"]').each(function(index, value) {
-				acum += clean_number_mask($(value).find('label').html());
-			});
-
-			$('table#control_panel_2 tbody tr:eq(8)').append('<td class="text-right"><label class="decimal_numbers_2">'+acum+'<label></td><td class="text-right"><label>'+((acum/totalEntity)*100).toFixed(2)+'%</label></td>');
-
-			acum = 0;
-
-			dataElement.find('td[data-codecc^="191"]').each(function(index, value) {
-				acum += clean_number_mask($(value).find('label').html());
-			});
-
-			$('table#control_panel_2 tbody tr:eq(9)').append('<td class="text-right"><label class="decimal_numbers_2">'+acum+'<label></td><td class="text-right"><label>'+((acum/totalEntity)*100).toFixed(2)+'%</label></td>');
-
-			acum = 0;
-
-			dataElement.find('td[data-codecc^="4"], td[data-codecc^="5"], td[data-codecc^="7"], td[data-codecc^="8"], td[data-codecc^="95"]').each(function(index, value) {
-				acum += clean_number_mask($(value).find('label').html());
-			});
-
-			$('table#control_panel_2 tbody tr:eq(10)').append('<td class="text-right"><label class="decimal_numbers_2">'+acum+'<label></td><td class="text-right"><label>'+((acum/totalEntity)*100).toFixed(2)+'%</label></td>');
-
-			acum = 0;
-
-			dataElement.find('td[data-codecc^="99"]').each(function(index, value) {
-				acum += clean_number_mask($(value).find('label').html());
-			});
-
-			$('table#control_panel_2 tbody tr:eq(11)').append('<td class="text-right"><label class="decimal_numbers_2">'+acum+'<label></td><td class="text-right"><label>'+((acum/totalEntity)*100).toFixed(2)+'%</label></td>');
-		}
-		//
-		function calculated_cp_3() {
-			var totalEntity = clean_number_mask($('#consolidated_table tbody tr:last td#total_entity label').html()), numBeds;
-
-			numBeds = clean_number_mask($('table#control_panel_3 tbody tr:eq(0) td:eq(1) label').html());
-			
-			$('table#control_panel_3 tbody tr:eq(0)').append('<td class="text-right"><label class="decimal_numbers_2">'+(parseFloat(totalEntity) / parseFloat(numBeds)).toFixed(2)+'</label></td>');
-		}
-		//
-		function calculate_control_panel_tables() {
-			set_month_current();
-			copy_calculated_values();
-			calculated_cp_2();
-			calculated_cp_3();
-
-			$('.decimal_numbers_2').number( true, 0 );
-
-			$('#content-control-panel').show();
-		}
-	</script>
+    function get_info_control_panel() {
+      $.ajax({
+        url: '/multiple_months/management_number_one/control_panel',
+        method: 'GET'
+      })
+      .done(function(data) {
+        var total_entity = print_totals(data);
+        print_special_values(data.spv, total_entity);
+        print_parent_centers_analysis(data.pg, total_entity);
+        get_info_costs_per_month();
+      });
+    }
+  </script>
 <% end %>

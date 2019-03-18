@@ -19,127 +19,61 @@
 										<label for=""><%= cost_center.description %></label>
 									</td>
 							<% end %>
+							<td><label for="">Total</label></td>
 						</tr>
 					</thead>
 					<tbody>
-						<tr data-summary='human_resource' class="header_human_resource">
-							<td>
-								<label for=""><%= t('app.analysis_tables.common.human_resource') %></label>
-							</td>
-							<% @cost_centers.each do |cost_center| %>
-									<td class="text-right" data-cost-center="<%= cost_center.id %>" data-function="<%= cost_center.function %>">
-										<label class="decimal_numbers_2 value">
-											<%= @human_resource.select {|d| d['cost_center_id'] == cost_center.id}.inject(0) {|sum, hash| sum + (hash['salary'] + hash['bonuses'] + hash['benefits'])} %>
-										</label>
-									</td>
-							<% end %>
+						<tr id='summary-hs' class="header_human_resource">
+							<td><label for=""><%= t('app.analysis_tables.common.human_resource') %></label></td>							
 						</tr>
-						<% ['salary' , 'bonuses', 'benefits'].each do |element| %>
-								<tr class="row_human_resource">
-									<td>
-										<label for="">
-											<% if element == 'salary' %>
-												<%= t('app.analysis_tables.common.salaries') %>
-											<% elsif element == 'bonuses' %>
-												<%= t('app.analysis_tables.common.bonuses') %>
-											<% else %>
-												<%= t('app.analysis_tables.common.benefits') %>
-											<% end %>
-										</label>
-									</td>
-									<% @cost_centers.each do |cost_center| %>
-											<td class="text-right">
-												<label class="decimal_numbers_2 value">
-													<%= @human_resource.select {|d| d['cost_center_id'] == cost_center.id}.inject(0) {|sum, hash| sum + hash[element] } %>
-												</label>
-											</td>
-									<% end %>
-								</tr>
-						<% end %>
-						<tr data-summary='overhead' class="header_overheads">
-							<td>
-								<label for=""><%= t('app.analysis_tables.common.overheads') %></label>
-							</td>
-							<% @cost_centers.each do |cost_center| %>
-									<td class="text-right">
-										<label class="decimal_numbers_2 value">
-											<%= @overheads.select {|d| d['cost_center'] == cost_center.id}.inject(0) {|sum, hash| sum + hash['value']} %>
-										</label>
-									</td>
-							<% end %>
-						</tr>
-						<% @supplies_overheads.each do |supply| %>
-							<tr class="row_overheads">
-								<td>
-									<label for=""><%= supply.description %></label>
-								</td>
-								<% @cost_centers.each do |cost_center| %>
-										<td class="text-right">
-											<label class="decimal_numbers_2 value">
-												<%= @overheads.select {|d| d['cost_center'] == cost_center.id && d['supply'] == supply.id}.inject(0) {|sum, hash| sum + hash['value']} %>
-											</label>
-										</td>
-								<% end %>
-							</tr>
-						<% end %>
-						<tr data-summary='supply' class="header_supplies">
-							<td>
-								<label for=""><%= t('app.analysis_tables.common.supplies') %></label>
-							</td>
-							<% @cost_centers.each do |cost_center| %>
-									<td class="text-right">
-										<label class="decimal_numbers_2 value">
-											<%= @supplies.select {|d| d['cost_center'] == cost_center.id}.inject(0) {|sum, hash| sum + hash['value']} %>
-										</label>
-									</td>
-							<% end %>
-						</tr>
-						<% @supplies_heads.each do |supply| %>
-							<tr class="row_supplies" data-supply="<%= supply.id %>">
-								<td>
-									<label for=""><%= supply.description %></label>
-								</td>
-								<% @cost_centers.each do |cost_center| %>
-										<td class="text-right">
-											<label class="decimal_numbers_2 value">
-												<%= @supplies.select {|d| d['cost_center'] == cost_center.id && d['supply'] == supply.id}.inject(0) {|sum, hash| sum + hash['value']} %>
-											</label>
-										</td>
-								<% end %>
-							</tr>
-						<% end %>
-						<tr data-summary='total'>
-							<td><label><%= t('app.analysis_tables.common.total') %></label></td>
-						</tr>
+						<tr class="row_human_resource" data-type='hs'><td><label for=""><%= t('app.analysis_tables.common.salaries') %></label></td></tr>
+						<tr class="row_human_resource" data-type='hs'><td><label for=""><%= t('app.analysis_tables.common.bonuses') %></label></td></tr>
+						<tr class="row_human_resource" data-type='hs'><td><label for=""><%= t('app.analysis_tables.common.benefits') %></label></td></tr>
+						<tr id='summary-ov' class="header_overheads">
+              <td><label for=""><%= t('app.analysis_tables.common.overheads') %></label></td>
+            </tr>
+            <% @overheads.each do |overhead| %>
+              <tr class="row_overheads" data-supply="<%= overhead.id %>" data-type='ov'><td><label for=""><%= overhead.description %></label></td></tr>
+            <% end %>
+            <tr id='summary-sp' class="header_supplies">
+              <td><label for=""><%= t('app.analysis_tables.common.supplies') %></label></td>              
+            </tr>
+            <% @supplies.each do |supply| %>
+              <tr class="row_supplies" data-supply="<%= supply.id %>" data-type='sp'><td><label for=""><%= supply.description %></label></td></tr>
+            <% end %>
+            <tr id='summary-total'>
+              <td><label>Total</label></td>
+            </tr>
 					</tbody>
 				</table>
 			</div>
 		</div>
+		<hr>
 		<div class="row">
 			<div class="col-md-4">
 				<%= select_tag('supplies_evaluated', options_from_collection_for_select(Supply.joins(:entities).where(:entities_supplies => { entity_id: session[:entity_id] } ).order('supplies.supplies_category_id, supplies.description'), 'id', 'description'),
 									 {class: 'form-control m-b select2'}) %>
 			</div>
 			<div class="col-md-8">
-				<%= button_tag(type: 'button', class: 'minimalize-styl-2 btn btn-primary no-margins evaluated-data', style: 'max-height: 28px;', 'data-target': '#supplies_evaluated_table', 'data-select': '#supplies_evaluated', 'data-info': '#summary_table') do %>
+				<button type="button" class="btn btn-primary no-margins" data-js-analyze-data="" data-type='add' 
+					data-info-el="#supplies_evaluated" 
+					data-table-find="#summary_table"
+					data-table="#supplies_evaluated_table">
 					<i class='fa fa-search'></i>
-				<% end %>
-				
-				<%= button_tag(type: 'button', class: 'minimalize-styl-2 btn btn-primary no-margins reset-data', style: 'max-height: 28px; margin-left: 10px !important;', 'data-target': '#supplies_evaluated_table', 'data-select': '#supplies_evaluated', 'data-info': '#summary_table') do %>
+				</button>
+				<button type="button" class="btn btn-primary no-margins" data-js-analyze-data="" data-type='refresh' 
+					data-info-el="#supplies_evaluated" 
+					data-table-find="#summary_table"
+					data-table="#supplies_evaluated_table">
 					<i class='fa fa-refresh'></i>
-				<% end %>
+				</button>
 			</div>
 		</div>
 		<hr class="hr-line-solid"/>
-		<table class="table table-bordered dataTable no-footer" id="supplies_evaluated_table" cellspacing="0">
+		<table class="table table-bordered dataTable no-footer special-table" id="supplies_evaluated_table" cellspacing="0">
 			<thead>
 				<tr>
-					<th><label for=""><%= t('app.analysis_tables.common.supplies_overheads') %></label></th>
-					<% @cost_centers.each do |cost_center| %>
-							<th data-cost-center="<%= cost_center.id %>" data-function="<%= cost_center.function %>">
-								<label for=""><%= cost_center.description %></label>
-							</th>
-					<% end %>
+					<td><label for=""><%= t('app.analysis_tables.common.supplies_overheads') %></label></td>					
 				</tr>
 			</thead>
 			<tbody>
@@ -150,114 +84,177 @@
 
 <% content_for :javascript do %>
 	<script type="text/javascript">
-		/** ---------------------- Variables ---------------------- **/
-		var supplies_table = $('#supplies_evaluated_table'), supplies_datatable = '', costcenter_datatable = '';
-		/** ---------------------- Functions ---------------------- **/
-		// Clean mask of number
-		function clean_number_mask(number) {
-			return parseFloat(String(number).replace(/,/g, ""));
+		function find_hs_detail(data, current_cc) {
+			var found_data = {}, length_data = data.length, transform_data = data;
+			for(var i=0; i<length_data; i++){
+				if (transform_data[i].cost_center_id == current_cc){
+					found_data = data[i];
+					data.splice(i,1);
+					break;
+				}
+			}
+			return found_data;
 		}
-		// Create Table
-		function create_special_datatable(table_id) {
-			var table = $(table_id).DataTable({
-				bInfo: 					false,
-				searching: 			false,
-				bSort: 					false,
-				scrollY:        "500px",
-				scrollX:        true,
-				scrollCollapse: true,
-				paging:         false,
-				fixedColumns:   {
-					leftColumns: 1
-				},
-				dom: 'Bfrtip',
-				buttons: [
-					{
-						extend: 'excelHtml5',
-						title: 'Data export'
+
+		function find_supplies_detail(data, current_cc, current_sp) {
+			var found_data = {}, length_data = data.length, transform_data = data;
+			for(var i=0; i<length_data; i++){
+				if (transform_data[i].cost_center_id == current_cc && transform_data[i].supply_id == current_sp ){
+					found_data = data[i];
+					data.splice(i,1);
+					break;
+				}
+			}
+			return found_data;
+		}
+
+		function replicate_oc_centers(el) {
+			if (el == null) {
+				el = '#summary_table';
+			}
+			var cc = $(el + ' thead tr:first td:not(:first)').clone();
+
+			$('#supplies_evaluated_table thead tr:first').append($(cc).clone());
+
+			cc = $(cc).addClass('text-right').html('<label class="integer_numbers">0</label>');
+			$(el + ' tbody tr').append(cc);
+		}
+
+		function get_data_analyze_btn(element) {
+			var el = $(element);
+			return { type_btn: el.data('type'), select: el.data('info-el'), table_data: el.data('table-find'), table_target: el.data('table') }
+		}
+		
+		function analyze_supplies(el) {
+			if (el == null) {
+				el = 'button[data-js-analyze-data]'
+			}
+
+			$(el).click(function(e) {
+				var info = get_data_analyze_btn(this), select = $(info.select).val(), row, type, cols, val_col, total_row, new_html = '<tr><td></td>', table;
+
+				if ( $.fn.dataTable.isDataTable(info.table_target) ) {
+					table = $(info.table_target).DataTable();
+					table.destroy();
+				}
+
+				if (info.type_btn == 'refresh') {
+					$(info.table_target + ' tbody').empty();
+				}
+
+				row = $(info.table_data + ' tbody tr[data-supply="'+ select +'"]');
+				type = row.data('type');
+				cols = row.find('td').clone();
+
+				$(info.table_target + ' tbody').append('<tr data-supply="'+ select +'"></tr>');
+				$(info.table_target + ' tbody tr[data-supply="'+ select +'"]').append(cols);
+
+				total_row = parseFloat(clean_number_mask($(info.table_target + ' tbody tr[data-supply="'+ select +'"] td:last label').html()));
+				$(info.table_target + ' tbody tr[data-supply="'+ select +'"] td:not(:first)').each(function(k,v) {
+					val_col = parseFloat(clean_number_mask($(v).find('label').html()));
+					new_html += '<td class="text-right"><label>'+ ((val_col / total_row) * 100).toFixed(2) +'%</label></td>';
+				});
+				new_html += '</tr>';
+
+				$(info.table_target + ' tbody').append(new_html);
+				table = analyze_datatble(info.table_target);
+			});
+		}
+
+		function update_hs(data, el) {
+			if (el == null) {
+				el = '#summary_table';
+			}
+
+			var current_col, cc, current_data, total = 0, total_salary = 0, total_bonuses = 0, total_benefits = 0;
+
+			$(el + ' thead tr:first td:not(:first)').each(function(k,v) {
+				current_col = $(v);
+				cc = current_col.data('cost-center');
+				current_data = find_hs_detail(data, cc);
+				if (!$.isEmptyObject(current_data)) {
+					$(el + ' tbody tr:eq(0) td[data-cost-center="'+ cc +'"] label').html(current_data.total);
+					$(el + ' tbody tr:eq(1) td[data-cost-center="'+ cc +'"] label').html(current_data.salary);
+					$(el + ' tbody tr:eq(2) td[data-cost-center="'+ cc +'"] label').html(current_data.bonuses);
+					$(el + ' tbody tr:eq(3) td[data-cost-center="'+ cc +'"] label').html(current_data.benefits);
+					total += parseFloat(current_data.total);
+					total_salary += parseFloat(current_data.salary);
+					total_bonuses += parseFloat(current_data.bonuses);
+					total_benefits += parseFloat(current_data.benefits);
+				}
+			});
+
+			$(el + ' tbody tr:eq(0) td:last label').html(total);
+			$(el + ' tbody tr:eq(1) td:last label').html(total_salary);
+			$(el + ' tbody tr:eq(2) td:last label').html(total_bonuses);
+			$(el + ' tbody tr:eq(3) td:last label').html(total_benefits);
+		}
+
+		function update_ov(data, type, el) {
+			if (el == null) {
+				el = '#summary_table';
+			}
+
+			var current_row, current_col, cc, ov, current_data, total_cc, col_total, total_row = 0;
+
+			$(el + ' tbody tr[data-type="'+ type +'"]').each(function(key, val) {
+				total_row = 0;
+				current_row = $(val);
+				ov = current_row.data('supply');				
+				$(el + ' thead tr:first td:not(:first)').each(function(k,v) {
+					current_col = $(v);
+					cc = current_col.data('cost-center');
+					current_data = find_supplies_detail(data, cc, ov);
+					if (!$.isEmptyObject(current_data)) {
+						$(el + ' tbody tr[data-type="'+ type +'"][data-supply="'+ ov +'"] td[data-cost-center="'+ cc +'"] label').html(current_data.total);
+						col_total = $(el + ' tbody tr#summary-'+ type +' td[data-cost-center="'+ cc +'"] label');
+						total_cc = parseFloat(col_total.html());
+						col_total.html(total_cc + parseFloat(current_data.total));
+
+						total_row += parseFloat(current_data.total);
 					}
-				]
+				});
+				$(el + ' tbody tr[data-type="'+ type +'"][data-supply="'+ ov +'"] td:last label').html(total_row);
 			});
+		}
 
-			if (table_id == '#supplies_evaluated_table') {
-				supplies_datatable = table;
-			}else {
-				costcenter_datatable = table;
-			}
-		}
-		// Destroy DataTable
-		function reset_data_table(table_id) {
-			if (table_id == '#supplies_evaluated_table') {
-				if (supplies_datatable != '') {
-					supplies_datatable.destroy();
-				}
-			}else {
-				if (costcenter_datatable != '') {
-					costcenter_datatable.destroy();
-				}
-			}
-		}
-		// Empty DataTable
-		function empty_datatable(table_id) {
-			reset_data_table(table_id);
-			$(table_id).find('tbody').empty();
-			create_special_datatable(table_id);
-		}
-		// Evaluate Supply Selected
-		function evaluate_supply(table_id, select_id, table_info) {
-			var supply = $('select'+select_id).val(),
-					total_supply = clean_number_mask($(table_info).find('tbody tr[data-supply="'+supply+'"] td:last-child label').html()),
-					html_value = '<tr>',
-					html_perce = '<tr>';
+		function update_total() {
+			var total_hs = 0, total_ov = 0, total_sp = 0, last_row = $('#summary_table tbody tr:last');
 
-			$(table_info).find('tbody tr[data-supply="'+supply+'"] td:not(:last-child)').each(function (index, value) {
-				if (index == 0) {
-					html_value += '<td>'+$(value).html()+'</td>';
-					html_perce += '<td></td>';
-				} else {
-					html_value += '<td>'+$(value).html()+'</td>';
-					html_perce += '<td><label class="text-right">'+((clean_number_mask($(value).find('label').html())/total_supply)*100).toFixed(2)+'%<label></td>';
-				}
+			$('#summary_table tbody tr#summary-ov td:not(:first):not(:last)').each(function(k,v) {
+				total_ov += parseFloat(clean_number_mask($(v).find('label').html()));				
 			});
+			$('#summary_table tbody tr#summary-ov td:last label').html(total_ov);
 
-			html_value += '</tr>';
-			html_perce += '</tr>';
+			$('#summary_table tbody tr#summary-sp td:not(:first):not(:last)').each(function(k,v) {
+				total_sp += parseFloat(clean_number_mask($(v).find('label').html()));				
+			});
+			$('#summary_table tbody tr#summary-sp td:last label').html(total_sp);
 
-			reset_data_table(table_id);
-			$(table_id).find('tbody').append(html_value);
-			$(table_id).find('tbody').append(html_perce);
+			$('#summary_table tbody tr:first td:not(:first)').each(function(k,v) {
+				total_hs = parseFloat(clean_number_mask($(v).find('label').html()));
+				total_ov = parseFloat(clean_number_mask($('#summary_table tbody tr#summary-ov td:eq('+ (k + 1) +') label').html()));
+				total_sp = parseFloat(clean_number_mask($('#summary_table tbody tr#summary-sp td:eq('+ (k + 1) +') label').html()));
 
-			create_special_datatable(table_id);
+				last_row.find('td:eq('+ (k + 1) +') label').html((total_hs + total_ov + total_sp));
+			});
 		}
-		// Evaluate Indirect Costs Selected
-		function evaluate_indirect_costs(table_id, select_id, table_info) {
-			var center = $('select'+select_id).val(),
-					total_center = 0,
-					html_value = '<tr>',
-					html_perce = '<tr>';
 
-			$(table_info).find('tbody tr[data-center="'+center+'"] td:not(:first-child)').each(function (index, value) {
-				total_center += clean_number_mask($(value).find('label').html());
+		function get_info_direct_costs() {
+			$.ajax({
+				url: '/multiple_months/management_number_one/tf_direct_costs',
+        method: 'GET'
 			})
-
-			$(table_info).find('tbody tr[data-center="'+center+'"] td').each(function (index, value) {
-				if (index == 0) {
-					html_value += '<td>'+$(value).html()+'</td>';
-					html_perce += '<td></td>';
-				} else {
-					html_value += '<td>'+$(value).html()+'</td>';
-					html_perce += '<td><label class="text-right">'+((clean_number_mask($(value).find('label').html())/total_center)*100).toFixed(2)+'%<label></td>';
-				}
+			.done(function(data) {
+				$.when(replicate_oc_centers()).done(function() {
+					$.when(update_hs(data.hs),update_ov(data.ov, 'ov'),update_ov(data.sp, 'sp')).done(function() {
+						update_total();
+						analyze_supplies();
+						/* CALLBACKS */
+						get_indirect_cost_data();
+					});
+				});
 			});
-
-			html_value += '</tr>';
-			html_perce += '</tr>';
-
-			reset_data_table(table_id);
-			$(table_id).find('tbody').append(html_value);
-			$(table_id).find('tbody').append(html_perce);
-
-			create_special_datatable(table_id);
 		}
 	</script>
 <% end %>

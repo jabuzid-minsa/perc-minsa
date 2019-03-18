@@ -13,15 +13,49 @@
 				<table class="table table-bordered dataTable no-footer fixed_table" cellspacing="0" id="production_centers">
 					<thead>
 						<tr>
-							<td></td>
-							<% @supported_cost_centers.each do |cost_center| %>
-									<td data-cost-center="<%= cost_center.description %>" data-function="<%= cost_center.function %>">
-										<label for=""><%= cost_center.description %></label>
-									</td>
-							<% end %>
+							<td></td>							
 						</tr>
 					</thead>
 					<tbody>
+						<tr class="row_supplies">
+							<td><label for=""><%= t('app.analysis_tables.two.third_panel.total_cost_center') %></label></td>
+						</tr>
+						<tr class="row_supplies" data-type='production-1'>
+							<td><label for=""><%= t('app.analysis_tables.two.third_panel.production_unit') + ' 1' %></label></td>
+						</tr>
+						<tr class="row_supplies decimal_calcs" data-type='costprod-1'>
+							<td><label class="name_base"><%= t('app.analysis_tables.two.third_panel.unit_cost_production') + ' 1' %></label></td>
+						</tr>
+						<tr class="row_supplies" data-type='production-2'>
+							<td><label for=""><%= t('app.analysis_tables.two.third_panel.production_unit') + ' 2' %></label></td>
+						</tr>
+						<tr class="row_supplies decimal_calcs" data-type='costprod-2'>
+							<td><label class="name_base"><%= t('app.analysis_tables.two.third_panel.unit_cost_production') + ' 2' %></label></td>
+						</tr>
+						<tr class="row_supplies" data-type='production-3'>
+							<td><label for=""><%= t('app.analysis_tables.two.third_panel.production_unit') + ' 3' %></label></td>
+						</tr>
+						<tr class="row_supplies decimal_calcs" data-type='costprod-3'>
+							<td><label class="name_base"><%= t('app.analysis_tables.two.third_panel.unit_cost_production') + ' 3' %></label></td>
+						</tr>
+						<tr class="row_supplies" data-type='production-4'>
+							<td><label for=""><%= t('app.analysis_tables.two.third_panel.production_unit') + ' 4' %></label></td>
+						</tr>
+						<tr class="row_supplies decimal_calcs" data-type='costprod-4'>
+							<td><label class="name_base"><%= t('app.analysis_tables.two.third_panel.unit_cost_production') + ' 4' %></label></td>
+						</tr>
+						<tr class="row_supplies" data-type='production-5'>
+							<td><label for=""><%= t('app.analysis_tables.two.third_panel.production_unit') + ' 5' %></label></td>
+						</tr>
+						<tr class="row_supplies decimal_calcs" data-type='costprod-5'>
+							<td><label class="name_base"><%= t('app.analysis_tables.two.third_panel.unit_cost_production') + ' 5' %></label></td>
+						</tr>
+						<tr class="row_supplies" data-type='production-6'>
+							<td><label for=""><%= t('app.analysis_tables.two.third_panel.production_unit') + ' Nº Camas' %></label></td>
+						</tr>
+						<tr class="row_supplies decimal_calcs" data-type='costprod-6'>
+							<td><label class="name_base"><%= t('app.analysis_tables.two.third_panel.unit_cost_production') + ' Nº Camas' %></label></td>
+						</tr>
 					</tbody>
 				</table>
 			</div>
@@ -31,88 +65,86 @@
 
 <% content_for :javascript do %>
 	<script type="text/javascript">
-		/** ---------------------- Variables ---------------------- **/
-		var production_centers = <%= @production_centers_data.to_json.html_safe %>,
-				direct_cost_table = $('#summary_table'),
-				indirect_cost_table = $('#indirect_costs_table'),
-				production_table = $('#production_centers'),
-				name_row_production = [
-					"<%= t('app.analysis_tables.two.third_panel.production_unit') %>"+' 1',
-					"<%= t('app.analysis_tables.two.third_panel.production_unit') %>"+' 2',
-					"<%= t('app.analysis_tables.two.third_panel.production_unit') %>"+' 3',
-					"<%= t('app.analysis_tables.two.third_panel.production_unit') %>"+' 4',
-					"<%= t('app.analysis_tables.two.third_panel.production_unit') %>"+' 5',
-					"<%= t('app.analysis_tables.two.third_panel.production_unit') %>"+' N. Camas',
-				],
-				name_row_unit_cost = [
-					"<%= t('app.analysis_tables.two.third_panel.unit_cost_production') %>"+' 1',
-					"<%= t('app.analysis_tables.two.third_panel.unit_cost_production') %>"+' 2',
-					"<%= t('app.analysis_tables.two.third_panel.unit_cost_production') %>"+' 3',
-					"<%= t('app.analysis_tables.two.third_panel.unit_cost_production') %>"+' 4',
-					"<%= t('app.analysis_tables.two.third_panel.unit_cost_production') %>"+' 5',
-					"<%= t('app.analysis_tables.two.third_panel.unit_cost_production') %>"+' N. Camas',
-				];
-		/** ---------------------- Functions ---------------------- **/
-		//
-		function create_records_data(production_unit, html) {
-			$.when(production_table.find('tbody').append('<tr data-production-unit="'+production_unit+'" data-value="production">'+html+'</tr>')).done(
-				function() {
-					html = html.replace(/class="decimal_numbers_2"/g, 'class="number-two-decimals"');
-					production_table.find('tbody').append('<tr data-production-unit="'+production_unit+'" data-value="unit_cost">'+html+'</tr>');
-				}
-			);
-		}
-		//
-		function calculated_total_per_center() {
-			var total_direct, total_indirect, 
-					html = '<tr><td><label>'+"<%= t('app.analysis_tables.two.third_panel.total_cost_center') %>"+'</label></td>';
-			direct_cost_table.find('tbody tr[data-summary="total"] td').not(':first').not(':last').each(function(index, value) {
-				total_direct = clean_number_mask($(value).find('label').html());
-				total_indirect = clean_number_mask(indirect_cost_table.find('tr[data-indirect="total"] td[data-cost-center="'+$(value).data('cost-center')+'"] label').html());
-				html += '<td class="text-right" data-cost-center="'+$(value).data('cost-center')+'">'+
-								'<label class="decimal_numbers_2">'+(total_direct + total_indirect).toFixed(2)+'</label></td>';
+		function replacte_info_production(elrep, el) {
+			if (elrep == null) {
+				elrep = '#summary_table';
+			}
+			if (el == null) {
+				el = '#production_centers';
+			}
+
+			var cc = $(elrep + ' thead tr:first td:not(:first)').clone(), total_dir = 0, total_ind = 0, col, new_html = '';
+			$(el + ' thead tr:first').append(cc);
+
+			cc = $(cc).clone().addClass('text-right').html('<label class="integer_numbers">0</label>');
+			$(el + ' tbody tr:not(:first)').append(cc);
+
+			$(el + ' thead tr:first td:not(:first)').each(function(k, v) {
+				col = k + 1;
+				cc = $(v).data('cost-center');
+				total_dir = parseFloat(clean_number_mask($('#summary_table tbody tr:last td:eq(' + col + ') label').html()));
+				total_ind = parseFloat(clean_number_mask($('#indirect_costs_table tbody tr:last td:eq(' + col + ') label').html()));
+				new_html += '<td data-cost-center="'+ cc +'" class="text-right"><label class="integer_numbers">'+ (total_dir + total_ind) +'</label></td>';
 			});
+
+			$(el + ' tbody tr:first').append(new_html);
+			$(el + ' tbody tr.decimal_calcs td label:not(.name_base)').removeClass('integer_numbers').addClass('decimal_numbers');
+		}
+
+		function update_production_cc(data) {
+			var table = $('#production_centers tbody'), value, total;
 			
-			html += '</tr>';
-
-			$.when(production_table.find('tbody').append(html)).done(function() {
-				html = production_table.find('tbody tr:eq(0)').html().trim();
-				$([1,2,3,4,5,6]).each(function(index, value) {					
-					$.when(create_records_data(value, html)).done(function() {
-						production_table.find('tbody tr[data-production-unit="'+value+'"] td label').html('');
-					});
-				});
+			$(data).each(function(k, v) {
+				value = parseFloat(v.convert_value);
+				total = parseFloat(clean_number_mask(table.find('tr:first td[data-cost-center="'+ v.cost_center_id +'"] label').html()));
+				table.find('tr[data-type="production-'+ v.production_units +'"] td[data-cost-center="'+ v.cost_center_id +'"] label').html(value);
+				table.find('tr[data-type="costprod-'+ v.production_units +'"] td[data-cost-center="'+ v.cost_center_id +'"] label').html(total/value);
 			});
 		}
-		//
-		function calculate_units_costs() {
-			var html_production, html_unit_cost, data_filter, total_cost;
 
-			$([1,2,3,4,5,6]).each(function(index, value) {
-				production_table.find('tbody tr[data-production-unit="'+value+'"][data-value="production"] td:first label').html(name_row_production[value-1]);
-				production_table.find('tbody tr[data-production-unit="'+value+'"][data-value="unit_cost"] td:first label').html(name_row_unit_cost[value-1]);
+		function create_datatable_fixed() {
+      var table, title_file, options;
+      $('table.fixed_table').each(function(index, value) {
+        title_file = $(value).data('title_download')+' '+$('#work_date_costs_navbar').val() || 'Tabla de Analisis'+' '+$('#work_date_costs_navbar').val();
+        options = {
+          bInfo: false, searching: false, bSort: false, paging: false, scrollY: "500px", scrollX: true, scrollCollapse: true, dom: 'Bfrtip',
+          buttons: [{
+            extend: 'excelHtml5',
+            title: title_file,
+            action: function(e, dt, node, config) {              
+              $('.integer_numbers').number(true, 0, '.', '');
+              $.fn.DataTable.ext.buttons.excelHtml5.action.call(this, e, dt, node, config);
+              $('.integer_numbers').number( true, 0 );
+            }
+          }]
+        };
+        table = $(value).DataTable(options);
+        if ($(value).attr('id') != 'indirect_costs_table') {
+          new $.fn.dataTable.FixedColumns( table, {
+            heightMatch: 'none'
+          } );
+        }
+      });
+    }
 
-				data_filter = production_centers.filter(function(data) { return data.production_units == value });
+    function activate_visual_plugins() {
+      $.when(create_datatable_fixed()).done(function() {      	
+        $('.integer_numbers').number(true, 0);
+        $('.decimal_numbers').number(true, 2);
+      });
+    }
 
-				$(data_filter).each(function(ind, val) {
-					total_cost = clean_number_mask(production_table.find('tbody tr:eq(0) td[data-cost-center="'+val.cost_center_id+'"] label').html());
-					production_table.find('tbody tr[data-production-unit="'+value+'"][data-value="production"] td[data-cost-center="'+val.cost_center_id+'"] label').html(val.value);
-					if (val.equivalence > 0) {
-						cost_per_unit = total_cost/val.total_center;
-						converted_cost = val.convert_value * cost_per_unit;
-						html_unit_cost = converted_cost/val.value;
-					} else {
-						html_unit_cost = total_cost/parseFloat(val.value);
-					}
-					production_table.find('tbody tr[data-production-unit="'+value+'"][data-value="unit_cost"] td[data-cost-center="'+val.cost_center_id+'"] label').html(html_unit_cost);
+		function get_production_data() {
+			$.ajax({
+				url: '/multiple_months/management_number_one/tf_production_info',
+				method: 'GET'
+			})
+			.done(function(data) {
+				$.when(replacte_info_production()).done(function() {
+					update_production_cc(data.production);
+					activate_visual_plugins();
 				});
 			});
-		}
-		//
-		function calculated_productions_and_costs() {
-			$.when(calculated_total_per_center()).done(function() {
-				calculate_units_costs();		
-			});	
-		}
+		}		
 	</script>
 <% end %>;

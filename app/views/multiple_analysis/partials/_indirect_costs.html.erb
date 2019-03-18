@@ -24,17 +24,22 @@
 		<table class="table table-bordered dataTable no-footer fixed_table" id="indirect_costs_table" cellspacing="0" data-columntotals='1' data-title_download='Analisis Costos Indirectos' width="100%">
 			<thead>
 				<tr>
+					<td data-cc_name='x'></td>
 				</tr>
 			</thead>
 			<tbody>
-				<tr id="direct_cost">
-				</tr>
-				<tr id="indirect_cost">
-				</tr>
-				<tr id="total_cost">
-				</tr>
+				<tr>
+          <td><label for=""><%= t('app.analysis_tables.one.fifth_panel.operating_cost') %></label></td>
+        </tr>
+        <tr>
+          <td><label for=""><%= t('app.analysis_tables.one.fifth_panel.indirect_cost') %></label></td>
+        </tr>
+        <tr>
+        	<td><label for="">Total</label></td>
+        </tr>
 			</tbody>
 		</table>
+		<hr>
 		<h3><%= t('app.analysis_tables.one.fifth_panel.title_table') %></h3>
 		<div class="row">
 			<div class="col-sm-6">
@@ -59,402 +64,233 @@
 			<div class="col-sm-6">
 				<div id="weight_percentage_graphic"></div>
 			</div>
-		</div>
-		<hr>
-		<h3><%= t('app.analysis_tables.one.fifth_panel.validations.title') %></h3>
-		<div class="row">
-			<div class="col-sm-6">
-				<table id='total_validation_table' class="table table-bordered">
-					<thead>
-						<tr>
-							<th></th>
-							<th><%= t('app.analysis_tables.one.fifth_panel.validations.first_table.value') %></th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr id="total_validation_entity">
-							<td><%= t('app.analysis_tables.one.fifth_panel.validations.first_table.first_row') %></td>
-							<td class="text-right"><label class="decimal_numbers_2"></label></td>
-						</tr>
-						<tr id="total_validation_distribution">
-							<td><%= t('app.analysis_tables.one.fifth_panel.validations.first_table.second_row') %></td>
-							<td class="text-right"><label class="decimal_numbers_2"></label></td>
-						</tr>
-						<tr id="difference_in_totals">
-							<td><%= t('app.analysis_tables.one.fifth_panel.validations.first_table.third_row') %></td>
-							<td class="text-right"><label class="decimal_numbers_2"></label></td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-			<div class="col-sm-6">
-				<table id='validate_centers_without_production' class="table table-bordered">
-					<thead>
-						<tr>
-							<th></th>
-							<th><%= t('app.analysis_tables.one.fifth_panel.validations.second_table.missing_distribute') %></th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr id='missing_logistical'>
-							<td><%= t('app.analysis_tables.one.fifth_panel.validations.second_table.first_row') %></td>
-							<td class="text-right"><label class="decimal_numbers_2"></label></td>
-						</tr>
-						<tr id='missing_administrative'>
-							<td><%= t('app.analysis_tables.one.fifth_panel.validations.second_table.second_row') %></td>
-							<td class="text-right"><label class="decimal_numbers_2"></label></td>
-						</tr>
-						<tr id="missing_care">
-							<td><%= t('app.analysis_tables.one.fifth_panel.validations.second_table.third_row') %></td>
-							<td class="text-right"><label class="decimal_numbers_2"></label></td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-		</div>
-		<p>
-			<%= t('app.analysis_tables.one.fifth_panel.validations.wrong_support') %>: <%= @total_selfsupport %>
-			<ul>
-				<% @selfsupport.each do |center| %>
-					<li><%= center['description'] %></li>
-				<% end %>
-			</ul>			
-		</p>
+		</div>		
 	</div>
 </div>
 
 <% content_for :javascript do %>
 	<script type="text/javascript">
-		/** ---------------------- Variables ---------------------- **/
-		var processed_production = <%= @distribution_processed.to_json.html_safe %>,		
-				direct_cost_table = $('#concepts_by_cost_centers'),
-				indirect_cost_table = $('#indirect_costs_table'),
-				distribution_costs = [
-					{ function: 'logistical_support', num_function: 1, type_distribution: 'd' },
-					{ function: 'administrative_support', num_function: 0, type_distribution: 'p' },
-					{ function: 'care_support', num_function: 2, type_distribution: 'd' }
-				];
-		/** ---------------------- Functions ---------------------- **/
-		// 
-		function search_function_centers(table, function_centers) {
-			return table.find('#direct_cost td[data-function="'+function_centers+'"]');
-		}
-		// 
-		function search_direct_value(table, cost_center, specific_row) {
-			var row = specific_row || '#direct_cost', return_value;
-			return_value = clean_number_mask(table.find(row+' td[data-costcenter="'+cost_center+'"] label').html());
-
-			return return_value ? return_value : 0;
-		}
-		// 
-		function search_indirect_value(table, cost_center, specific_row) {
-			var row = specific_row || '#indirect_cost', return_value;
-
-			return_value = clean_number_mask(table.find(row+' td[data-costcenter="'+cost_center+'"] label').html());
-
-			return return_value ? return_value : 0;
-		}
-		// 
-		function set_indirect_value(new_value ,table, cost_center, specific_row) {
-			var row = specific_row || '#indirect_cost';
-			if (table.find(row+' td[data-costcenter="'+cost_center+'"] label').html() !== undefined) {
-				table.find(row+' td[data-costcenter="'+cost_center+'"] label').html(new_value);
-				return 0;
-			} else {
-				return parseFloat(new_value);
-			}			
-		}
-		//
-		function remove_cost_center(table, cost_center) {
-			table.find('thead td[data-costcenter="'+cost_center+'"]').remove();
-			table.find('tbody #direct_cost td[data-costcenter="'+cost_center+'"]').remove();
-			table.find('tbody #indirect_cost td[data-costcenter="'+cost_center+'"]').remove();
-			table.find('tbody #total_cost td[data-costcenter="'+cost_center+'"]').remove();
-		}
-		// Copy total operating costs to start calculating indirect costs
-		function copy_initial_operating_data() {
-			var string_html = '';
-			
-			string_html = direct_cost_table.find('thead tr').html().trim();
-
-			indirect_cost_table.find('thead tr').html(string_html);
-
-			string_html = direct_cost_table.find('tbody #total_concept').html().trim();
-
-			indirect_cost_table.find('tbody #direct_cost').html(string_html);
-			indirect_cost_table.find('tbody #indirect_cost').html(string_html);
-			indirect_cost_table.find('tbody #total_cost').html(string_html);
-
-			indirect_cost_table.find('tbody #direct_cost td:first label').html("<%= t('app.analysis_tables.one.fifth_panel.operating_cost') %>");
-			indirect_cost_table.find('tbody #indirect_cost td label').html('');
-			indirect_cost_table.find('tbody #indirect_cost td:first label').html("<%= t('app.analysis_tables.one.fifth_panel.indirect_cost') %>");
-			indirect_cost_table.find('tbody #total_cost td label').html('');
-			indirect_cost_table.find('tbody #total_cost td:first label').html("<%= t('app.analysis_tables.common.total') %>");
-		}
-		// 
-		function production_distribution(cost_distribution, cost_center_function, number_function) {
-			var filtered_data = cost_distribution.filter(function(value) { return value.function == number_function }),
-					direct_cost, indirect_cost, cost_per_unit, split_supported_data, current_value_sc, support_center, support_value, 
-					total_support, new_value, remaining_value = 0;
-
-			$(filtered_data).each(function(index, value) {
-				direct_cost = search_direct_value(indirect_cost_table, value.cost_center_id);
-				indirect_cost = search_indirect_value(indirect_cost_table, value.cost_center_id);
-
-				split_supported_data = value.supported_cost_centers_values.split('_');
-
-				total_cost = direct_cost + indirect_cost;
-				cost_per_unit = total_cost/parseFloat(value.total_support);
-
-				$(split_supported_data).each(function(internal_index, internal_value) {
-					support_center = internal_value.split('|')[0];
-					support_value = internal_value.split('|')[1];
-					current_value_sc = search_indirect_value(indirect_cost_table, support_center);
-					
-					new_value = ((support_value * cost_per_unit) + current_value_sc).toFixed(2);
-
-					remaining_value += set_indirect_value(new_value, indirect_cost_table, support_center);
-				});
-				remove_cost_center(indirect_cost_table, value.cost_center_id);
-			});
-
-			return remaining_value;
-		}
-		// 
-		function percentage_distribution(remaining_value, cost_center_function, number_function) {
-			var filtered_data = search_function_centers(indirect_cost_table, cost_center_function),
-					total_center, total_entity, cost_center, current_cost_center, direct_cost, indirect_cost,
-					current_direct, current_indirect, percentage, new_value;
-
-			$(filtered_data).each(function(index, value) {
-				cost_center = $(value).data('costcenter');
-
-				direct_cost = search_direct_value(indirect_cost_table, cost_center);
-				indirect_cost = search_indirect_value(indirect_cost_table, cost_center);
-
-				total_center = direct_cost + indirect_cost;
-
-				remove_cost_center(indirect_cost_table, cost_center);
-				
-				total_entity = (clean_number_mask($('#consolidated_table tbody #total_entity label').html()) - total_center) - remaining_value;
-				
-				indirect_cost_table.find('#indirect_cost td:not(:first-child)').each(function(internal_index, internal_value) {
-					current_cost_center = $(internal_value).data('costcenter');
-					current_direct = search_direct_value(indirect_cost_table, current_cost_center);
-					current_indirect = search_indirect_value(indirect_cost_table, current_cost_center);
-
-					percentage = ((current_direct + current_indirect) / total_entity);
-
-					new_value = (percentage * total_center) + current_indirect;
-					
-					set_indirect_value(new_value ,indirect_cost_table, current_cost_center);
-				});
-			});
-		}
-		//
-		function percentage_distribution_by_value(remaining_value) {
-			var total_center, total_entity, cost_center, current_cost_center, direct_cost, indirect_cost,
-					current_direct, current_indirect, percentage, new_value;
-			
-			total_center = remaining_value;
-
-			total_entity = clean_number_mask($('#consolidated_table tbody #total_entity label').html()) - total_center;
-
-			indirect_cost_table.find('#indirect_cost td:not(:first-child)').each(function(internal_index, internal_value) {
-				current_cost_center = $(internal_value).data('costcenter');
-				current_direct = search_direct_value(indirect_cost_table, current_cost_center);
-				current_indirect = search_indirect_value(indirect_cost_table, current_cost_center);
-				
-				percentage = ((current_direct + current_indirect) / total_entity);
-				
-				new_value = (percentage * total_center) + current_indirect;
-				
-				set_indirect_value(new_value ,indirect_cost_table, current_cost_center);
-			});
-		}
-		//
-		function distribute_missing_values(remaining_value) {
-			if (remaining_value > 0) {
-				percentage_distribution_by_value(remaining_value);
-			}			
-
-			/*percentage_distribution(0, 'logistical_support', 1);	
-
-			percentage_distribution(0, 'care_support', 2);*/
-		}
-		//
-		function calculate_totals_indirect_costs() {
-			var direct_cost, indirect_cost;
-
-			indirect_cost_table.find('tbody #direct_cost td').each(function(index, value) {
-				if (index > 0) {
-					direct_cost = clean_number_mask(indirect_cost_table.find('tbody #direct_cost td:eq('+index+') label').html());
-					indirect_cost = clean_number_mask(indirect_cost_table.find('tbody #indirect_cost td:eq('+index+') label').html());
-
-					indirect_cost_table.find('tbody #total_cost td:eq('+index+') label').html((direct_cost + indirect_cost).toFixed(2));
+		function find_indirect_cc(data, current_cc) {
+			var found_data = {}, length_data = data.length, transform_data = data;
+			for(var i=0; i<length_data; i++){
+				if (transform_data[i].cost_center_id == current_cc){
+					found_data = data[i];
+					data.splice(i,1);
+					break;
 				}
-			});
-		}
-		//
-		function calculate_indirect_costs() {
-			var missing_values_distribute = 0;
-			$.when(copy_initial_operating_data()).done(function() {
-				$(distribution_costs).each(function(i, v) {
-					if (v.type_distribution == 'p') {
-						percentage_distribution(missing_values_distribute, v.function, v.num_function);
-					} else {
-						missing_values_distribute += production_distribution(processed_production, v.function, v.num_function);
-					}
-				});
-				
-				$.when(distribute_missing_values(missing_values_distribute)).done(function() {
-					calculate_totals_indirect_costs();
-				});
-
-				calculate_table_total_validations();
-				calculate_non_distributed_support_centers();
-				calculate_weight_percentage();
-			});
-		}
-		//
-		function calculate_indirect_cost_percentages() {
-			var cost_direct, cost_indirect, total_center,
-					direct_costs_row = indirect_cost_table.find('tbody #direct_cost'),
-					indirect_costs_row = indirect_cost_table.find('tbody #indirect_cost'),
-					total_costs_row = indirect_cost_table.find('tbody #total_cost');
-
-			if (direct_costs_row.data('value') == 'currency' || direct_costs_row.data('value') == undefined) {
-				direct_costs_row.find('td').each(function(index, value) {
-					if (index > 0) {
-						total_center = clean_number_mask(total_costs_row.find('td:eq('+index+') label').html());
-
-						cost_direct = clean_number_mask(direct_costs_row.find('td:eq('+index+') label').html());
-						direct_costs_row.find('td:eq('+index+') label').data('amount', cost_direct);
-						direct_costs_row.find('td:eq('+index+') label').html(((cost_direct/total_center)*100).toFixed(2)+'%');
-
-						cost_indirect = clean_number_mask(indirect_costs_row.find('td:eq('+index+') label').html());
-						indirect_costs_row.find('td:eq('+index+') label').data('amount', cost_indirect);
-						indirect_costs_row.find('td:eq('+index+') label').html(((cost_indirect/total_center)*100).toFixed(2)+'%');
-					}	
-				});
-				direct_costs_row.data('value', 'percentage');
-			} else {
-				direct_costs_row.find('td').each(function(index, value) {
-					if (index > 0) {
-						cost_direct = direct_costs_row.find('td:eq('+index+') label').data('amount');
-						direct_costs_row.find('td:eq('+index+') label').html(cost_direct);
-
-						cost_indirect = indirect_costs_row.find('td:eq('+index+') label').data('amount');
-						indirect_costs_row.find('td:eq('+index+') label').html(cost_indirect);
-					}	
-				});
-				direct_costs_row.data('value', 'currency');
-				$('.decimal_numbers_2').number( true, 0 );
 			}
-			created_from_chart_table_details({
-				graphic_element: '#graph_detail_comparative',
-				data_table: '#indirect_costs_table',
-				type: 'bar',
-				colors: {
-					"<%= t('app.analysis_tables.one.fifth_panel.indirect_cost') %>": '#E83060',
-					"<%= t('app.analysis_tables.one.fifth_panel.operating_cost') %>": '#3FCFDA'
-				},
-				groups: [["<%= t('app.analysis_tables.one.fifth_panel.indirect_cost') %>", "<%= t('app.analysis_tables.one.fifth_panel.operating_cost') %>"]]
-			});
+			return found_data;
 		}
-		//
-		function calculate_table_total_validations() {
-			var total_entity = clean_number_mask($('#consolidated_table tbody #total_entity label').html()),
-					total_distribution = 0;
+
+		function replicate_final_centers(elrep, el) {
+			if (elrep == null) {
+				elrep = '#concepts_by_cost_centers';
+			}
+			if (el == null) {
+				el = '#indirect_costs_table';
+			}
+
+			var structure = $(elrep + ' thead tr:first td[data-function="final"]');
+			$(el + ' thead tr:first').append($(structure).clone());
+
+			structure = $(elrep + ' tbody tr:last td[data-function="final"]').clone();
+			$(el + ' tbody tr:first').append($(structure).clone());
+
+			structure = $(structure).html('<label class="integer_numbers">0</label>');
+			$(el + ' tbody tr:eq(1)').append($(structure).clone());
+			$(el + ' tbody tr:eq(2)').append($(structure).clone());
+		}
+
+		function update_total_distribution(total_direct, total_indirect, el) {
+			if (el == null) {
+				el = '#weight_percentage';
+			}
+
+			var total = total_direct + total_indirect, percent_direct, percent_indirect,
+					name_direct = $(el + ' tbody tr:eq(0) td:eq(0)').html(),
+					name_indirect = $(el + ' tbody tr:eq(1) td:eq(0)').html(),
+					colors = {};
+
+			percent_direct = ((total_direct/total)*100).toFixed(2);
+			percent_indirect = ((total_indirect/total)*100).toFixed(2);
+
+			$(el + ' tbody tr:eq(0)').append('<td class="text-right"><label class="integer_numbers">'+ total_direct +'</label></td><td class="text-right"><label>'+ percent_direct +'%</label></td>');
+			$(el + ' tbody tr:eq(1)').append('<td class="text-right"><label class="integer_numbers">'+ total_indirect +'</label></td><td class="text-right"><label>'+ percent_indirect +'%</label></td>');
 			
-			$('#total_validation_table tbody #total_validation_entity td:eq(1) label').html(total_entity);
-
-			indirect_cost_table.find('tbody #total_cost td:not(:first)[data-function="final"] label').each(function(index, value) {
-				total_distribution += clean_number_mask($(value).html());
-			});
-
-			$('#total_validation_table tbody #total_validation_distribution td:eq(1) label').html(total_distribution);
-
-			$('#total_validation_table tbody #difference_in_totals td:eq(1) label').html(parseInt(total_entity) - parseInt(total_distribution));
-		}
-		//
-		function calculate_non_distributed_support_centers() {
-			var administrative = search_function_centers(indirect_cost_table, 'administrative_support'),
-					care = search_function_centers(indirect_cost_table, 'care_support'),
-					logistical = search_function_centers(indirect_cost_table, 'logistical_support');
-
-			$('#validate_centers_without_production tbody #missing_logistical td:eq(1) label').html(logistical.length);	
-			$('#validate_centers_without_production tbody #missing_administrative td:eq(1) label').html(administrative.length);	
-			$('#validate_centers_without_production tbody #missing_care td:eq(1) label').html(care.length);	
-		}
-		//
-		function calculate_weight_percentage() {
-			var totalDirect = 0, totalIndirect = 0, total, html;
-			
-			indirect_cost_table.find('tbody tr:eq(0) td:not(:first) label').each(function(index, value) {
-				totalDirect += clean_number_mask($(value).html());
-			});
-
-			indirect_cost_table.find('tbody tr:eq(1) td:not(:first) label').each(function(index, value) {
-				if ($(value).html() != '' && $(value).html() != NaN) {
-					totalIndirect += clean_number_mask($(value).html());
-				}
-			});
-
-			total = totalDirect + totalIndirect;
-
-			html = '<td class="text-right"><label class="decimal_numbers_2">'+totalDirect.toFixed(2)+'</label></td><td class="text-right"><label class="">'+((totalDirect/total)*100).toFixed(2)+'%</label></td>';
-
-			$('table#weight_percentage tbody tr:eq(0)').append(html);
-
-			html = '<td class="text-right"><label class="decimal_numbers_2">'+totalIndirect.toFixed(2)+'</label></td><td class="text-right"><label class="">'+((totalIndirect/total)*100).toFixed(2)+'%</label></td>';
-
-			$('table#weight_percentage tbody tr:eq(1)').append(html);
+			colors[name_direct] = '#3FCFDA';
+			colors[name_indirect] = '#E83060';
 
 			c3.generate({
-				bindto: '#weight_percentage_graphic',
-				data:{
-					x : 'x',
-					columns: [
-						['x', 'Total'],
-						["<%= t('app.analysis_tables.one.fifth_panel.operating_cost') %>", clean_number_mask($('table#weight_percentage tbody tr:eq(0) td:eq(2) label').html())],
-						["<%= t('app.analysis_tables.one.fifth_panel.indirect_cost') %>", clean_number_mask($('table#weight_percentage tbody tr:eq(1) td:eq(2) label').html())]
-					],
-					colors: {
-						"<%= t('app.analysis_tables.one.fifth_panel.indirect_cost') %>": '#E83060',
-						"<%= t('app.analysis_tables.one.fifth_panel.operating_cost') %>": '#3FCFDA'
-					},
-					type: 'bar',
-					groups: [["<%= t('app.analysis_tables.one.fifth_panel.indirect_cost') %>", "<%= t('app.analysis_tables.one.fifth_panel.operating_cost') %>"]],
-					labels: {
-						format: {
-							y: d3.format("$,")
-						}
-					}
-				},
-				tooltip: {
-					format: {
-						value: function(value) {
-							return d3.format(",.2f")(value)
-						}
-					}
-				},
-				axis: {
-					rotated: true,
-					y: {
-						tick: {
-							multiline: true,
-							format: d3.format(",.0f")
-						}
-					},
-					x: {
-						type: 'category',
-						tick: {
-							multiline: true,
-						}
-					}
+        bindto: '#weight_percentage_graphic',
+        data:{
+          x : 'x',
+          columns: [['x', 'Total'], [name_direct, percent_direct], [name_indirect, percent_indirect]],
+          colors: colors,
+          type: 'bar',
+          groups: [[name_direct, name_indirect]],
+          labels: { format: { y: d3.format("$,") } }
+        },
+        tooltip: { format: { value: function(value) { return d3.format(",.2f")(value) } } },
+        axis: {
+          rotated: true,
+          y: { tick: { multiline: true, format: d3.format(",.0f") } },
+          x: { type: 'category', tick: { multiline: true, } }
+        }
+      });
+		}
+
+		function graph_indirect_costs(info, elgraph, el){
+			if (el == null){
+				el = '#indirect_costs_table'
+			}
+			if (elgraph == null) {
+				elgraph = '#graph_detail_comparative';
+			}
+
+			graph = c3.generate({
+        bindto: elgraph,
+        data:{
+          x : 'x',
+          columns: info.columns,
+          colors: info.colors,
+          type: 'bar',
+          groups: info.groups || [],
+          labels: { format: { y: d3.format("$,") } }
+        },
+        zoom: { enabled: true },
+        tooltip: { format: { value: function(value) { return d3.format(",.2f")(value) } } },
+        axis: {
+          y: { tick: { format: d3.format(",.2f") } },
+          x: { type: 'category', tick: { rotate: 90, multiline: true, width: 140 }, height: 200 }
+        }
+      });
+
+      if ($(el + ' thead tr td').length > 21) {
+        graph.zoom([1, 10]);
+      }
+		}
+
+		function print_indirect_graph(el) {
+			if (el == null) {
+				el = '#indirect_costs_table';
+			}
+
+			var current_data, data_graph = { columns: [[],[],[]], colors: {}, groups: [] };
+
+			$(el + ' thead tr:first td').each(function(k, v) {
+				current_data = $(v);
+				data_graph.columns[0].push(current_data.data('cc_name'));
+				data_graph.columns[1].push(clean_number_mask($(el + ' tbody tr:eq(0) td:eq('+ k +') label').html()));
+				data_graph.columns[2].push(clean_number_mask($(el + ' tbody tr:eq(1) td:eq('+ k +') label').html()));
+			});
+
+			data_graph.colors[data_graph.columns[1][0]] = '#3FCFDA';
+			data_graph.colors[data_graph.columns[2][0]] = '#E83060';
+			data_graph.groups.push([data_graph.columns[1][0], data_graph.columns[2][0]]);
+
+			graph_indirect_costs(data_graph);
+		}
+
+		function update_indirect_costs(data, remnant, el) {
+			if (el == null) {
+				el = '#indirect_costs_table';
+			}
+
+			var current_cc, current_data, current_total, current_direct, current_indirect, current_update, current_remnant,
+					total_direct = 0, total_indirect = 0,
+					total_norem = parseFloat(clean_number_mask($('#control_panel_1 tbody tr:eq(0) td:eq(1) label').html())) - remnant;
+
+			$(el + ' tbody tr:first td:not(:first)').each(function(k,v) {
+				current_cc = $(v);
+				current_direct = parseFloat(clean_number_mask(current_cc.find('label').html()));
+				current_total = current_direct;
+				total_direct += current_direct;
+				current_data = find_indirect_cc(data, current_cc.data('cc'));
+				if (current_data != {}) {
+					current_indirect = parseFloat(current_data.total) > 0 ? parseFloat(current_data.total) : 0.0;
+					current_total += current_indirect;
+					current_remnant = (remnant * (current_total/total_norem));
+					current_indirect += current_remnant;
+					current_total += current_remnant;
+					current_update = $(el + ' tbody tr:eq(1) td:eq('+ (k + 1) +') label');
+					current_update.html(current_indirect);
+					total_indirect += current_indirect;
+					current_update.data('change_val', ((current_indirect / current_total) * 100).toFixed(2) + '%');
 				}
+				current_cc.find('label').data('change_val', ((current_direct / current_total) * 100).toFixed(2) + '%');
+				$(el + ' tbody tr:eq(2) td:eq('+ (k + 1) +') label').html(current_total);
+			});
+			update_total_distribution(total_direct, total_indirect);
+			print_indirect_graph();
+		}
+
+		function change_indirect_to_percent(el, table) {
+			if (el == null) {
+				el = '#change_values__indirect_costs_table';
+			}
+			if (table == null) {
+				table = '#indirect_costs_table';
+			}
+
+			var other_val, $current;
+
+			$(el).click(function(e) {
+				$(table + ' tbody tr:not(:last) td:not(:first) label').each(function(k,v) {
+					$current = $(v)
+					other_val = $current.data('change_val');
+					$current.data('change_val', $current.html());
+					$current.html(other_val);
+				});
+				print_indirect_graph();
 			});
 		}
+
+    function create_datatable_fixed() {
+      var table, title_file, options;
+      $('table.fixed_table').each(function(index, value) {
+        title_file = $(value).data('title_download')+' '+$('#work_date_costs_navbar').val() || 'Tabla de Analisis'+' '+$('#work_date_costs_navbar').val();
+        options = {
+          bInfo: false, searching: false, bSort: false, paging: false, scrollY: "500px", scrollX: true, scrollCollapse: true, dom: 'Bfrtip',
+          buttons: [{
+            extend: 'excelHtml5',
+            title: title_file,
+            action: function(e, dt, node, config) {              
+              $('.integer_numbers').number(true, 0, '.', '');
+              $.fn.DataTable.ext.buttons.excelHtml5.action.call(this, e, dt, node, config);
+              $('.integer_numbers').number( true, 0 );
+            }
+          }]
+        };
+        table = $(value).DataTable(options);
+        if ($(value).attr('id') != 'indirect_costs_table') {
+          new $.fn.dataTable.FixedColumns( table, {
+            heightMatch: 'none'
+          } );
+        }
+        /*if (table != "") {
+          table.fnAdjustColumnSizing.call(this); //oTable is the variable which holds DataTable
+        }*/
+      });
+    }
+
+    function activate_visual_plugins() {
+      $.when(create_datatable_fixed()).done(function() {
+        $('.integer_numbers').number(true, 0);
+      });
+    }
+
+		function get_info_total_indirect() {
+      $.ajax({
+        url: '/multiple_months/management_number_one/total_indirects',
+        method: 'GET'
+      })
+      .done(function(data) {
+        $.when(replicate_final_centers()).done(function(){        	
+        	update_indirect_costs(data.indirect, parseFloat(data.remnants[0].total));
+        	change_indirect_to_percent();
+          activate_visual_plugins();
+        });        
+      });
+    }
 	</script>
 <% end %>

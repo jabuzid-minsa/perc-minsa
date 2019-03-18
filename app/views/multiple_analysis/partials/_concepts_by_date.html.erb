@@ -28,52 +28,25 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr id="date_human_resource_concept">
+				<tr>
 					<td>
 						<label for=""><%= t('app.analysis_tables.common.human_resource') %></label>
 					</td>
-					<% (0..@months_total).each do |number| %>
-						<% current_date = @starting_date + number.months %>
-						<td class="text-right">
-							<label class="decimal_numbers_2 value">
-								<%= @human_resource.select {|d| d['year'] == current_date.year && d['month'] == current_date.month }.inject(0) {|sum, hash| sum + hash['value']} %>
-							</label>
-						</td>
-					<% end %>
 				</tr>
-				<tr id="date_overhead_concept">
+				<tr>
 					<td>
 						<label for=""><%= t('app.analysis_tables.common.overheads') %></label>
 					</td>
-					<% (0..@months_total).each do |number| %>
-						<% current_date = @starting_date + number.months %>
-							<td class="text-right">
-								<label class="decimal_numbers_2 value">
-									<%= @overheads.select {|d| d['year'] == current_date.year && d['month'] == current_date.month }.inject(0) {|sum, hash| sum + hash['value']} %>
-								</label>
-							</td>
-					<% end %>
 				</tr>
-				<tr id="date_supply_concept">
+				<tr>
 					<td>
 						<label for=""><%= t('app.analysis_tables.common.supplies') %></label>
 					</td>
-					<% (0..@months_total).each do |number| %>
-						<% current_date = @starting_date + number.months %>
-							<td class="text-right">
-								<label class="decimal_numbers_2 value">
-									<%= @supplies.select {|d| d['year'] == current_date.year && d['month'] == current_date.month }.inject(0) {|sum, hash| sum + hash['value']} %>
-								</label>
-							</td>
-					<% end %>
 				</tr>
-				<tr id='date_total_concept'>
+				<tr>
 					<td>
 						<label for=""><%= t('app.analysis_tables.common.total') %></label>
 					</td>
-					<% (0..@months_total).each do |number| %>
-							<td class="text-right"></td>
-					<% end %>
 				</tr>
 			</tbody>
 		</table>
@@ -82,73 +55,111 @@
 
 <% content_for :javascript do %>
 	<script type="text/javascript">
-		var date_concepts_table = $('#concepts_by_date'),
-				date_hr_concept = $('#concepts_by_date #date_human_resource_concept'),
-				date_ov_concept = $('#concepts_by_date #date_overhead_concept'),
-				date_sp_concept = $('#concepts_by_date #date_supply_concept'),
-				date_tt_concept = $('#concepts_by_date #date_total_concept');
-		/** ---------------------- Functions ---------------------- **/
-		// Calculating totals by cost center
-		function calculate_totals_by_date(){
-			var total_cost_center;
-			date_hr_concept.find('td').each(function(index, value) {
-				total_cost_center = 0;
-				if (index > 0) {
-					
-					total_cost_center += clean_number_mask(date_hr_concept.find('td:eq('+index+') label').html());
-					total_cost_center += clean_number_mask(date_ov_concept.find('td:eq('+index+') label').html());
-					total_cost_center += clean_number_mask(date_sp_concept.find('td:eq('+index+') label').html());
+		function create_graph_by_date(options) {
+      var graphic_element = options.graphic_element,
+          graph;
+      graph = c3.generate({
+        point: options.point,
+        bindto: graphic_element,
+        data:{
+          x : 'x',
+          columns: options.columns || [],
+          colors: options.colors || {},
+          type: options.type || 'line',
+          groups: options.groups || [],
+          labels: {
+            format: {
+              y: d3.format("$,")
+            }
+          }
+        },
+        zoom: {
+          enabled: true
+        },
+        tooltip: {
+          format: {
+            value: function(value) {
+              return d3.format(",.2f")(value)
+            }
+          }
+        },
+        axis: {
+          y : {
+            tick: {
+              format: d3.format(",.2f")
+            }
+          },
+          x: {
+            type: 'category'
+          }
+        }
+      });
 
-					date_tt_concept.find('td:eq('+index+')').html("<label class='decimal_numbers_2'>"+ (parseFloat(total_cost_center)).toFixed(2) +"</label>");
+      if ($('#concepts_by_date thead tr td').length > 21) {
+        graph.zoom([1, 10]);
+      }
+    }
+
+		function find_data_in_object(data, current_date) {
+			var found_data = {}, length_data = data.length, transform_data = data;
+			for(var i=0; i<length_data; i++){
+				if (transform_data[i].date_total == current_date){
+					found_data = data[i];
+					data.splice(i,1);
+					break;
 				}
+			}
+			return found_data;
+		}
+
+		function print_date_info(data) {
+			var current_hs, current_ov, current_sp, current_date, graph_colors = {}, 
+					$table = $('#concepts_by_date')
+					data_graph = [
+						['x'],
+						[$table.find('tbody tr:eq(0) td:first label').html().trim()],
+						[$table.find('tbody tr:eq(1) td:first label').html().trim()],
+						[$table.find('tbody tr:eq(2) td:first label').html().trim()]
+					];
+
+			$('#concepts_by_date thead tr:first td:gt(0)').each(function(k,v) {
+				current_date = v.textContent.trim();
+				data_graph[0].push(current_date);
+				current_hs = find_data_in_object(data.hs, current_date);
+				current_ov = find_data_in_object(data.ov, current_date);
+				current_sp = find_data_in_object(data.sp, current_date);
+
+				$('#concepts_by_date tbody tr:eq(0)').append('<td class="text-right"><label class="integer_numbers">'+ current_hs.total +'</label></td>');
+				data_graph[1].push(current_hs.total);
+				$('#concepts_by_date tbody tr:eq(1)').append('<td class="text-right"><label class="integer_numbers">'+ current_ov.total +'</label></td>');
+				data_graph[2].push(current_ov.total);
+				$('#concepts_by_date tbody tr:eq(2)').append('<td class="text-right"><label class="integer_numbers">'+ current_sp.total +'</label></td>');
+				data_graph[3].push(current_sp.total);
+				$('#concepts_by_date tbody tr:eq(3)').append('<td class="text-right"><label class="integer_numbers">'+ (parseFloat(current_hs.total) + parseFloat(current_ov.total) + parseFloat(current_sp.total)) +'</label></td>');
+			});
+
+			graph_colors[$table.find('tbody tr:eq(0) td:first label').html().trim()] = '#E83060';
+			graph_colors[$table.find('tbody tr:eq(1) td:first label').html().trim()] = '#FFE321';
+			graph_colors[$table.find('tbody tr:eq(2) td:first label').html().trim()] = '#3FCFDA';
+
+			create_graph_by_date({
+				graphic_element: '#graph_concepts_by_date',
+				columns: data_graph,
+				type: 'line',
+				colors: graph_colors,
+				groups: []
 			});
 		}
-		/** ---------------------- Graph Functions ---------------------- **/
-		// Create Graph for the concepts table
-		function create_graph_by_date(options) {
-			var graphic_element = options.graphic_element,
-					data_table = options.data_table,
-					graph;
-			graph = c3.generate({
-				point: options.point,
-				bindto: graphic_element,
-				data:{
-					x : 'x',
-					columns: c3Custom_get_data($(data_table)),
-					colors: options.colors || {},
-					type: options.type || 'line',
-					groups: options.groups || [],
-					labels: {
-						format: {
-							y: d3.format("$,")
-						}
-					}
-				},
-				zoom: {
-					enabled: true
-				},
-				tooltip: {
-					format: {
-						value: function(value) {
-							return d3.format(",.2f")(value)
-						}
-					}
-				},
-				axis: {
-					y : {
-						tick: {
-							format: d3.format(",.2f")
-						}
-					},
-					x: {
-						type: 'category'
-					}
-				}
-			});
 
-			if ($('#concepts_by_date thead tr td').length > 21) {
-				graph.zoom([1, 10]);
-			}
+		function get_info_costs_per_month() {
+			$.ajax({
+				url: '/multiple_months/management_number_one/total_per_month',
+				method: 'GET'
+			})
+			.done(function(data) {
+				print_date_info(data);
+        print_table_consolidated();
+			});
 		}
 	</script>
 <% end %>

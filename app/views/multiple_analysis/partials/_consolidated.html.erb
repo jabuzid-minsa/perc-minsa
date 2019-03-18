@@ -19,43 +19,17 @@
 					</tr>
 					</thead>
 					<tbody>
-					<% total_acum = 0 %>
 					<tr data-summary='human_resource'>
 						<td><%= t('app.analysis_tables.common.human_resource') %></td>
-						<td class="currency text-right">                    
-							<% total_hr = @human_resource.inject(0) {|sum, hash| sum + hash['value']} %>
-							<label class="decimal_numbers_2"><%= total_hr %></label>
-						</td>
-						<td class="percentage text-right" id="column_percentage_rh"></td>
-						<% total_hr = total_hr ? total_hr : 0 %>
-						<% total_acum = total_acum + total_hr %>
 					</tr>
 					<tr data-summary='overheads'>
 						<td><%= t('app.analysis_tables.common.overheads') %></td>
-						<td class="currency text-right">
-							<% total_oh = @overheads.inject(0) {|sum, hash| sum + hash['value']} %>
-							<label class="decimal_numbers_2"><%= total_oh %></label>
-						</td>
-						<td class="percentage text-right" id="column_percentage_gg"></td>
-						<% total_oh = total_oh ? total_oh : 0 %>
-						<% total_acum = total_acum + total_oh %>
 					</tr>
 					<tr data-summary='supplies'>
 						<td><%= t('app.analysis_tables.common.supplies') %></td>
-						<td class="currency text-right">
-							<% total_sy = @supplies.inject(0) {|sum, hash| sum + hash['value']} %>
-							<label class="decimal_numbers_2"><%= total_sy %></label>
-						</td>
-						<td class="percentage text-right" id="column_percentage_in"></td>
-						<% total_sy = total_sy ? total_sy : 0 %>
-						<% total_acum = total_acum + total_sy %>
 					</tr>
 					<tr data-summary='total_entity' style="background-color: rgba(63,207,218,0.6); font-weight: bold;">
 						<td><%= t('app.analysis_tables.common.total') %></td>
-						<td class="text-right" id="total_entity">
-							<label class="decimal_numbers_2"><%= total_acum %></label>
-						</td>
-						<td></td>
 					</tr>
 					</tbody>
 				</table>
@@ -75,103 +49,100 @@
 
 <% content_for :javascript do %>
 	<script type="text/javascript">
-		var consolidated_table = $('#consolidated_table'),
-				polar_graphic = document.getElementById('consolidated_polar_graphic').getContext('2d');
-		/** ---------------------- Functions ---------------------- **/
-		// Calculation of percentages for the consolidated table
-		function consolidated_percentage_calculation() {
-			var total, current_value;
-			
-			total = parseFloat(consolidated_table.find('#total_entity label').html().replace(new RegExp(',', 'g'), ''));
-			current_value = '';
-
-			consolidated_table.find('.currency').each(function (index, value) {
-				current_value = parseFloat(String($('label', value).html()).replace(new RegExp(',', 'g'), ''));
-				$(value).next().html("<label class=''>"+ (current_value * 100 / total).toFixed(2) +"%</label>");
-			});
+		function delete_character(text, character) {
+			if (character == null) {
+				character = '%';
+			}
+			return text.replace(new RegExp(character, 'g'), '')
 		}
-		// Data Collection and Polar Chart Creation
-		function creation_polar_chart() {
-			var consolidated_hr, consolidated_ov, consolidated_sy, polar_data, polar_options;
 
-			consolidated_hr = parseFloat(consolidated_table.find('tr[data-summary="human_resource"] .percentage label').html().replace(new RegExp('%', 'g'), ''));
-			consolidated_ov = parseFloat(consolidated_table.find('tr[data-summary="overheads"] .percentage label').html().replace(new RegExp('%', 'g'), ''));
-			consolidated_sy = parseFloat(consolidated_table.find('tr[data-summary="supplies"] .percentage label').html().replace(new RegExp('%', 'g'), ''));
-
-			polar_data = {
-				labels: ["<%= t('app.analysis_tables.common.human_resource') %>", "<%= t('app.analysis_tables.common.overheads') %>", "<%= t('app.analysis_tables.common.supplies') %>"],
-				datasets: [
-					{
-						label: 'Porcentaje',
-						backgroundColor: ['rgba(232,48,96,0.6)', 'rgba(255,227,33,0.6)', 'rgba(63,207,218,0.6)'],
-						data: [consolidated_hr, consolidated_ov, consolidated_sy]
-					}
-				]
-			};
-			polar_options = {
-				responsive: true,
-				scale: {
-					ticks: {
-						beginAtZero: true,
-						max: 100
-					}
+		function get_data_consolidated(el) {
+			if (el == null) {
+				el='#control_panel_1';
+			}
+			return {
+				labels: {
+					hs: $(el).find('tbody tr:eq(1) td:eq(0)').html().trim(),
+					ov: $(el).find('tbody tr:eq(2) td:eq(0)').html().trim(),
+					sp: $(el).find('tbody tr:eq(3) td:eq(0)').html().trim()
+				},
+				hs: {
+					total: parseFloat($(el).find('tbody tr:eq(1) td:eq(1) label').html().trim()),
+					percent: delete_character($(el).find('tbody tr:eq(1) td:eq(2) label').html().trim())
+				},
+				ov: {
+					total: parseFloat($(el).find('tbody tr:eq(2) td:eq(1) label').html().trim()),
+					percent: delete_character($(el).find('tbody tr:eq(2) td:eq(2) label').html().trim())
+				},
+				sp: {
+					total: parseFloat($(el).find('tbody tr:eq(3) td:eq(1) label').html().trim()),
+					percent: delete_character($(el).find('tbody tr:eq(3) td:eq(2) label').html().trim())
+				},
+				total: {
+					total: parseFloat($(el).find('tbody tr:eq(0) td:eq(1) label').html().trim()),
+					percent: delete_character($(el).find('tbody tr:eq(0) td:eq(2) label').html().trim())
 				}
 			};
-			
-			new Chart(polar_graphic, {
-				type: 'polarArea',
-				data: polar_data,
-				options: polar_options
-			});
+		}
 
-			graph = c3.generate({
+		function print_graph_polar(data) {
+			new Chart(document.getElementById('consolidated_polar_graphic').getContext('2d'), {
+				type: 'polarArea',
+				data: data,
+				options: { responsive: true, scale: { ticks: { beginAtZero: true, max: 100 } } }
+			});
+		}
+
+		function print_graph_bars(data) {
+			c3.generate({
 				bindto: '#consolidated_value_graphic',
 				data:{
 					x : 'x',
-					columns: [
-						['x', 'Total'],
-						["<%= t('app.analysis_tables.common.human_resource') %>", clean_number_mask(consolidated_table.find('tr[data-summary="human_resource"] .currency label').html())],
-						["<%= t('app.analysis_tables.common.overheads') %>", clean_number_mask(consolidated_table.find('tr[data-summary="overheads"] .currency label').html())],
-						["<%= t('app.analysis_tables.common.supplies') %>", clean_number_mask(consolidated_table.find('tr[data-summary="supplies"] .currency label').html())]
-					],
-					colors: {
-						"<%= t('app.analysis_tables.common.human_resource') %>": '#E83060',
-						"<%= t('app.analysis_tables.common.overheads') %>": '#FFE321',
-						"<%= t('app.analysis_tables.common.supplies') %>": '#3FCFDA'
-					},
+					columns: data.columns,
+					colors: data.colors,
 					type: 'bar',
-					groups: [["<%= t('app.analysis_tables.common.human_resource') %>","<%= t('app.analysis_tables.common.overheads') %>","<%= t('app.analysis_tables.common.supplies') %>"]],
-					labels: {
-						format: {
-							y: d3.format("$,")
-						}
-					}
+					groups: data.groups,
+					labels: { format: { y: d3.format("$,") } }
 				},
-				tooltip: {
-					format: {
-						value: function(value) {
-							return d3.format(",.2f")(value)
-						}
-					}
-				},
+				tooltip: { format: { value: function(value) { return d3.format(",.2f")(value) } } },
 				axis: {
 					rotated: true,
-					y: {
-						tick: {
-							rotate: 90,
-							multiline: true,
-							format: d3.format(",.0f")
-						}
-					},
-					x: {
-						type: 'category',
-						tick: {
-							rotate: 90,
-							multiline: true,
-						}
-					}
+					y: { tick: { rotate: 90, multiline: true, format: d3.format(",.0f") } },
+					x: { type: 'category', tick: { rotate: 90, multiline: true } }
 				}
 			});
+		}
+
+		function print_table_consolidated(el) {
+			if (el == null) {
+				el = "#consolidated_table";
+			}
+			
+			var data = get_data_consolidated(),
+					polar_graph = { labels: [], datasets: [{ 
+						label: $(el).find('thead tr:first td:last').html().trim(),
+						backgroundColor: ['rgba(232,48,96,0.6)', 'rgba(255,227,33,0.6)', 'rgba(63,207,218,0.6)'],
+						data: []
+					}]},
+					bar_graph = { columns: [], colors: {}, groups: []};
+
+			$(el).find('tbody tr:eq(0)').append('<td class="currency text-right"><label class="integer_numbers">'+ data.hs.total +'</label></td><td class="percentage text-right"><label class="">'+ data.hs.percent +'%</label></td>');
+			$(el).find('tbody tr:eq(1)').append('<td class="currency text-right"><label class="integer_numbers">'+ data.ov.total +'</label></td><td class="percentage text-right"><label class="">'+ data.ov.percent +'%</label></td>');
+			$(el).find('tbody tr:eq(2)').append('<td class="currency text-right"><label class="integer_numbers">'+ data.sp.total +'</label></td><td class="percentage text-right"><label class="">'+ data.sp.percent +'%</label></td>');
+			$(el).find('tbody tr:eq(3)').append('<td class="currency text-right"><label class="integer_numbers">'+ data.total.total +'</label></td><td class="percentage text-right"><label class="">'+ data.total.percent +'%</label></td>');
+
+			polar_graph.labels.push(data.labels.hs,data.labels.ov,data.labels.sp);
+			polar_graph.datasets[0].data.push(data.hs.percent,data.ov.percent,data.sp.percent);
+			print_graph_polar(polar_graph);
+
+			bar_graph.columns.push(['x', 'Total'],[data.labels.hs, data.hs.total],[data.labels.ov, data.ov.total],[data.labels.sp, data.sp.total]);
+			bar_graph.colors[data.labels.hs] = '#E83060';
+			bar_graph.colors[data.labels.ov] = '#FFE321';
+			bar_graph.colors[data.labels.sp] = '#3FCFDA';
+			bar_graph.groups.push([data.labels.hs,data.labels.ov,data.labels.sp]);
+			print_graph_bars(bar_graph);
+
+			get_info_total_cc();
 		}
 	</script>
 <% end %>

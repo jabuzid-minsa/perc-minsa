@@ -16,76 +16,144 @@ class MultipleAnalysisController < ApplicationController
       redirect_to multiple_report_number_one_url
     end
 
-    def report_number_one
-        settings = session[:entity_id] + ',' + session[:date_start].split('/')[1] + ',' + session[:date_start].split('/')[0] + ',' + session[:date_end].split('/')[1] + ',' + session[:date_end].split('/')[0]
-        end_date = Date.civil((session[:date_end].split('/')[1]).to_i, (session[:date_end].split('/')[0]).to_i, -1)
-        #months = (end_date - Date.strptime("#{session[:date_start].split('/')[1]}-#{session[:date_start].split('/')[0]}-01", '%Y-%m-%d')).to_f
+    ### Production, Costs and Efficiency
+    def report_number_one        
+        end_date = Date.civil((session[:date_end].split('/')[1]).to_i, (session[:date_end].split('/')[0]).to_i, -1)        
         star_date = Date.strptime("#{session[:date_start].split('/')[1]}-#{session[:date_start].split('/')[0]}-01", '%Y-%m-%d')
         months = ((end_date.month - star_date.month) + 12 * (end_date.year - star_date.year))
-
         @cost_centers = CostCenter.joins(:entity_cost_centers).where(:entity_cost_centers => { entity_id: session[:entity_id] }).order_priority.order(:code)
-
-        @human_resource = ActiveRecord::Base.connection.select_all("CALL calculate_humanresource(#{settings},FALSE)").to_hash
-        ActiveRecord::Base.clear_active_connections!
-
-        @overheads = ActiveRecord::Base.connection.select_all("CALL calculate_overhead(#{settings},FALSE,TRUE)").to_hash
-        ActiveRecord::Base.clear_active_connections!
-
-        @supplies = ActiveRecord::Base.connection.select_all("CALL calculate_supplies(#{settings},FALSE,TRUE)").to_hash
-        ActiveRecord::Base.clear_active_connections!
-
-        @distribution_processed = ActiveRecord::Base.connection.select_all("CALL calculate_distribution_processed(#{settings},FALSE)").to_hash
-        ActiveRecord::Base.clear_active_connections!
-
-        @total_selfsupport = DistributionCost.where(year: session[:date_start].split('/')[1]..session[:date_end].split('/')[1], month: session[:date_start].split('/')[0]..session[:date_end].split('/')[0], entity_id: session[:entity_id]).where('distribution_costs.cost_center_id = distribution_costs.supported_cost_center_id AND distribution_costs.value > 0').select('DISTINCT cost_center_id').count
-
-        @selfsupport = ActiveRecord::Base.connection.select_all("CALL calculate_selfsupport(#{settings})").to_hash
-        ActiveRecord::Base.clear_active_connections!
-
-        @medicines = DistributionSupply.where(year: session[:date_start].split('/')[1]..session[:date_end].split('/')[1], month: session[:date_start].split('/')[0]..session[:date_end].split('/')[0], entity_id: session[:entity_id], supply_id: 30).select('ROUND(SUM(value),0) AS total')
-
-        @osteosinthesis_material = DistributionSupply.where(year: session[:date_start].split('/')[1]..session[:date_end].split('/')[1], month: session[:date_start].split('/')[0]..session[:date_end].split('/')[0], entity_id: session[:entity_id], supply_id: 16).select('ROUND(SUM(value),0) AS total')
-
-        beds = ActiveRecord::Base.connection.select_all("CALL calculate_beds(#{settings})").to_hash
-        ActiveRecord::Base.clear_active_connections!
-
-        @total_beds = beds[0]['value']
-        
-        #@months_total = (months.abs/30).to_i - 1
         @months_total = months
-
         @starting_date = Date.strptime("#{session[:date_start].split('/')[1]}-#{session[:date_start].split('/')[0]}", '%Y-%m')
         @final_date = Date.strptime("#{session[:date_end].split('/')[1]}-#{session[:date_end].split('/')[0]}", '%Y-%m')
     end
 
+    ### Production, Costs and Efficiency
+    # First Panel: Control Panel
+    def rno_control_panel
+      settings = "#{session[:date_start].split('/')[1]},#{session[:date_end].split('/')[1]},#{session[:date_start].split('/')[0]},#{session[:date_end].split('/')[0]},'#{session[:entity_id]}'"
+      
+      human_resource = ActiveRecord::Base.connection.select_all("CALL hs_calc_human_resource(#{settings},1)").to_hash
+      ActiveRecord::Base.clear_active_connections!
+
+      overheads = ActiveRecord::Base.connection.select_all("CALL hs_calc_overheads(#{settings},1)").to_hash
+      ActiveRecord::Base.clear_active_connections!
+
+      supplies = ActiveRecord::Base.connection.select_all("CALL hs_calc_supplies(#{settings},1)").to_hash
+      ActiveRecord::Base.clear_active_connections!
+      
+      specialvalues = ActiveRecord::Base.connection.select_all("CALL hs_calc_specialvalues(#{settings})").to_hash
+      ActiveRecord::Base.clear_active_connections!
+
+      parent_groups = ActiveRecord::Base.connection.select_all("CALL hs_calc_parent_groups(#{settings})").to_hash
+      ActiveRecord::Base.clear_active_connections!
+
+      render json: { hs: human_resource, ov: overheads, sp: supplies, spv: specialvalues, pg: parent_groups }, status: :ok
+    end
+
+    ### Production, Costs and Efficiency
+    # Second Panel: Cost Total per month
+    def total_per_month
+      settings = "#{session[:date_start].split('/')[1]},#{session[:date_end].split('/')[1]},#{session[:date_start].split('/')[0]},#{session[:date_end].split('/')[0]},'#{session[:entity_id]}'"
+
+      human_resource = ActiveRecord::Base.connection.select_all("CALL hs_calc_human_resource(#{settings},0)").to_hash
+      ActiveRecord::Base.clear_active_connections!
+
+      overheads = ActiveRecord::Base.connection.select_all("CALL hs_calc_overheads(#{settings},0)").to_hash
+      ActiveRecord::Base.clear_active_connections!
+
+      supplies = ActiveRecord::Base.connection.select_all("CALL hs_calc_supplies(#{settings},0)").to_hash
+      ActiveRecord::Base.clear_active_connections!
+
+      render json: { hs: human_resource, ov: overheads, sp: supplies }, status: :ok
+    end
+
+    ### Production, Costs and Efficiency
+    # Fourth Panel: Cost Total per month
+    def total_per_cost_center
+      settings = "#{session[:date_start].split('/')[1]},#{session[:date_end].split('/')[1]},#{session[:date_start].split('/')[0]},#{session[:date_end].split('/')[0]},'#{session[:entity_id]}'"
+
+      human_resource = ActiveRecord::Base.connection.select_all("CALL hs_calc_human_resource(#{settings},2)").to_hash
+      ActiveRecord::Base.clear_active_connections!
+
+      overheads = ActiveRecord::Base.connection.select_all("CALL hs_calc_overheads(#{settings},2)").to_hash
+      ActiveRecord::Base.clear_active_connections!
+
+      supplies = ActiveRecord::Base.connection.select_all("CALL hs_calc_supplies(#{settings},2)").to_hash
+      ActiveRecord::Base.clear_active_connections!
+
+      render json: { hs: human_resource, ov: overheads, sp: supplies }, status: :ok
+    end
+
+    ### Production, Costs and Efficiency
+    # Six Panel: Cost Indirects
+    def total_indirects
+      settings = "#{session[:date_start].split('/')[1]},#{session[:date_end].split('/')[1]},#{session[:date_start].split('/')[0]},#{session[:date_end].split('/')[0]},'#{session[:entity_id]}'"
+
+      indirec_costs = ActiveRecord::Base.connection.select_all("CALL hs_calc_indirect_costs(#{settings},0)").to_hash
+      ActiveRecord::Base.clear_active_connections!
+
+      remnants = ActiveRecord::Base.connection.select_all("CALL hs_calc_indirect_remnants(#{settings})").to_hash
+      ActiveRecord::Base.clear_active_connections!
+
+      render json: { indirect: indirec_costs, remnants: remnants }, status: :ok
+    end
+
+    ### Table 4
     def report_detail_number_one
       settings = session[:entity_id] + ',' + session[:date_start].split('/')[1] + ',' + session[:date_start].split('/')[0] + ',' + session[:date_end].split('/')[1] + ',' + session[:date_end].split('/')[0]
 
       @cost_centers = CostCenter.joins(:entity_cost_centers).where(:entity_cost_centers => { entity_id: session[:entity_id] }).order_priority.order(:code)
-      @supplies_heads = Supply.joins(:entities).where(:entities_supplies => { entity_id: session[:entity_id] } ).where('supplies.supplies_category_id = ?', '1')
-      @supplies_overheads = Supply.joins(:entities).where(:entities_supplies => { entity_id: session[:entity_id] } ).where('supplies.supplies_category_id = ?', '2')
-
-      @human_resource = ActiveRecord::Base.connection.select_all("CALL calculate_humanresource(#{settings},TRUE)").to_hash
-      ActiveRecord::Base.clear_active_connections!
-
-      @overheads = ActiveRecord::Base.connection.select_all("CALL calculate_overhead(#{settings},TRUE,FALSE)").to_hash
-      ActiveRecord::Base.clear_active_connections!
-
-      @supplies = ActiveRecord::Base.connection.select_all("CALL calculate_supplies(#{settings},TRUE,FALSE)").to_hash
-      ActiveRecord::Base.clear_active_connections!
-
+      @supplies = Supply.joins(:entities).where(:entities_supplies => { entity_id: session[:entity_id] } ).where('supplies.supplies_category_id = ?', '1')
+      @overheads = Supply.joins(:entities).where(:entities_supplies => { entity_id: session[:entity_id] } ).where('supplies.supplies_category_id = ?', '2')
       # Indirect Costs
       @production_cost_centers = CostCenter.for_entity(session[:entity_id]).where.not(function: 3).order_distribution
-      
-      @supported_cost_centers = CostCenter.for_entity(session[:entity_id]).order_priority.order(:code)
-      
-      @distribution_processed = ActiveRecord::Base.connection.select_all("CALL calculate_distribution_processed(#{settings},FALSE)").to_hash
-      ActiveRecord::Base.clear_active_connections!
-
-      @production_centers_data = ActiveRecord::Base.connection.select_all("CALL mul_unit_costs_per_production(#{settings})").to_hash
-      ActiveRecord::Base.clear_active_connections!
     end
 
+    ### Table 4
+    # First Panel: Direct Costs
+    def tf_direct_costs
+      settings = "#{session[:date_start].split('/')[1]},#{session[:date_end].split('/')[1]},#{session[:date_start].split('/')[0]},#{session[:date_end].split('/')[0]},'#{session[:entity_id]}'"
+
+      human_resource = ActiveRecord::Base.connection.select_all("CALL hs_calc_human_resource(#{settings},3)").to_hash
+      ActiveRecord::Base.clear_active_connections!
+
+      overheads = ActiveRecord::Base.connection.select_all("CALL hs_calc_overheads(#{settings},3)").to_hash
+      ActiveRecord::Base.clear_active_connections!
+
+      supplies = ActiveRecord::Base.connection.select_all("CALL hs_calc_supplies(#{settings},3)").to_hash
+      ActiveRecord::Base.clear_active_connections!
+
+      render json: { hs: human_resource, ov: overheads, sp: supplies }, status: :ok
+    end
+
+    ### Table 4
+    # Second Panel: Indirect Costs
+    def tf_indirect_costs
+      settings = "#{session[:date_start].split('/')[1]},#{session[:date_end].split('/')[1]},#{session[:date_start].split('/')[0]},#{session[:date_end].split('/')[0]},'#{session[:entity_id]}'"
+
+      indirec_costs = ActiveRecord::Base.connection.select_all("CALL hs_calc_indirect_costs(#{settings},3)").to_hash
+      ActiveRecord::Base.clear_active_connections!
+
+      remnants = ActiveRecord::Base.connection.select_all("CALL hs_calc_indirect_remnants(#{settings})").to_hash
+      ActiveRecord::Base.clear_active_connections!
+
+      total_indirects = ActiveRecord::Base.connection.select_all("CALL hs_calc_indirect_costs(#{settings},2)").to_hash
+      ActiveRecord::Base.clear_active_connections!
+
+      render json: { indirect: indirec_costs, remnants: remnants, totals: total_indirects }, status: :ok
+    end
+
+    ### Table 4
+    # Second Panel: Indirect Costs
+    def tf_production_info
+      settings = "#{session[:date_start].split('/')[1]},#{session[:date_end].split('/')[1]},#{session[:date_start].split('/')[0]},#{session[:date_end].split('/')[0]},'#{session[:entity_id]}'"
+
+      production = ActiveRecord::Base.connection.select_all("CALL hs_calc_production_unit(#{settings})").to_hash
+
+      render json: { production: production }, status: :ok
+    end
+
+    ### Other's
     def report_number_two
       @cost_centers = CostCenter.joins(:entity_cost_centers).where(:entity_cost_centers => { entity_id: session[:entity_id] }).order_priority
       @staffs = Staff.for_entity(session[:entity_id])
