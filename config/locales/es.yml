@@ -323,12 +323,12 @@ es:
       header_action: acciones
       texts:
         processing: procesando...
-        length_menu: mostrando _menu_ registros
+        length_menu: mostrando _MENU_ registros
         zero_records: no se encontraron resultados
         empty_table: ningun dato disponible en esta tabla
-        info: monstrando registros del _start_ al _end_ de un total de _total_ registros
+        info: monstrando registros del _START_ al _END_ de un total de _TOTAL_ registros
         info_empty: mostrando registros del 0 al 0 de un total de 0 registros
-        info_filtered: (filtrado de un total de _max_ registros)
+        info_filtered: (filtrado de un total de _MAX_ registros)
         search: buscar
         info_thousands: ','
         loading_records: cargando...
