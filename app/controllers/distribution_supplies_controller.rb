@@ -4,7 +4,7 @@ class DistributionSuppliesController < ApplicationController
   # GET /distribution_supplies
   # GET /distribution_supplies.json
   def index
-    @supplies = Supply.active.for_entity(session[:entity_id]).where('supplies.code LIKE ?', '%002%')
+    @supplies = Supply.active.for_entity(session[:entity_id]).where('supplies.supplies_category_id = ?', 1)
     @cost_centers = CostCenter.for_entity(session[:entity_id]).order_priority.order(:code)
     @distribution_supplies = DistributionSupply.date(session[:year], session[:month]).for_entity(session[:entity_id])
     respond_to do |format|

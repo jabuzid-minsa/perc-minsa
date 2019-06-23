@@ -68,6 +68,21 @@ class LanguagesController < ApplicationController
     end
   end
 
+  # GET /change_language/es
+  def change_language
+    selected_language = ''
+    language = Language.find_by(abbreviation: params[:abbreviation])
+    
+    if language.present?
+      session[:language_user] = language.abbreviation
+      selected_language = session[:language_user]
+    end
+
+    respond_to do |format|
+      format.json { render json: { language: selected_language } }
+    end
+  end
+
   private
   # Use callbacks to share common setup or constraints between actions.
   def set_language

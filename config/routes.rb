@@ -206,7 +206,9 @@ Rails.application.routes.draw do
 
   # Configuration paths for the app.
   scope 'settings', prefix: 'settings' do
-	resources :languages, except: [:show, :destroy]
+		resources :languages, except: [:show, :destroy] do
+			get '/change_language', to: 'languages#change_language', as: 'change_language', on: :collection
+		end
   end
 
   # Dynamic URL root for user role.

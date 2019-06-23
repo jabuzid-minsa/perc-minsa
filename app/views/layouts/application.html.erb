@@ -15,6 +15,15 @@
         $('.decimal_numbers_2').each(function (idnex, value) { $(this).number($(this).text(),2); });
         //$('.decimal_numbers_2').number( true, 2 );
 
+        $('#change_idiom').change(function(event) {
+          asynchronous.exec_ajax({
+            url: '<%= change_language_languages_path %>',
+            data: { abbreviation: $(this).val() },
+            beforeSend: asynchronous.div_loading('<%= t('app.texts.loading') %>'),
+            reload: true
+          });
+        });
+
         <% if user_signed_in? and can? :change_country, Geography %>
           // Actions on element with id change_country to send the change of country
           $("#change_country_navbar").change(function () {

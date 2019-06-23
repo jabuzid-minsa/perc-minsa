@@ -8,7 +8,7 @@
     <Table>
       <Row>
         <Cell><Data ss:Type="String">Centro de Costo</Data></Cell>
-        <% Supply.active.for_entity(session[:entity_id]).where('supplies.code LIKE ?', '%002%').each do |supply| %>
+        <% Supply.active.for_entity(session[:entity_id]).where('supplies.supplies_category_id = ?', 1).each do |supply| %>
             <Cell><Data ss:Type="String"><%= "#{supply.id}-#{supply.description}" %></Data></Cell>
         <% end %>
       </Row>

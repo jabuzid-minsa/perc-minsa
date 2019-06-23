@@ -22,7 +22,7 @@ class AnalysisGraphsController < ApplicationController
     @distribution_processed = ActiveRecord::Base.connection.select_all("CALL distribution_costs_processed(#{session[:year]},#{session[:month]}, #{session[:entity_id]})").to_hash
     ActiveRecord::Base.clear_active_connections!
 
-    @medicines = DistributionSupply.where(year: session[:year], month: session[:month], entity_id: session[:entity_id], supply_id: 30).select('ROUND(SUM(value),0) AS total')
+    @medicines = DistributionSupply.where(year: session[:year], month: session[:month], entity_id: session[:entity_id], supply_id: [30,387,390]).select('ROUND(SUM(value),0) AS total')
 
     @osteosinthesis_material = DistributionSupply.where(year: session[:year], month: session[:month], entity_id: session[:entity_id], supply_id: 16).select('ROUND(SUM(value),0) AS total')
 

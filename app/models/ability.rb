@@ -8,6 +8,7 @@ class Ability
     if user.is_global_administrator?
       can :manage, :all
     elsif user.is_basic_administrator?
+      can :change_language, Language
       can :change_date, User
       can :change_entity, Entity
       can :change_network, Network
@@ -33,6 +34,7 @@ class Ability
       can :view_comparative_graphs, User
       can :access_multiple_analysis, User
     elsif user.is_level_two_local_administrator?
+      can :change_language, Language
       can :get_third_level, Geography
       can :get_fourth_level, Geography
       can :get_fifth_level, Geography
@@ -62,6 +64,9 @@ class Ability
       can :view_comparative_graphs, User
       can :access_multiple_analysis, User
     elsif user.is_level_one_local_administrator?
+      can :access_parametrization, User
+      can :read, User
+      can :change_language, Language
       can :get_third_level, Geography
       can :get_fourth_level, Geography
       can :get_fifth_level, Geography
@@ -91,6 +96,7 @@ class Ability
       can :view_comparative_graphs, User
       can :access_multiple_analysis, User
     elsif user.is_level_three_manager?
+      can :change_language, Language
       can :change_date, User
       can :change_entity, Entity
       can :change_network, Network
@@ -111,6 +117,7 @@ class Ability
       can :view_comparative_graphs, User
       can :access_multiple_analysis, User
     elsif user.is_level_two_manager?
+      can :change_language, Language
       can :change_network, Network
       can :change_entity, Entity
       can :select_date, User
@@ -132,6 +139,7 @@ class Ability
       can :view_comparative_graphs, User
       can :access_multiple_analysis, User
     elsif user.is_level_one_manager?
+      can :change_language, Language
       can :change_date, User
       can :change_entity, Entity
       can :change_network, Network
@@ -143,6 +151,7 @@ class Ability
       can :access_multiple_analysis, User
       can :validate_dates_for_entity, Payroll
     elsif user.is_level_two_operator?
+      can :change_language, Language
       can :change_network, Network
       can :change_entity, Entity
       can :select_date, User
@@ -163,6 +172,7 @@ class Ability
       can :view_comparative_graphs, User
       can :access_multiple_analysis, User
     elsif user.is_level_one_operator?
+      can :change_language, Language
       can :change_network, Network
       can :change_entity, Entity
       can :select_date, User
@@ -183,6 +193,7 @@ class Ability
       can :view_comparative_graphs, User
       can :access_multiple_analysis, User
     else
+      can :change_language, Language
       can :read, Geography
     end
   end

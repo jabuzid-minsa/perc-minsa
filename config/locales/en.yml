@@ -128,6 +128,11 @@ en:
     buttons:
       back: Back
       create: Create
+      csv: CSV
+      excel: Excel
+      format_excel: Excel Format
+      empty_before: Empty before
+      import: Import
     change_date: Successfully changed date
     controllers:
       care_levels: levels_attention
@@ -221,7 +226,7 @@ en:
     texts:
       all_countries: All Countries
       create: Create %{element}
-      creating: Creating un nuevo %{element}
+      creating: Creating %{element}
       creation: Creation - %{element}
       editing: Editing - %{element}
       edition: Edition - %{element}
@@ -309,9 +314,9 @@ en:
   # Help classes of Rails
   helpers:
     submit:
-      create: Create% {model}
-      submit: Save% {model}
-      update: Update% {model}
+      create: Create %{model}
+      submit: Save %{model}
+      update: Update %{model}
   # Messages javascript files
   javascript:
     data_tables:
