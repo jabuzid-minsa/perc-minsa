@@ -33,6 +33,7 @@ class Ability
       can :view_management_number_two, User
       can :view_comparative_graphs, User
       can :access_multiple_analysis, User
+      can :manage, :analysis_network
     elsif user.is_level_two_local_administrator?
       can :change_language, Language
       can :get_third_level, Geography
@@ -63,6 +64,7 @@ class Ability
       can :view_management_number_two, User
       can :view_comparative_graphs, User
       can :access_multiple_analysis, User
+      can :manage, :analysis_network
     elsif user.is_level_one_local_administrator?
       can :access_parametrization, User
       can :read, User
@@ -95,6 +97,7 @@ class Ability
       can :view_management_number_two, User
       can :view_comparative_graphs, User
       can :access_multiple_analysis, User
+      can :manage, :analysis_network
     elsif user.is_level_three_manager?
       can :change_language, Language
       can :change_date, User
@@ -116,6 +119,7 @@ class Ability
       can :view_management_number_two, User
       can :view_comparative_graphs, User
       can :access_multiple_analysis, User
+      can :manage, :analysis_network
     elsif user.is_level_two_manager?
       can :change_language, Language
       can :change_network, Network
@@ -138,6 +142,7 @@ class Ability
       can :view_management_number_two, User
       can :view_comparative_graphs, User
       can :access_multiple_analysis, User
+      can :manage, :analysis_network
     elsif user.is_level_one_manager?
       can :change_language, Language
       can :change_date, User
@@ -150,6 +155,7 @@ class Ability
       can :view_comparative_graphs, User
       can :access_multiple_analysis, User
       can :validate_dates_for_entity, Payroll
+      can :manage, :analysis_network
     elsif user.is_level_two_operator?
       can :change_language, Language
       can :change_network, Network
@@ -192,6 +198,7 @@ class Ability
       can :view_management_number_two, User
       can :view_comparative_graphs, User
       can :access_multiple_analysis, User
+      can :manage, :analysis_network
     else
       can :change_language, Language
       can :read, Geography
