@@ -70,7 +70,7 @@ class AnalysisNetworksController < ApplicationController
     if current_user.global_administrator?
       @entities = Entity.where(id: filters[:entities]).select('id, code, abbreviation, description')
     else
-      @entities = Entity.for_users(current_user.id).where(id: filters[:entities]).select('id, code, abbreviation, description')
+      @entities = Entity.for_users(current_user.id).where(id: filters[:entities]).select('entities.id, entities.code, entities.abbreviation, entities.description')
     end
   end
 
