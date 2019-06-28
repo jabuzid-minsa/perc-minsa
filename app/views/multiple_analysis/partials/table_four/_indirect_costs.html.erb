@@ -141,10 +141,7 @@
 				cc = current_col.data('cost-center');
 				current_data = find_ind_total(data, cc);
 				if (!$.isEmptyObject(current_data)) {
-					console.log(current_col);
-					console.log(current_data);
-					console.log(current_data.total);
-					current_col.find('label').html(parseFloat(current_data.total));
+					current_col.find('label').html(current_data.total);
 					row_total += parseFloat(current_data.total);
 				}
 			});
@@ -165,7 +162,8 @@
 				col_indirect = $('#indirect_costs_table tbody tr:last td[data-cost-center="'+ cc +'"] label');
 				total_dir = parseFloat(clean_number_mask($('#summary_table tbody tr:last td[data-cost-center="'+ cc +'"] label').html()));
 				total_ind = parseFloat(clean_number_mask(col_indirect.html()));
-
+				console.log(total_dir);
+				console.log(total_ind);
 				part_remnant = (remnants * ((total_dir + total_ind) / total));
 				current_col.find('label').html(part_remnant);
 				col_indirect.html((total_ind + part_remnant));
