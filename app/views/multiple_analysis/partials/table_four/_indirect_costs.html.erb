@@ -153,21 +153,22 @@
 				el = '#indirect_costs_table';
 			}
 
-			var total = parseFloat(clean_number_mask($('#summary_table tbody tr:last td:last label').html())) - remnants,
+			if (parseFloat(remnants) > 0) {
+				var total = parseFloat(clean_number_mask($('#summary_table tbody tr:last td:last label').html())) - remnants,
 					cc, total_ind, total_dir, current_col, part_remnant, col_indirect;
 
-			$(el + ' tbody tr#tbl-ind-remnants td[data-function="final"]').each(function(k,v) {
-				current_col = $(v);
-				cc = current_col.data('cost-center');
-				col_indirect = $('#indirect_costs_table tbody tr:last td[data-cost-center="'+ cc +'"] label');
-				total_dir = parseFloat(clean_number_mask($('#summary_table tbody tr:last td[data-cost-center="'+ cc +'"] label').html()));
-				total_ind = parseFloat(clean_number_mask(col_indirect.html()));
-				console.log(total_dir);
-				console.log(total_ind);
-				part_remnant = (remnants * ((total_dir + total_ind) / total));
-				current_col.find('label').html(part_remnant);
-				col_indirect.html((total_ind + part_remnant));
-			});
+				$(el + ' tbody tr#tbl-ind-remnants td[data-function="final"]').each(function(k,v) {
+					current_col = $(v);
+					cc = current_col.data('cost-center');
+					col_indirect = $('#indirect_costs_table tbody tr:last td[data-cost-center="'+ cc +'"] label');
+					total_dir = parseFloat(clean_number_mask($('#summary_table tbody tr:last td[data-cost-center="'+ cc +'"] label').html()));
+					total_ind = parseFloat(clean_number_mask(col_indirect.html()));
+					
+					part_remnant = (remnants * ((total_dir + total_ind) / total));
+					current_col.find('label').html(part_remnant);
+					col_indirect.html((total_ind + part_remnant));
+				});
+			}
 		}
 
 		function analyze_ind_centers(el) {
