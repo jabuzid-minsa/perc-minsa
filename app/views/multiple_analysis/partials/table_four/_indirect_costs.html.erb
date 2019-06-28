@@ -140,6 +140,7 @@
 				current_col = $(v);
 				cc = current_col.data('cost-center');
 				current_data = find_ind_total(data, cc);
+				console.log(current_data);
 				if (!$.isEmptyObject(current_data)) {
 					current_col.find('label').html(current_data.total);
 					row_total += parseFloat(current_data.total);
