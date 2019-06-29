@@ -109,7 +109,7 @@
 					break;
 				}
 			}
-			return found_data ? found_data : { total: 0 };
+			return !$.isEmptyObject(found_data) ? found_data : { total: 0 };
 		}
 
 		function print_date_info(data) {
