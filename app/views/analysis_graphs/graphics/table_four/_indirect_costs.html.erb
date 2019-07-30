@@ -105,9 +105,9 @@
 			
 			if (cell.data('distributed')) { 
 				remainder = value_convert;
+			} else {
+				cell.find('label').html(value_convert);
 			}
-			
-			cell.find('label').html(value_convert);
 
 			return remainder;
 		}
