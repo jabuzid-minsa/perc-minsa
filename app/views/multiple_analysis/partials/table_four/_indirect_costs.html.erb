@@ -155,7 +155,7 @@
 
 			if (parseFloat(remnants) > 0) {
 				var total = parseFloat(clean_number_mask($('#summary_table tbody tr:last td:last label').html())) - remnants,
-					cc, total_ind, total_dir, current_col, part_remnant, col_indirect;
+					cc, total_ind, total_dir, current_col, part_remnant, col_indirect, total_remnants = 0;
 
 				$(el + ' tbody tr#tbl-ind-remnants td[data-function="final"]').each(function(k,v) {
 					current_col = $(v);
@@ -167,9 +167,10 @@
 					part_remnant = (remnants * ((total_dir + total_ind) / total));
 					current_col.find('label').html(part_remnant);
 					col_indirect.html((total_ind + part_remnant));
+					total_remnants += part_remnant
 				});
 
-				$('#indirect_costs_table tr#tbl-ind-remnants td:last label').html(remnants);
+				$('#indirect_costs_table tr#tbl-ind-remnants td:last label').html(total_remnants);
 			}
 		}
 
