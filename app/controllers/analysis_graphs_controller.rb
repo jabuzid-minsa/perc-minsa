@@ -1,6 +1,8 @@
 class AnalysisGraphsController < ApplicationController
 
   def management_number_one
+    @entity = Entity.find(session[:entity_id])
+    @income = Income.where(year: session[:year], month: session[:month], entity_id: session[:entity_id]).sum(:value)
     @cost_centers = CostCenter.joins(:entity_cost_centers)
                         .where(:entity_cost_centers => { entity_id: session[:entity_id] }).order_priority.order(:code)
 
@@ -22,9 +24,9 @@ class AnalysisGraphsController < ApplicationController
     @distribution_processed = ActiveRecord::Base.connection.select_all("CALL distribution_costs_processed(#{session[:year]},#{session[:month]}, #{session[:entity_id]})").to_hash
     ActiveRecord::Base.clear_active_connections!
 
-    @medicines = DistributionSupply.where(year: session[:year], month: session[:month], entity_id: session[:entity_id], supply_id: [30,387,390]).select('ROUND(SUM(value),0) AS total')
+    #@medicines = DistributionSupply.where(year: session[:year], month: session[:month], entity_id: session[:entity_id], supply_id: [30,387,390]).select('ROUND(SUM(value),0) AS total')
 
-    @osteosinthesis_material = DistributionSupply.where(year: session[:year], month: session[:month], entity_id: session[:entity_id], supply_id: 16).select('ROUND(SUM(value),0) AS total')
+    #@osteosinthesis_material = DistributionSupply.where(year: session[:year], month: session[:month], entity_id: session[:entity_id], supply_id: 16).select('ROUND(SUM(value),0) AS total')
 
     @total_beds = ProductionCostCenter.joins('INNER JOIN entity_cost_centers ON entity_cost_centers.entity_id = production_cost_centers.entity_id AND entity_cost_centers.cost_center_id = production_cost_centers.cost_center_id').where(year: session[:year], month: session[:month], entity_id: session[:entity_id], production_units: 6).select('ROUND(SUM(value),0) AS total')
 

@@ -22,8 +22,8 @@ es:
       common:
         all_human_resource: recurso humano,salarios,bonus,beneficios
         average_cost: costo promedio
-        benefits: benefits
-        bonuses: bonuses
+        benefits: Beneficios
+        bonuses: Bonificaciones
         human_resource: recurso humano
         months:
           january: enero
@@ -41,7 +41,7 @@ es:
         overheads: gastos generales
         percentage: porcentaje
         quantity: cantidad
-        salaries: salaries
+        salaries: Salarios
         supplies: insumos
         supplies_overheads: insumos/gastos
         total: total
@@ -66,6 +66,14 @@ es:
           other_services: otros servicios
           administration: administracion
           beds: camas
+          supply: Insumo
+          total_cost: Costos Totales
+          total_human_resource: Costos Recurso Humano
+          care_services: Servicios Asistenciales
+          logistic_services: Servicios Logísticos
+          administration_services: Servicios Administrativos
+          income: Ingresos
+          margin: Margen Final
         second_panel:
           title: costos consolidados
           title_graph: estructura porcentual de gastos
@@ -96,6 +104,7 @@ es:
         second_panel:
           title: costos indirectos
         third_panel:
+          direct_cost: Costo Directo
           title: costos unitarios por producción
           production_unit: producción unitaria
           total_cost_center: total centro de costo

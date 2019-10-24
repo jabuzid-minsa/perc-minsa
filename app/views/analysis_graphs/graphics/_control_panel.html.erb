@@ -63,14 +63,6 @@
 						<tr>
 							<td><%= t('app.analysis_tables.common.supplies') %></td>
 						</tr>
-						<tr>
-							<td><%= t('app.analysis_tables.one.first_panel.medicines') %></td>
-							<td class="text-right"><label class="decimal_numbers_2"><%= @medicines[0].total.present? ? @medicines[0].total : 0 %></label></td>
-						</tr>
-						<tr>
-							<td><%= t('app.analysis_tables.one.first_panel.op_material') %></td>
-							<td class="text-right"><label class="decimal_numbers_2"><%= @osteosinthesis_material[0].total.present? ? @osteosinthesis_material[0].total : 0 %></label></td>
-						</tr>
 					</tbody>
 				</table>
 			</div>
@@ -113,6 +105,76 @@
 							<td><label><%= t('app.analysis_tables.one.first_panel.beds') %></label></td>
 							<td class="text-right"><label class="decimal_numbers_2"><%= @total_beds[0].total.present? ? @total_beds[0].total : 0 %></label></td>
 						</tr>
+					</tbody>
+				</table>
+				<br/>
+				<table class="table table-bordered dataTable no-footer" cellspacing="0" id="control_panel_fm">
+					<thead>
+					<tr>
+						<td></td>
+						<td><%= t('app.analysis_tables.one.first_panel.total_cost') %></td>
+					</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td><label><%= t('app.analysis_tables.one.first_panel.income') %></label></td>
+							<td class="text-right"><label class="decimal_numbers_2"><%= @income %></label></td>
+						</tr>
+						<tr>
+							<td><label><%= t('app.analysis_tables.one.first_panel.margin') %></label></td>
+							<td class="text-right"><label class="decimal_numbers_2">0</label></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<hr>
+		<div class="row">
+			<div class="col-md-4">
+				<%= select_tag('entity_supplies', options_from_collection_for_select(@entity.supplies.only_supply, 'id', 'description'), {include_blank: true, class: 'form-control m-b select2', multiple: true}) %>
+				<table class="table table-bordered dataTable no-footer" cellspacing="0" id="control_panel_supplies">
+					<thead>
+						<tr>
+							<th><%= t('app.analysis_tables.one.first_panel.supply') %></th>
+							<th><%= t('app.analysis_tables.common.total') %></th>
+							<th><%= t('app.analysis_tables.common.percentage') %></th>
+						</tr>
+					</thead>
+					<tbody>
+					</tbody>
+				</table>
+			</div>
+			<div class="col-md-4">
+				<h3><%= t('app.analysis_tables.one.first_panel.total_cost') %></h3>
+				<table class="table table-bordered dataTable no-footer" cellspacing="0" id="control_panel_cts">
+					<thead>
+						<tr>
+							<th></th>
+							<th><%= t('app.analysis_tables.common.total') %></th>
+							<th><%= t('app.analysis_tables.common.percentage') %></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr><td><%= t('app.analysis_tables.one.first_panel.care_services') %></td><td class="text-right">0</td><td class="text-right">0</td></tr>
+						<tr><td><%= t('app.analysis_tables.one.first_panel.logistic_services') %></td><td class="text-right">0</td><td class="text-right">0</td></tr>
+						<tr><td><%= t('app.analysis_tables.one.first_panel.administration_services') %></td><td class="text-right">0</td><td class="text-right">0</td></tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="col-md-4">
+				<h3><%= t('app.analysis_tables.one.first_panel.total_human_resource') %></h3>
+				<table class="table table-bordered dataTable no-footer" cellspacing="0" id="control_panel_crs">
+					<thead>
+						<tr>
+							<th></th>
+							<th><%= t('app.analysis_tables.common.total') %></th>
+							<th><%= t('app.analysis_tables.common.percentage') %></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr><td><%= t('app.analysis_tables.one.first_panel.care_services') %></td><td class="text-right">0</td><td class="text-right">0</td></tr>
+						<tr><td><%= t('app.analysis_tables.one.first_panel.logistic_services') %></td><td class="text-right">0</td><td class="text-right">0</td></tr>
+						<tr><td><%= t('app.analysis_tables.one.first_panel.administration_services') %></td><td class="text-right">0</td><td class="text-right">0</td></tr>
 					</tbody>
 				</table>
 			</div>
@@ -285,5 +347,23 @@
 
 			$('#content-control-panel').show();
 		}
+
+		//
+		$('#entity_supplies').on('select2:selecting', function (e) {
+			// e.params.args.data.element.value
+			$.ajax({
+				url: '/asynchronous_requests/supplies/info_supply',
+        method: 'POST',
+        data: {
+        	supply: e.params.args.data.element.value,
+        	type: 'single'
+        }
+			}).done(function(data) {
+				total_entity = $('#control_panel_1 tbody tr:first td:eq(1) label').html().replace(/,/g, "").trim();
+				$('#control_panel_supplies tbody').append('<tr id="cp_supplies_' + e.params.args.data.element.value + '"><td>' + e.params.args.data.text + '</td><td class="text-right">' + new Intl.NumberFormat().format(parseFloat(data).toFixed(0)) + '</td><td class="text-right">' + ((parseFloat(data) / parseFloat(total_entity)) * 100).toFixed(2) + '%</td></tr>');
+			});
+		}).on('select2:unselecting', function (e) {
+			$('#control_panel_supplies tbody tr#cp_supplies_' + e.params.args.data.element.value).remove();
+		});
 	</script>
 <% end %>

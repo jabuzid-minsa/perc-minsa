@@ -22,6 +22,9 @@ class Supply < ActiveRecord::Base
   scope :child, -> { where.not(supply_id: [0, nil]) }
   scope :selectable, -> { where.not(supply_id: [0, nil]) }
   scope :available_for_country, ->(country_ids) { where(geography_id: country_ids) }
+  scope :only_supply, -> {
+    where(supplies_category_id: [1, 3])
+  }
 
   scope :for_entity, ->(entity_id) {
     joins(:entities).where( :entities => { id: entity_id } )

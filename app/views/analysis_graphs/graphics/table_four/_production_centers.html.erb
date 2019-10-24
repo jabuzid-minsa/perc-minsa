@@ -24,6 +24,35 @@
 					<tbody>
 					</tbody>
 				</table>
+				<hr/>
+				<h3>Costos unitarios por producción (Solo Costos Directos)</h3>
+				<table class="table table-bordered dataTable no-footer fixed_table" cellspacing="0" id="production_centers_direct">
+					<thead>
+						<tr>
+							<td></td>
+							<% @supported_cost_centers.each do |cost_center| %>
+									<td data-cost-center="<%= cost_center.description %>" data-function="<%= cost_center.function %>">
+										<label for=""><%= cost_center.description %></label>
+									</td>
+							<% end %>
+						</tr>
+					</thead>
+					<tbody>
+						<tr><td><%= t('app.analysis_tables.two.third_panel.direct_cost') %> 1</td></tr>
+						<tr><td><%= t('app.analysis_tables.two.third_panel.production_unit') %> 1</td></tr>
+						<tr><td><%= t('app.analysis_tables.two.third_panel.unit_cost_production') %> 1</td></tr>
+						<tr><td><%= t('app.analysis_tables.two.third_panel.production_unit') %> 2</td></tr>
+						<tr><td><%= t('app.analysis_tables.two.third_panel.unit_cost_production') %> 2</td></tr>
+						<tr><td><%= t('app.analysis_tables.two.third_panel.production_unit') %> 3</td></tr>
+						<tr><td><%= t('app.analysis_tables.two.third_panel.unit_cost_production') %> 3</td></tr>
+						<tr><td><%= t('app.analysis_tables.two.third_panel.production_unit') %> 4</td></tr>
+						<tr><td><%= t('app.analysis_tables.two.third_panel.unit_cost_production') %> 4</td></tr>
+						<tr><td><%= t('app.analysis_tables.two.third_panel.production_unit') %> 5</td></tr>
+						<tr><td><%= t('app.analysis_tables.two.third_panel.unit_cost_production') %> 5</td></tr>
+						<tr><td><%= t('app.analysis_tables.two.third_panel.production_unit') %> Nº Camas</td></tr>
+						<tr><td><%= t('app.analysis_tables.two.third_panel.unit_cost_production') %> Nº Camas</td></tr>
+					</tbody>
+				</table>
 			</div>
 		</div>
 	</div>
@@ -109,9 +138,69 @@
 			});
 		}
 		//
+		function calculate_punit_direct() {
+			var new_html = '', direct_cost = 0, production = 0;
+
+			$('#production_centers_direct tbody tr:first').append($('#summary_table tbody tr:last td:not(:first):not(:last)').clone());
+			$('#production_centers_direct tbody tr:eq(1)').append($('#production_centers tbody tr:eq(1) td:not(:first)').clone());
+			$('#production_centers_direct tbody tr:eq(3)').append($('#production_centers tbody tr:eq(3) td:not(:first)').clone());
+			$('#production_centers_direct tbody tr:eq(5)').append($('#production_centers tbody tr:eq(5) td:not(:first)').clone());
+			$('#production_centers_direct tbody tr:eq(7)').append($('#production_centers tbody tr:eq(7) td:not(:first)').clone());
+			$('#production_centers_direct tbody tr:eq(9)').append($('#production_centers tbody tr:eq(9) td:not(:first)').clone());
+			$('#production_centers_direct tbody tr:eq(11)').append($('#production_centers tbody tr:eq(11) td:not(:first)').clone());
+
+			$('#production_centers_direct tbody tr:eq(1) td:not(:first)').each(function(k, v) {
+				direct_cost = clean_number_mask( $('#production_centers_direct tbody tr:first td:eq(' + $(v).index() + ') label').html() );
+				production = clean_number_mask( $(v).find('label').html() );
+				new_html += '<td class="text-right"><label class="number-two-decimals">' + (direct_cost / production) + '</label></td>'
+			});
+			$('#production_centers_direct tbody tr:eq(2)').append(new_html);
+
+			new_html = '';
+			$('#production_centers_direct tbody tr:eq(3) td:not(:first)').each(function(k, v) {
+				direct_cost = clean_number_mask( $('#production_centers_direct tbody tr:first td:eq(' + $(v).index() + ') label').html() );
+				production = clean_number_mask( $(v).find('label').html() );
+				new_html += '<td class="text-right"><label class="number-two-decimals">' + (direct_cost / production) + '</label></td>'
+			});
+			$('#production_centers_direct tbody tr:eq(4)').append(new_html);
+
+			new_html = '';
+			$('#production_centers_direct tbody tr:eq(5) td:not(:first)').each(function(k, v) {
+				direct_cost = clean_number_mask( $('#production_centers_direct tbody tr:first td:eq(' + $(v).index() + ') label').html() );
+				production = clean_number_mask( $(v).find('label').html() );
+				new_html += '<td class="text-right"><label class="number-two-decimals">' + (direct_cost / production) + '</label></td>'
+			});
+			$('#production_centers_direct tbody tr:eq(6)').append(new_html);
+
+			new_html = '';
+			$('#production_centers_direct tbody tr:eq(7) td:not(:first)').each(function(k, v) {
+				direct_cost = clean_number_mask( $('#production_centers_direct tbody tr:first td:eq(' + $(v).index() + ') label').html() );
+				production = clean_number_mask( $(v).find('label').html() );
+				new_html += '<td class="text-right"><label class="number-two-decimals">' + (direct_cost / production) + '</label></td>'
+			});
+			$('#production_centers_direct tbody tr:eq(8)').append(new_html);
+
+			new_html = '';
+			$('#production_centers_direct tbody tr:eq(9) td:not(:first)').each(function(k, v) {
+				direct_cost = clean_number_mask( $('#production_centers_direct tbody tr:first td:eq(' + $(v).index() + ') label').html() );
+				production = clean_number_mask( $(v).find('label').html() );
+				new_html += '<td class="text-right"><label class="number-two-decimals">' + (direct_cost / production) + '</label></td>'
+			});
+			$('#production_centers_direct tbody tr:eq(10)').append(new_html);
+
+			new_html = '';
+			$('#production_centers_direct tbody tr:eq(11) td:not(:first)').each(function(k, v) {
+				direct_cost = clean_number_mask( $('#production_centers_direct tbody tr:first td:eq(' + $(v).index() + ') label').html() );
+				production = clean_number_mask( $(v).find('label').html() );
+				new_html += '<td class="text-right"><label class="number-two-decimals">' + (direct_cost / production) + '</label></td>'
+			});
+			$('#production_centers_direct tbody tr:eq(12)').append(new_html);
+		}
+		//
 		function calculated_productions_and_costs() {
 			$.when(calculated_total_per_center()).done(function() {
-				calculate_units_costs();		
+				calculate_units_costs();
+				calculate_punit_direct();
 			});	
 		}
 	</script>

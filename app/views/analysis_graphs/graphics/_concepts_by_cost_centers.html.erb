@@ -103,18 +103,47 @@
 		/** ---------------------- Functions ---------------------- **/
 		// Calculating totals by cost center
 		function calculate_concept_totals(){
-			var total_cost_center;
+			var total_cost_center, data = '', hr = 0, total_costs = { 'total': { 'care': 0, 'logistic': 0, 'administration': 0 }, 'hr': { 'care': 0, 'logistic': 0, 'administration': 0 } }, total_entity = 0;
 			hr_concept.find('td').each(function(index, value) {
 				total_cost_center = 0;
 				if (index > 0) {
-					
-					total_cost_center += clean_number_mask(hr_concept.find('td:eq('+index+') label').html());
+					data = tt_concept.find('td:eq('+index+')').data('function');
+					hr = clean_number_mask(hr_concept.find('td:eq('+index+') label').html());
+					total_cost_center += hr;
 					total_cost_center += clean_number_mask(ov_concept.find('td:eq('+index+') label').html());
 					total_cost_center += clean_number_mask(sp_concept.find('td:eq('+index+') label').html());
 
 					tt_concept.find('td:eq('+index+')').html("<label class='decimal_numbers_2'>"+ (parseFloat(total_cost_center)).toFixed(2) +"</label>");
+					total_entity += total_cost_center;
+
+					if (data == 'final' || data == 'care_support') {
+						total_costs.total.care += total_cost_center;
+						total_costs.hr.care += hr;
+					} else if (data == 'logistical_support') {
+						total_costs.total.logistic += total_cost_center;
+						total_costs.hr.logistic += hr;
+					} else {
+						total_costs.total.administration += total_cost_center;
+						total_costs.hr.administration += hr;
+					}
 				}
 			});
+
+			$('#control_panel_cts tbody tr:first td:eq(1)').html( new Intl.NumberFormat().format(total_costs.total.care.toFixed(0)) );
+			$('#control_panel_cts tbody tr:first td:eq(2)').html( ((total_costs.total.care / total_entity) * 100).toFixed(2) + '%' );
+			$('#control_panel_cts tbody tr:eq(1) td:eq(1)').html( new Intl.NumberFormat().format(total_costs.total.logistic.toFixed(0)) );
+			$('#control_panel_cts tbody tr:eq(1) td:eq(2)').html( ((total_costs.total.logistic / total_entity) * 100).toFixed(2) + '%' );
+			$('#control_panel_cts tbody tr:eq(2) td:eq(1)').html( new Intl.NumberFormat().format(total_costs.total.administration.toFixed(0)) );
+			$('#control_panel_cts tbody tr:eq(2) td:eq(2)').html( ((total_costs.total.administration / total_entity) * 100).toFixed(2) + '%' );
+
+			$('#control_panel_crs tbody tr:first td:eq(1)').html( new Intl.NumberFormat().format(total_costs.hr.care.toFixed(0)) );
+			$('#control_panel_crs tbody tr:first td:eq(2)').html( ((total_costs.hr.care / total_entity) * 100).toFixed(2) + '%' );
+			$('#control_panel_crs tbody tr:eq(1) td:eq(1)').html( new Intl.NumberFormat().format(total_costs.hr.logistic.toFixed(0)) );
+			$('#control_panel_crs tbody tr:eq(1) td:eq(2)').html( ((total_costs.hr.logistic / total_entity) * 100).toFixed(2) + '%' );
+			$('#control_panel_crs tbody tr:eq(2) td:eq(1)').html( new Intl.NumberFormat().format(total_costs.hr.administration.toFixed(0)) );
+			$('#control_panel_crs tbody tr:eq(2) td:eq(2)').html( ((total_costs.hr.administration / total_entity) * 100).toFixed(2) + '%' );
+
+			$('#control_panel_fm tbody tr:eq(1) td:eq(1) label').html(clean_number_mask($('#control_panel_fm tbody tr:first td:eq(1) label').html()) - total_entity.toFixed(0));
 		}
 		//
 		function calculate_percentages_concepts() {

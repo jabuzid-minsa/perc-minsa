@@ -10,7 +10,7 @@
 #  timeout: 5000
 default: &default
   adapter: mysql2
-  host: 104.254.244.90
+  host: 127.0.0.1
   port: 3306
   pool: 4
   timeout: 5000
@@ -18,9 +18,9 @@ default: &default
 development:
   <<: *default
   #database: perc_development
-  database: perc_stable
-  username: ToolAdmin
-  password: Ah17F7dY82Oa0Qf0qW45
+  database: perc_development
+  username: root
+  password: abcd1234
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
@@ -28,8 +28,8 @@ development:
 test:
   <<: *default
   database: perc_test
-  username: ToolAdmin
-  password: Ah17F7dY82Oa0Qf0qW45
+  username: root
+  password: abcd1234
 
 production:
   <<: *default

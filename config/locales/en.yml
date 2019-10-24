@@ -66,6 +66,14 @@ en:
           other_services: Other Services
           administration: Administration
           beds: Beds
+          supply: Supply
+          total_cost: Total Costs
+          total_human_resource: Human Resource Costs
+          care_services: Care Services
+          logistic_services: Logistic Services
+          administration_services: Administration Services
+          income: Incomes
+          margin: Final Margin
         second_panel:
           title: Consolidated Costs
           title_graph: Percentage Structure of Expenses
@@ -96,6 +104,7 @@ en:
         second_panel:
           title: Indirect Costs
         third_panel:
+          direct_cost: Direct Cost
           title: Unit Costs per Production
           production_unit: Production Unit
           total_cost_center: Total Cost Center

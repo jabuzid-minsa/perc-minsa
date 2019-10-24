@@ -46,6 +46,19 @@ class DistributionSuppliesController < ApplicationController
     redirect_to distribution_supplies_url, notice: "Archivo Importado."
   end
 
+  # POST /distribution_supplies/get_supply
+  def info_supply
+    if params[:type] == 'single'
+      cost = DistributionSupply.where(year: session[:year], month: session[:month], entity_id: session[:entity_id], supply_id: params[:supply]).first.value
+    else
+      cost = {}
+    end
+
+    render json: cost, status: :ok
+  rescue Exception => e
+    render json: ['Error'], status: :bad
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_distribution_supply

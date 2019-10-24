@@ -65,6 +65,8 @@ Rails.application.routes.draw do
 
   # Ajax application requests
   scope 'asynchronous_requests', prefix: 'asynchronous_requests' do
+  	#
+  	post 'supplies/info_supply', to: 'distribution_supplies#info_supply', as: 'info_supply_entity'
 	#
 	get 'production_cost_centers/save_production_cost_centers' => 'production_cost_centers#save_production_cost_centers', as: 'save_production_cost_centers'
 	#
