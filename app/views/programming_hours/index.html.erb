@@ -44,67 +44,6 @@
 							<% end %>
 						</div>
 					</div>
-					<table class="table table-bordered dataTable no-footer" id="fixed_table" cellspacing="0">
-						<thead>
-						<tr>
-							<td><%= ProgrammingHour.human_attribute_name(:payroll_id) %></td>
-							<td><%= LaborLaw.human_attribute_name(:contract_type_id) %></td>
-							<td><%= ProgrammingHour.human_attribute_name(:total) %></td>
-							<td><%= ProgrammingHour.human_attribute_name(:paid) %></td>
-							<td><%= SalaryComponent.model_name.human %></td>
-							<% @cost_centers.each do |cost_center| %>
-									<td data-service="<%= cost_center.id %>"><%= cost_center.description %></td>
-							<% end %>
-						</tr>
-						</thead>
-						<tbody>
-							<%= will_paginate @staffs %>
-							<% last_staff = 0 %>
-							<% @staffs.each_with_index do |staff, index_pr| %>
-									<% if last_staff != staff['id'] %>
-										<tr class="<%= 'bg-light-blue' if index_pr % 2 == 0 %>" data-payroll="<%= staff['id'] %>" data-hour-value="<%= staff['min_wage'] %>">
-											<td><%= staff['roster'] %></td>
-											<td><%= staff['contract_type'] %></td>
-											<td><%= text_field_tag 'programming_hour', nil, step: 2, class: "form-control size-20 decimal_numbers_2 ajax_hours_total total_per_payroll_#{staff['id']}",
-															data: {payroll: staff['id']}, value: find_hours_for_payroll(@programming_hours, 'total', staff['id'],nil, nil, 1) %>
-											</td>
-											<td><%= text_field_tag 'programming_hour', nil, step: 2, class: "form-control decimal_numbers_2 ajax_hours_paid hours_per_payroll_#{staff['id']}",
-																									 data: {payroll: staff['id']}, value: find_hours_for_payroll(@programming_hours, 'paid', staff['id'], nil, nil, staff.salary) %>
-											</td>
-											<td id="scp_<%= staff['id'] %>" data-max-value="<%= staff['max_value'] %>" data-percentage="<%= staff['rate'] %>">
-												<%= staff['abbreviation'] %>
-												<%= " ($)" if staff['rate'].to_i == 0 %>
-											</td>
-											<% @cost_centers.each do |cost_center| %>
-													<td><%= text_field_tag 'programming_hour', nil, step: 2, class: 'form-control size-100 decimal_numbers_2 ajax_hours',
-													data: {cost_center: cost_center.id, payroll: staff['id'], salary_component: staff['salary_component_id']},
-													value: find_hours_for_payroll(@programming_hours, 'hours', staff['id'], staff['salary_component_id'], cost_center.id) %>
-													</td>
-											<% end %>
-										</tr>
-									<% else  %>
-										<tr class="<%= 'bg-light-blue' if index_pr % 2 == 0 %>" data-payroll="<%= staff['id'] %>" data-hour-value="<%= staff['min_wage'] %>">
-											<td></td>
-											<td></td>
-											<td></td>
-											<td></td>
-											<td id="scp_<%= staff['id'] %>" data-max-value="<%= staff['max_value'] %>" data-percentage="<%= staff['rate'] %>">
-												<%= staff['abbreviation'] %>
-												<%= " ($)" if staff['rate'].to_i == 0 %>
-											</td>
-											<% @cost_centers.each do |cost_center| %>
-													<td><%= text_field_tag 'programming_hour', nil, step: 2, class: 'form-control size-100 decimal_numbers_2 ajax_hours',
-													data: {cost_center: cost_center.id, payroll: staff['id'], salary_component: staff['salary_component_id']},
-													value: find_hours_for_payroll(@programming_hours, 'hours', staff['id'], staff['salary_component_id'], cost_center.id) %>
-													</td>
-											<% end %>
-										</tr>
-									<% end  %>
-									<% last_staff = staff['id'] %>
-							<% end %>							
-						</tbody>
-					</table>
-					<%= will_paginate @staffs %>
 				</div>
 			</div>
 		</div>
