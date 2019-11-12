@@ -49,9 +49,11 @@ class DistributionSuppliesController < ApplicationController
   # POST /distribution_supplies/get_supply
   def info_supply
     if params[:type] == 'single'
-      cost = DistributionSupply.where(year: session[:year], month: session[:month], entity_id: session[:entity_id], supply_id: params[:supply]).first.value
+      cost = DistributionSupply.where(year: session[:year], month: session[:month], entity_id: session[:entity_id], supply_id: params[:supply]).sum(:value)
     else
-      cost = {}
+      end_date = Date.civil((session[:date_end].split('/')[1]).to_i, (session[:date_end].split('/')[0]).to_i, -1)        
+      star_date = Date.strptime("#{session[:date_start].split('/')[1]}-#{session[:date_start].split('/')[0]}-01", '%Y-%m-%d')
+      cost = DistributionSupply.where("CAST(CONCAT(a.year, '-', a.month, '-1') AS DATE) BETWEEN CAST(#{star_date} AS DATE) AND CAST(#{end_date} AS DATE)").sum(:value)
     end
 
     render json: cost, status: :ok
