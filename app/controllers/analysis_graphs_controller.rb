@@ -105,7 +105,7 @@ class AnalysisGraphsController < ApplicationController
   def detail_report_cost_production_center
     @cost_centers = CostCenter.joins(:entity_cost_centers).where(:entity_cost_centers => { entity_id: session[:entity_id] } ).order_priority.order(:code)
     @staffs = Staff.joins(:entities).where(:entities_staffs => { entity_id: session[:entity_id] } )
-    @supplies = Supply.joins(:entities).where(:entities_supplies => { entity_id: session[:entity_id] } ).where('supplies.code LIKE ?', '002%')
+    @supplies = Supply.joins(:entities).where(:entities_supplies => { entity_id: session[:entity_id] } ).where('supplies.supplies_category_id = 1')
     @supplies_overheads = Supply.joins(:entities).where(:entities_supplies => { entity_id: session[:entity_id] } ).where('supplies.supplies_category_id = ?', '2')
     @human_resource = ActiveRecord::Base.connection.select_all("CALL detail_report_human_resources(#{session[:year]},#{session[:month]}, #{session[:entity_id]})").to_hash
     ActiveRecord::Base.clear_active_connections!
