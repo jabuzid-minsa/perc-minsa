@@ -1,4 +1,7 @@
 es:
+  #
+  analysis_multiple_months:
+    production_operating_cost: Costos unitarios por producción (Solo Costos Directos)
   # translations for tool
   app:
     analysis_graphs:
@@ -177,6 +180,19 @@ es:
         administrative_support: apoyo admin
         care_support: apoyo asist
         logistical_support: apoyo log
+      type_group:
+        '1': Hospitalizacion
+        '2': Unidad De Cuidados Intensivos
+        '3': Quirofanos
+        '4': Emergencias
+        '5': Consultas
+        '6': Servicios Extramurales
+        '7': Centro De Salud
+        '8': Promoción Y Prevención
+        '9': Atención Primaria En Salud
+        '10': Plan De Atención Basica
+        '11': Otros Servicios
+        '12': Administracion
     dual_select:
       multi_select:
         non_selected_list_label: elementos disponibles
@@ -362,12 +378,29 @@ es:
       title: 'esta seguro?'
   # messages app
   messages:
-    activated: activado correctamente
+    activated: activado correctamente    
     crud:
       created: creado exitosamente
       destroyed: eliminado correctamente
       updated: actualizado correctamente
     deactivated: desactivado correctamente
+    programming_hours: 'Por motivos de optimización, el formato de programación de horas ya no se podrá visualizar desde el sistema, para ver los datos por favor descargue el archivo desde la opción "Excel", el cual bajara los datos que haya cargado previamente en el sistema; o puede revisar los valores desde los analisis del sistema.'
+    total_hours: 'Total de horas cargadas en el sistema: '
+  #
+  month:
+    '1': Enero
+    '2': Febrero
+    '3': Marzo
+    '4': Abril
+    '5': Mayo
+    '6': Junio
+    '7': Julio
+    '8': Agosto
+    '9': Septiembre
+    '10': Octubre
+    '11': Noviembre
+    '12': Dicimebre
+    to: ' a '
   # additional translations for devise
   views_devise:
     sessions:

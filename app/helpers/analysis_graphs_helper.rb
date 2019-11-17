@@ -1,5 +1,5 @@
 module AnalysisGraphsHelper
-
+  
   def calculate_hour_value(record, working_hour)
     benefits = ((record.payroll.benefits / working_hour) * record.hours)
     bonuses = ((record.payroll.bonuses / working_hour) * record.hours)

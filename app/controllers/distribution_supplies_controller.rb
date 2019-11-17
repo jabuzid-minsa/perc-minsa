@@ -53,7 +53,9 @@ class DistributionSuppliesController < ApplicationController
     else
       end_date = Date.civil((session[:date_end].split('/')[1]).to_i, (session[:date_end].split('/')[0]).to_i, -1)        
       star_date = Date.strptime("#{session[:date_start].split('/')[1]}-#{session[:date_start].split('/')[0]}-01", '%Y-%m-%d')
-      cost = DistributionSupply.where("CAST(CONCAT(a.year, '-', a.month, '-1') AS DATE) BETWEEN CAST(#{star_date} AS DATE) AND CAST(#{end_date} AS DATE)").sum(:value)
+      cost = DistributionSupply.where(entity_id: session[:entity_id], supply_id: params[:supply])
+                                .where("CAST(CONCAT(year, '-', month, '-1') AS DATE) BETWEEN CAST('#{star_date}' AS DATE) AND CAST('#{end_date}' AS DATE)")
+                                .sum(:value)
     end
 
     render json: cost, status: :ok

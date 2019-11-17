@@ -44,6 +44,16 @@
 							<% end %>
 						</div>
 					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<h4><%= "#{t('messages.total_hours')} #{number_to_currency(@programming_hours, unit: '', precision: 2)}" %></h4>
+						</div>
+					</div>
+					<div class="row" style="margin-top: 20px;">
+						<div class="col-md-8 col-md-offset-2">							
+							<h3 class="text-center"><%= t 'messages.programming_hours' %></h3>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>

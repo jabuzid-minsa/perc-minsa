@@ -1,7 +1,7 @@
 class AnalysisGraphsController < ApplicationController
-
+  before_action :set_entity, only: [ :management_number_one, :detail_report_cost_production_center, 
+                                      :management_number_two, :consumption_centers_support, :compare_information ]
   def management_number_one
-    @entity = Entity.find(session[:entity_id])
     @income = Income.where(year: session[:year], month: session[:month], entity_id: session[:entity_id]).sum(:value)
     @cost_centers = CostCenter.joins(:entity_cost_centers)
                         .where(:entity_cost_centers => { entity_id: session[:entity_id] }).order_priority.order(:code)
@@ -183,4 +183,9 @@ class AnalysisGraphsController < ApplicationController
       format.json { render :json => data }
     end
   end
+
+  private
+    def set_entity
+      @entity = Entity.find(session[:entity_id])
+    end
 end

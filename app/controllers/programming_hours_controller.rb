@@ -4,23 +4,7 @@ class ProgrammingHoursController < ApplicationController
 	# GET /programming_hours
 	# GET /programming_hours.json
 	def index
-		@cost_centers = CostCenter.active.for_entity(session[:entity_id]).order_priority.order(:code)
-		#@payrolls = Payroll.for_entity(session[:entity_id]).date(session[:year], session[:month])
-
-		#@staffs = ActiveRecord::Base.connection.select_all("CALL get_staff_entity(#{session[:year]}, #{session[:month]}, #{session[:entity_id]}, #{session[:country_id]})").to_hash
-		#ActiveRecord::Base.clear_active_connections!
-
-		@staffs = Payroll.joins('INNER JOIN labor_laws ON payrolls.labor_law_id = labor_laws.id
-														INNER JOIN staffs ON labor_laws.staff_id = staffs.id
-														INNER JOIN labor_standards ON labor_laws.labor_standard_id = labor_standards.id
-														INNER JOIN contract_types ON labor_laws.contract_type_id = contract_types.id
-														INNER JOIN salary_components ON 1 = 1')
-						.where('payrolls.year = ? AND payrolls.month = ? AND payrolls.entity_id = ? AND salary_components.geography_id = ?', session[:year], session[:month], session[:entity_id], session[:country_id])
-						.select("payrolls.id, payrolls.salary, CONCAT(payrolls.dni,'-', payrolls.name, ' ', labor_standards.description, '-', staffs.description) AS roster, salary_components.id AS salary_component_id, salary_components.abbreviation, contract_types.description AS contract_type, salary_components.rate, labor_laws.min_wage, salary_components.max_value")
-						.order('payrolls.id, salary_components.id')
-						.paginate(:page => params[:page], :per_page => 20)
-
-		@programming_hours = ProgrammingHour.date(session[:year], session[:month]).for_entity(session[:entity_id]).where('hours > 0')
+		@programming_hours = ProgrammingHour.date(session[:year], session[:month]).for_entity(session[:entity_id]).where('hours > 0').sum(:hours)
 		respond_to do |format|
 			format.html
 			format.xls { headers["Content-Disposition"] = "attachment; filename=\"#{ProgrammingHour.model_name.human}_#{session[:year]}_#{session[:month]}.xls\"" }

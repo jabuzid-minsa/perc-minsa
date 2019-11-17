@@ -175,6 +175,17 @@
       </div>
 
       <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label :type_group %>
+            <%= f.select :type_group, (1..12).to_a.collect { |p| [t("app.cost_centers.type_group.#{p}"), p] },
+                         { include_blank: false },
+                         { class: 'form-control select2' } %>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
         <div class="col-md-6 text-right">
           <%= link_to t('app.buttons.back'), :back, class: 'btn btn-outline btn-success' %>
         </div>

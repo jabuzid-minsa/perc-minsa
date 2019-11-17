@@ -11,9 +11,6 @@
 		<p class="text-right">
 			<%= link_to 'Generar Historico', generate_historic_entities_path, method: :post, class: 'btn btn-info' %>
 		</p>
-		<p>
-			<strong><%= t('app.analysis_tables.one.first_panel.month') %>: </strong><span id="month-current-human"></span>
-		</p>		
 		<div class="row">
 			<div class="col-md-4"></div>
 			<div class="col-md-4">
@@ -322,7 +319,7 @@
 
 			acum = 0;
 
-			dataElement.find('td[data-codecc^="99"]').each(function(index, value) {
+			dataElement.find('td[data-function="administrative_support"]').each(function(index, value) {
 				acum += clean_number_mask($(value).find('label').html());
 			});
 

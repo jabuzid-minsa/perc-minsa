@@ -1,4 +1,7 @@
 en:
+  #
+  analysis_multiple_months:
+    production_operating_cost: Unit costs per production (Direct Costs Only)
   # Translations for tool
   app:
     analysis_graphs:
@@ -164,8 +167,8 @@ en:
       incubo: Developed by Incubo Asesorias Integrales S.A.S. © 2016
       ops: PAHO © 2016
       login:
-        incubo: Desarrollado por Incubo Asesorias Integrales S.A.S © 2016
-        ops: Contenido por OPS © 2016
+        incubo: Developed by Incubo Asesorias Integrales S.A.S © 2016
+        ops: Content by PAHO © 2016
     cost_centers:
       functions:
         final: Final
@@ -177,6 +180,19 @@ en:
         administrative_support: Admin Support
         care_support: Care Support
         logistical_support: Logistical Support
+      type_group:
+        '1': Hospitalization
+        '2': Intensive Care Unit
+        '3': Operating rooms
+        '4': Emergencies
+        '5': Medical consultations
+        '6': Extramural Services
+        '7': Health Center
+        '8': Promotion and Prevention
+        '9': Primary Health Care
+        '10': Basic Attention Plan
+        '11': Other Services
+        '12': Administration
     dual_select:
       multi_select:
         non_selected_list_label: Available Items
@@ -368,6 +384,23 @@ en:
       destroyed: Eliminated Correctly
       updated: Updated Properly
     deactivated: Deactivated correctly
+    programming_hours: 'For optimization reasons, the schedule programming format can no longer be viewed from the system, to view the data please download the file from the "Excel" option, which will download the data that you have previously loaded into the system; Or you can review the values from the system analysis.'
+    total_hours: 'Total hours charged in the system: '
+  #
+  month:
+    '1': January
+    '2': February
+    '3': March
+    '4': April
+    '5': May
+    '6': June
+    '7': July
+    '8': August
+    '9': September
+    '10': October
+    '11': November
+    '12': December
+    to: ' to '
   # Additional translations for Devise
   views_devise:
     sessions:

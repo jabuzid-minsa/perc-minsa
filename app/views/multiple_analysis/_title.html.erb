@@ -1,0 +1,13 @@
+<div class="ibox float-e-margins">
+  <div class="ibox-content">
+    <h2 class="text-center">
+      <%= @entity.description %>
+      <br/>
+      <small>
+        <strong><%= t("month.#{session[:date_start].split('/')[0].to_i}") %> - <%= session[:date_start].split('/')[1] %></strong>
+        <span><%= t 'month.to' %></span> 
+        <strong><%= t("month.#{session[:date_end].split('/')[0].to_i}") %> - <%= session[:date_end].split('/')[1] %></strong>
+      </small>
+    </h2>
+  </div>
+</div>

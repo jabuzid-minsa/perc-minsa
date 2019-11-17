@@ -21,6 +21,8 @@
 					</div>
 				</div>
 				<div class="ibox-content">
+					<%= render 'multiple_analysis/title' %>
+					
 					<%= form_tag(multiple_filter_efficiency_staff_two_url, method: 'post', remote: true, 'data-type' => :json, id: 'filter_info') do  %>
 						<div class="row">
 							<div class="col-md-4">

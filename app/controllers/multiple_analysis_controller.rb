@@ -25,6 +25,10 @@ class MultipleAnalysisController < ApplicationController
     @months_total = months
     @starting_date = Date.strptime("#{session[:date_start].split('/')[1]}-#{session[:date_start].split('/')[0]}", '%Y-%m')
     @final_date = Date.strptime("#{session[:date_end].split('/')[1]}-#{session[:date_end].split('/')[0]}", '%Y-%m')
+
+    @income = Income.where(entity_id: session[:entity_id])
+                    .where("CAST(CONCAT(year, '-', month, '-1') AS DATE) BETWEEN CAST('#{star_date}' AS DATE) AND CAST('#{end_date}' AS DATE)")
+                    .sum(:value)
   end
 
   ### Production, Costs and Efficiency

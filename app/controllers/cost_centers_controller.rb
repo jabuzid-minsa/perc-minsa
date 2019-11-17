@@ -91,6 +91,6 @@ class CostCentersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def cost_center_params
-      params.require(:cost_center).permit(:code, :description, :definition, :function, :cost_center_id, :geography_id, :language_id, :staff_id, :supply_id, :cost_distribution_id, :primary_production_unit_id, :secondary_production_unit_id, :tertiary_production_unit_id, :quaternary_production_unit_id, :quinary_production_unit_id, :state, :comprehensive, :secondary_equivalent_to_primary, :tertiary_equivalent_to_primary, :quaternary_equivalent_to_primary, :quinary_equivalent_to_primary)
+      params.require(:cost_center).permit(:code, :description, :definition, :function, :cost_center_id, :geography_id, :language_id, :staff_id, :supply_id, :cost_distribution_id, :primary_production_unit_id, :secondary_production_unit_id, :tertiary_production_unit_id, :quaternary_production_unit_id, :quinary_production_unit_id, :state, :comprehensive, :secondary_equivalent_to_primary, :tertiary_equivalent_to_primary, :quaternary_equivalent_to_primary, :quinary_equivalent_to_primary, :type_group)
     end
 end

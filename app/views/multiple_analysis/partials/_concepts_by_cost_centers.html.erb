@@ -97,7 +97,7 @@
 				el = '#concepts_by_cost_centers';
 			}
 
-			var cc, current_data, current_total, current_hs, current_sp, current_ov;
+			var cc, current_data, current_total, current_hs, current_sp, current_ov, total_costs = { 'total': { 'care': 0, 'logistic': 0, 'administration': 0 }, 'hr': { 'care': 0, 'logistic': 0, 'administration': 0 } }, total_entity = 0, total_hr = 0, data_function = '';
 
 			$(el).find('thead tr:first td:not(:first)').each(function(k,v) {
 				current_total = 0;
@@ -106,6 +106,7 @@
 				current_sp = 0;
 
 				cc = $(v).data('cc');
+				data_function = $(v).data('function');
 
 				current_data = find_total_cc(data.hs, cc);
 				if (current_data != {}) {
@@ -125,11 +126,41 @@
 					current_total += current_sp;
 				}
 
+				total_entity += current_total;
+				total_hr += current_hs;
+
 				$(el + ' tbody tr:eq(0) td[data-cc="'+ cc +'"] label').data('change_val', ((current_hs/current_total)*100).toFixed(2)+'%').html(current_hs);
 				$(el + ' tbody tr:eq(1) td[data-cc="'+ cc +'"] label').data('change_val', ((current_ov/current_total)*100).toFixed(2)+'%').html(current_ov);
 				$(el + ' tbody tr:eq(2) td[data-cc="'+ cc +'"] label').data('change_val', ((current_sp/current_total)*100).toFixed(2)+'%').html(current_sp);
 				$(el + ' tbody tr:eq(3) td[data-cc="'+ cc +'"] label').html(current_total);
+
+				if (data_function == 'final' || data_function == 'care_support') {
+					total_costs.total.care += current_total;
+					total_costs.hr.care += current_hs;
+				} else if (data_function == 'logistical_support') {
+					total_costs.total.logistic += current_total;
+					total_costs.hr.logistic += current_hs;
+				} else {
+					total_costs.total.administration += current_total;
+					total_costs.hr.administration += current_hs;
+				}
 			});
+
+			$('#control_panel_cts tbody tr:first td:eq(1)').html( new Intl.NumberFormat().format(total_costs.total.care.toFixed(0)) );
+			$('#control_panel_cts tbody tr:first td:eq(2)').html( ((total_costs.total.care / total_entity) * 100).toFixed(2) + '%' );
+			$('#control_panel_cts tbody tr:eq(1) td:eq(1)').html( new Intl.NumberFormat().format(total_costs.total.logistic.toFixed(0)) );
+			$('#control_panel_cts tbody tr:eq(1) td:eq(2)').html( ((total_costs.total.logistic / total_entity) * 100).toFixed(2) + '%' );
+			$('#control_panel_cts tbody tr:eq(2) td:eq(1)').html( new Intl.NumberFormat().format(total_costs.total.administration.toFixed(0)) );
+			$('#control_panel_cts tbody tr:eq(2) td:eq(2)').html( ((total_costs.total.administration / total_entity) * 100).toFixed(2) + '%' );
+
+			$('#control_panel_crs tbody tr:first td:eq(1)').html( new Intl.NumberFormat().format(total_costs.hr.care.toFixed(0)) );
+			$('#control_panel_crs tbody tr:first td:eq(2)').html( ((total_costs.hr.care / total_hr) * 100).toFixed(2) + '%' );
+			$('#control_panel_crs tbody tr:eq(1) td:eq(1)').html( new Intl.NumberFormat().format(total_costs.hr.logistic.toFixed(0)) );
+			$('#control_panel_crs tbody tr:eq(1) td:eq(2)').html( ((total_costs.hr.logistic / total_hr) * 100).toFixed(2) + '%' );
+			$('#control_panel_crs tbody tr:eq(2) td:eq(1)').html( new Intl.NumberFormat().format(total_costs.hr.administration.toFixed(0)) );
+			$('#control_panel_crs tbody tr:eq(2) td:eq(2)').html( ((total_costs.hr.administration / total_hr) * 100).toFixed(2) + '%' );
+
+			$('#control_panel_fm tbody tr:eq(1) td:eq(1) label').html(new Intl.NumberFormat().format(clean_number_mask($('#control_panel_fm tbody tr:first td:eq(1) label').html()) - total_entity.toFixed(0)));
 		}
 
 		function graph_total_cc(info, el){

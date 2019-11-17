@@ -134,6 +134,66 @@
       });
     }
 
+    //
+    function calculate_punit_direct() {
+      var new_html = '', direct_cost = 0, production = 0;
+
+      $('#production_centers_direct tbody tr:first').append($('#summary_table tbody tr:last td:not(:first):not(:last)').clone());
+      $('#production_centers_direct tbody tr:eq(1)').append($('#production_centers tbody tr:eq(1) td:not(:first)').clone());
+      $('#production_centers_direct tbody tr:eq(3)').append($('#production_centers tbody tr:eq(3) td:not(:first)').clone());
+      $('#production_centers_direct tbody tr:eq(5)').append($('#production_centers tbody tr:eq(5) td:not(:first)').clone());
+      $('#production_centers_direct tbody tr:eq(7)').append($('#production_centers tbody tr:eq(7) td:not(:first)').clone());
+      $('#production_centers_direct tbody tr:eq(9)').append($('#production_centers tbody tr:eq(9) td:not(:first)').clone());
+      $('#production_centers_direct tbody tr:eq(11)').append($('#production_centers tbody tr:eq(11) td:not(:first)').clone());
+
+      $('#production_centers_direct tbody tr:eq(1) td:not(:first)').each(function(k, v) {
+        direct_cost = clean_number_mask( $('#production_centers_direct tbody tr:first td:eq(' + $(v).index() + ') label').html() );
+        production = clean_number_mask( $(v).find('label').html() );
+        new_html += '<td class="text-right"><label class="integer_numbers">' + (direct_cost / production) + '</label></td>'
+      });
+      $('#production_centers_direct tbody tr:eq(2)').append(new_html);
+
+      new_html = '';
+      $('#production_centers_direct tbody tr:eq(3) td:not(:first)').each(function(k, v) {
+        direct_cost = clean_number_mask( $('#production_centers_direct tbody tr:first td:eq(' + $(v).index() + ') label').html() );
+        production = clean_number_mask( $(v).find('label').html() );
+        new_html += '<td class="text-right"><label class="integer_numbers">' + (direct_cost / production) + '</label></td>'
+      });
+      $('#production_centers_direct tbody tr:eq(4)').append(new_html);
+
+      new_html = '';
+      $('#production_centers_direct tbody tr:eq(5) td:not(:first)').each(function(k, v) {
+        direct_cost = clean_number_mask( $('#production_centers_direct tbody tr:first td:eq(' + $(v).index() + ') label').html() );
+        production = clean_number_mask( $(v).find('label').html() );
+        new_html += '<td class="text-right"><label class="integer_numbers">' + (direct_cost / production) + '</label></td>'
+      });
+      $('#production_centers_direct tbody tr:eq(6)').append(new_html);
+
+      new_html = '';
+      $('#production_centers_direct tbody tr:eq(7) td:not(:first)').each(function(k, v) {
+        direct_cost = clean_number_mask( $('#production_centers_direct tbody tr:first td:eq(' + $(v).index() + ') label').html() );
+        production = clean_number_mask( $(v).find('label').html() );
+        new_html += '<td class="text-right"><label class="integer_numbers">' + (direct_cost / production) + '</label></td>'
+      });
+      $('#production_centers_direct tbody tr:eq(8)').append(new_html);
+
+      new_html = '';
+      $('#production_centers_direct tbody tr:eq(9) td:not(:first)').each(function(k, v) {
+        direct_cost = clean_number_mask( $('#production_centers_direct tbody tr:first td:eq(' + $(v).index() + ') label').html() );
+        production = clean_number_mask( $(v).find('label').html() );
+        new_html += '<td class="text-right"><label class="integer_numbers">' + (direct_cost / production) + '</label></td>'
+      });
+      $('#production_centers_direct tbody tr:eq(10)').append(new_html);
+
+      new_html = '';
+      $('#production_centers_direct tbody tr:eq(11) td:not(:first)').each(function(k, v) {
+        direct_cost = clean_number_mask( $('#production_centers_direct tbody tr:first td:eq(' + $(v).index() + ') label').html() );
+        production = clean_number_mask( $(v).find('label').html() );
+        new_html += '<td class="text-right"><label class="integer_numbers">' + (direct_cost / production) + '</label></td>'
+      });
+      $('#production_centers_direct tbody tr:eq(12)').append(new_html);
+    }
+
 		function get_production_data() {
 			$.ajax({
 				url: '/multiple_months/management_number_one/tf_production_info',
@@ -142,6 +202,7 @@
 			.done(function(data) {
 				$.when(replacte_info_production()).done(function() {
 					update_production_cc(data.production);
+          calculate_punit_direct();
 					activate_visual_plugins();
 				});
 			});

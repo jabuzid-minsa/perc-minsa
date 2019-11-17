@@ -148,6 +148,35 @@
 			<tbody>
 			</tbody>
 		</table>
+		<hr class="hr-line-solid"/>
+		<h3><%= t 'analysis_multiple_months.production_operating_cost' %></h3>
+		<table class="table table-bordered dataTable no-footer fixed_table" cellspacing="0" id="production_centers_direct">
+			<thead>
+				<tr>
+					<td></td>
+					<% @cost_centers.each do |cost_center| %>
+							<td data-cost-center="<%= cost_center.description %>" data-function="<%= cost_center.function %>">
+								<label for=""><%= cost_center.description %></label>
+							</td>
+					<% end %>
+				</tr>
+			</thead>
+			<tbody>
+				<tr><td><%= t('app.analysis_tables.two.third_panel.direct_cost') %> 1</td></tr>
+				<tr><td><%= t('app.analysis_tables.two.third_panel.production_unit') %> 1</td></tr>
+				<tr><td><%= t('app.analysis_tables.two.third_panel.unit_cost_production') %> 1</td></tr>
+				<tr><td><%= t('app.analysis_tables.two.third_panel.production_unit') %> 2</td></tr>
+				<tr><td><%= t('app.analysis_tables.two.third_panel.unit_cost_production') %> 2</td></tr>
+				<tr><td><%= t('app.analysis_tables.two.third_panel.production_unit') %> 3</td></tr>
+				<tr><td><%= t('app.analysis_tables.two.third_panel.unit_cost_production') %> 3</td></tr>
+				<tr><td><%= t('app.analysis_tables.two.third_panel.production_unit') %> 4</td></tr>
+				<tr><td><%= t('app.analysis_tables.two.third_panel.unit_cost_production') %> 4</td></tr>
+				<tr><td><%= t('app.analysis_tables.two.third_panel.production_unit') %> 5</td></tr>
+				<tr><td><%= t('app.analysis_tables.two.third_panel.unit_cost_production') %> 5</td></tr>
+				<tr><td><%= t('app.analysis_tables.two.third_panel.production_unit') %> Nº Camas</td></tr>
+				<tr><td><%= t('app.analysis_tables.two.third_panel.unit_cost_production') %> Nº Camas</td></tr>
+			</tbody>
+		</table>
 	</div>
 </div>
 
