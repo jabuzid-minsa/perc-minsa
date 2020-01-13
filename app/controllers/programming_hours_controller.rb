@@ -5,7 +5,7 @@ class ProgrammingHoursController < ApplicationController
 	# GET /programming_hours.json
 	def index
 		@programming_hours = ProgrammingHour.date(session[:year], session[:month]).for_entity(session[:entity_id]).where('hours > 0').sum(:hours)
-		@cost_centers = Entity.find(session[:entity_id]).cost_centers.order_priority
+		@cost_centers = Entity.find(session[:entity_id]).cost_centers.order_priority.order(:code)
 
 		respond_to do |format|
 			format.html
