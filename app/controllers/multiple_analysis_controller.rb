@@ -1,6 +1,6 @@
 class MultipleAnalysisController < ApplicationController
   before_action :validate_session_date_range, except: [:date_ranges, :set_date_ranges]
-  before_action :set_entity, only: [:report_number_one, :report_detail_number_one, :report_number_two, :consumption_centers_support]
+  before_action :set_entity, only: [:report_number_one, :report_detail_number_one, :report_number_two, :consumption_centers_support, :performance_beeds]
 
   def date_ranges
   end
@@ -200,6 +200,22 @@ class MultipleAnalysisController < ApplicationController
     respond_to do |format|
       format.json { render json: {supports: support, production: production} }
     end
+  end
+
+  def performance_beeds
+    @cost_centers = @entity.cost_centers.have_beeds.order_priority.order(:code).select(:id, :code, :description, :function)
+  end
+
+  def total_cost_performance_beeds
+    settings = "#{session[:date_start].split('/')[1]},#{session[:date_end].split('/')[1]},#{session[:date_start].split('/')[0]},#{session[:date_end].split('/')[0]},'#{session[:entity_id]}'"
+
+    costs = ActiveRecord::Base.connection.select_all("CALL hscalc_total_centers(#{settings}')").to_hash
+    ActiveRecord::Base.clear_active_connections!
+
+    production = ActiveRecord::Base.connection.select_all("CALL hs_calc_production_unit(#{settings}')").to_hash
+    ActiveRecord::Base.clear_active_connections!
+
+    render json: { costs: costs, production: production }
   end
 
   private

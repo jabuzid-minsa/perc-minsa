@@ -143,6 +143,21 @@
           </li>
       <% end %>
 
+      <% if can? :access_dashborads, User and current_user.is_valid_session_country?(session[:country_id]) %>
+        <li class="<%= is_active_prefix('dashboards') %>">
+          <a>
+            <i class="fa fa-pie-chart"></i>
+            <span class="nav-label" data-i18n="nav.dashboard"><%= t('app.sections.dashboards') %></span>
+            <span class="fa arrow"></span>
+          </a>
+          <ul class="nav nav-second-level collapse <%= is_active_prefix('dashboards') %>">
+            <% if can? :view_main_dashboard, User %>
+              <li class="<%= is_active_action('main_dashboard') %>"><%= link_to t('app.dashboards.main_dashboard.title'), main_dashboard_dashboards_path %></li>
+            <% end %>
+          </ul>
+        </li>
+      <% end %>
+
       <% if can? :access_analysis_and_graphs, User and (current_user.is_valid_geography? or current_user.is_valid_session_country?(session[:country_id])) and session[:entity_id].present? and session[:year].present? %>
           <li class="<%= is_active_prefix('graphics') %>">
             <a>
@@ -155,12 +170,13 @@
                   <li class="<%= is_active_action('management_number_one') %>"><%= link_to t('app.analysis_graphs.management.number_one.title'), analysis_graphs_management_number_one_path %></li>
               <% end %>
               <% if can? :view_management_number_one, User %>
-                  <li class="<%= is_active_action('detail_report_cost_production_center') %>"><%= link_to 'Cuadro 4', analysis_graphs_detail_report_cost_production_center_path %></li>
+                  <li class="<%= is_active_action('detail_report_cost_production_center') %>"><%= link_to t('app.analysis_graphs.management.table_four.title'), analysis_graphs_detail_report_cost_production_center_path %></li>
               <% end %>
               <% if can? :view_management_number_two, User %>
                   <li class="<%= is_active_action('management_number_two') %>"><%= link_to t('app.analysis_graphs.management.number_two.title'), analysis_graphs_management_number_two_path %></li>
+                  <li class="<%= is_active_action('performance_beeds') %>"><%= link_to t('app.analysis_graphs.management.performance_beeds.title'), analysis_graphs_performance_beeds_path %></li>
               <% end %>
-              <li class="<%= is_active_action('consumption_centers_support') %>"><%= link_to 'Consumos CPA', analysis_graphs_consumption_centers_support_path %></li>
+              <li class="<%= is_active_action('consumption_centers_support') %>"><%= link_to t('app.analysis_graphs.management.spc_consumtion.title'), analysis_graphs_consumption_centers_support_path %></li>
               <% if can? :view_comparative_graphs, User %>
                   <li class="<%= is_active_action('compare_information') %>"><%= link_to t('app.analysis_graphs.comparative.title'), analysis_graphs_compare_information_path %></li>
               <% end %>
@@ -177,10 +193,11 @@
             </a>
             <ul class="nav nav-second-level collapse <%= is_active_prefix('multiple_months') %>">
               <li class="<%= is_active_action('date_ranges') %>"><%= link_to 'Seleccion Meses', multiple_range_dates_path %></li>
-              <li class="<%= is_active_action('report_number_one') %>"><%= link_to 'Produccion, Costos y Eficiencia', multiple_report_number_one_path %></li>
-              <li class="<%= is_active_action('report_detail_number_one') %>"><%= link_to 'Cuadro 4', multiple_report_detail_number_one_path %></li>
-              <li class="<%= is_active_action('report_number_two') %>"><%= link_to 'Rendimiento', multiple_report_number_two_path %></li>
-              <li class="<%= is_active_action('consumption_centers_support') %>"><%= link_to 'Consumos CPA', multiple_consumption_support_path %></li>
+              <li class="<%= is_active_action('report_number_one') %>"><%= link_to t('app.analysis_graphs.management.number_one.title'), multiple_report_number_one_path %></li>
+              <li class="<%= is_active_action('report_detail_number_one') %>"><%= link_to t('app.analysis_graphs.management.table_four.title'), multiple_report_detail_number_one_path %></li>
+              <li class="<%= is_active_action('report_number_two') %>"><%= link_to t('app.analysis_graphs.management.number_two.title'), multiple_report_number_two_path %></li>
+              <li class="<%= is_active_action('report_number_two') %>"><%= link_to t('app.analysis_graphs.management.performance_beeds.title'), multiple_performance_beeds_path %></li>
+              <li class="<%= is_active_action('consumption_centers_support') %>"><%= link_to t('app.analysis_graphs.management.spc_consumtion.title'), multiple_consumption_support_path %></li>
             </ul>
           </li>
       <% end %>

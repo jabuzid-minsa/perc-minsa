@@ -110,10 +110,19 @@
 
       <div class="row">
         <div class="col-md-12">
-          <div class="form-group" id="entities_networks" style="display: <%= @network.entities.present? ? 'block' : 'none' %>;">
+          <div class="form-group" id="entities_networks">
             <%= f.label :entity_ids %>
-            <%= f.select(:entity_ids, entities_by_geography('first_level', get_country_for_element(nil, 'first_level')).collect {|p| [ "#{p.geography.description} - #{p.description.capitalize}", p.id ] }, {},
+            <%= f.select(:entity_ids, entities_for_country.collect {|p| [ "#{p.code} - #{p.description.capitalize}", p.id ] }, {},
                          {class: 'form-control multi-select', id: 'ids_entities', multiple: 'true'}) %>
+          </div>
+        </div>
+      </div>      
+      <hr/>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group" id="entities_networks">
+            <%= f.label :user_ids %>
+            <%= f.select(:user_ids, User.where(geography_id: session[:country_id]).collect {|p| [ p.full_name, p.id ] }, {}, {class: 'form-control multi-select', multiple: 'true'}) %>
           </div>
         </div>
       </div>

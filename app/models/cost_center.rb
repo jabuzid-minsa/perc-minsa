@@ -50,6 +50,11 @@ class CostCenter < ActiveRecord::Base
     joins(:entities).where( :entities => { id: entity_id } )
   }
 
+  scope :have_beeds, -> {
+    joins("INNER JOIN cost_centers parent ON cost_centers.cost_center_id = parent.id")
+    .where("parent.code IN ('01000', '01100', '01200', '01300', '01400', '01500', '01600', '02000','05000', '05100', '05200', '05300')")
+  }
+
   scope :finals, -> { where(function: self.functions[:final]) }
   scope :supports, -> { where(function: [ self.functions[:administrative_support], self.functions[:care_support], self.functions[:logistical_support] ]) }
 

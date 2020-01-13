@@ -1,0 +1,540 @@
+<% content_for :stylesheet do %>
+  <%= stylesheet_link_tag 'dual-select', media: 'screen', 'data-turbolinks-track' => true %>
+<% end %>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-title">          
+          <div class="ibox-tools">
+            <a class="collapse-link">
+              <i class="fa fa-chevron-up"></i>
+            </a>
+          </div>
+        </div>
+        <div class="ibox-content">
+          <div class="row">
+            <div class="col-md-4">
+              <h2 class="font-normal"><%= t('app.analysis_tables.multiple_months.selection_months.selection_range') %></h2>
+              <div class="input-daterange input-group" id="range-dates">
+                <input type="text" class="form-control-sm form-control" name="dashboards[date_start]" id="dashboards_date_start" value="<%= session[:date_start] %>" />
+                <span class="input-group-addon"><%= t('app.analysis_tables.multiple_months.selection_months.to') %></span>
+                <input type="text" class="form-control-sm form-control" name="dashboards[date_end]" id="dashboards_date_end" value="<%= session[:date_end] %>" />
+              </div>  
+            </div>
+            <div class="col-md-8">
+              <h2 class="font-normal"><%= Entity.model_name.human(count: 2) %></h2>
+              <%= select_tag 'dashboards[entity_ids]', options_for_select(@entities.collect{|u| [u.description, u.id] }), class: 'form-control multi-select', id: 'dashboards_entity_ids', multiple: 'true', required: true %>  
+            </div>
+          </div>
+          <hr/>
+          <h2><%= t('app.dashboards.main_dashboard.analysis_summary.title') %></h2>
+          <div id="analysis_summary" class="row">
+            <div class="col-md-6">
+              <h3><%= t('app.dashboards.main_dashboard.analysis_summary.min') %></h3>
+              <table id="summary_table_min" class="table">
+                <thead>
+                  <tr>
+                    <th><%= t 'app.dashboards.main_dashboard.table_summary.headers.item' %></th>
+                    <th><%= t 'app.dashboards.main_dashboard.table_summary.headers.value' %></th>
+                    <th><%= t 'app.dashboards.main_dashboard.table_summary.headers.entity' %></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><%= t 'app.dashboards.main_dashboard.table_summary.column.total' %></td>
+                    <td class="text-right"><label class="format_number">0</label></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td><%= t 'app.dashboards.main_dashboard.table_summary.column.hr' %></td>
+                    <td class="text-right"><label class="format_number">0</label></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td><%= t 'app.dashboards.main_dashboard.table_summary.column.ov' %></td>
+                    <td class="text-right"><label class="format_number">0</label></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td><%= t 'app.dashboards.main_dashboard.table_summary.column.sp' %></td>
+                    <td class="text-right"><label class="format_number">0</label></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="col-md-6">
+              <h3><%= t('app.dashboards.main_dashboard.analysis_summary.max') %></h3>
+              <table id="summary_table_max" class="table">
+                <thead>
+                  <tr>
+                    <th><%= t 'app.dashboards.main_dashboard.table_summary.headers.item' %></th>
+                    <th><%= t 'app.dashboards.main_dashboard.table_summary.headers.value' %></th>
+                    <th><%= t 'app.dashboards.main_dashboard.table_summary.headers.entity' %></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><%= t 'app.dashboards.main_dashboard.table_summary.column.total' %></td>
+                    <td class="text-right"><label class="format_number">0</label></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td><%= t 'app.dashboards.main_dashboard.table_summary.column.hr' %></td>
+                    <td class="text-right"><label class="format_number">0</label></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td><%= t 'app.dashboards.main_dashboard.table_summary.column.ov' %></td>
+                    <td class="text-right"><label class="format_number">0</label></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td><%= t 'app.dashboards.main_dashboard.table_summary.column.sp' %></td>
+                    <td class="text-right"><label class="format_number">0</label></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <hr/>
+          <h2><%= t('app.dashboards.main_dashboard.analysis_entities') %></h2>
+          <div id="info_entities" class="row">
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% content_for :javascript do %>
+  <%= javascript_include_tag 'dual-select', 'data-turbolinks-track' => true %>
+  <script type="text/javascript">
+    $(document).ready(function() {
+      $(document).on('change', 'select.cost_center_analysis', function(event) {
+        get_analysis_cost_center(this);
+      });
+
+      $('#range-dates').datepicker({
+        format: "mm/yyyy",
+        minViewMode: 1,
+        keyboardNavigation: false,
+        forceParse: false,
+        autoclose: true
+      });
+
+      var input_search_multi_select = '<input type="text" class="form-control search-input" autocomplete="off" placeholder="<%= t('app.dual_select.multi_select.filter_place_holder') %>">',
+          selectable_header = '<label for=""><%= t('app.dual_select.multi_select.non_selected_list_label') %></label>' + input_search_multi_select,
+          selection_header = '<label for=""><%= t('app.dual_select.multi_select.selected_list_label') %></label>' + input_search_multi_select;
+
+      $('.multi-select').multiSelect({
+        selectableHeader: selectable_header,
+        selectionHeader: selection_header,
+        afterInit: function(ms) {
+          var that = this,
+              $selectableSearch = that.$selectableUl.prev(),
+              $selectionSearch = that.$selectionUl.prev(),
+              selectableSearchString = '#'+that.$container.attr('id')+' .ms-elem-selectable:not(.ms-selected)',
+              selectionSearchString = '#'+that.$container.attr('id')+' .ms-elem-selection.ms-selected';
+
+          that.qs1 = $selectableSearch.quicksearch(selectableSearchString)
+              .on('keydown', function(e){
+                if (e.which === 40){
+                  that.$selectableUl.focus();
+                  return false;
+                }
+              });
+
+          that.qs2 = $selectionSearch.quicksearch(selectionSearchString)
+              .on('keydown', function(e){
+                if (e.which == 40){
+                  that.$selectionUl.focus();
+                  return false;
+                }
+              });
+        },
+        afterSelect: function(values) {
+          this.qs1.cache();
+          this.qs2.cache();
+          if ($("#dashboards_date_start").val() == '' || $("#dashboards_date_end").val() == '') {
+            $('#dashboards_entity_ids').multiSelect('deselect', values[0]);
+            alert('Debe seleccionar un rango de fechas para analizar, antes de proceder a seleccionar las instituciones.');
+          } else {
+            $.ajax({
+              url: '/dashboards/get_information_entity',
+              type: 'POST',
+              data: { 
+                dashboards: {
+                  entity_id: values[0],
+                  date_start: $("#dashboards_date_start").val(),
+                  date_end: $("#dashboards_date_end").val()
+                }
+              },
+            }).done(function(data) {
+              var human_resource = parseFloat(data.human_resource[0].total),
+                  overheads = parseFloat(data.overheads[0].total),
+                  supplies = parseFloat(data.supplies[0].total),
+                  total = human_resource + overheads + supplies;
+              if (total > 0){
+                update_summary_min({ total: total, hr: human_resource, ov: overheads, sp: supplies, entity_id: data.entity.id, entity: data.entity.description });
+                update_summary_max({ total: total, hr: human_resource, ov: overheads, sp: supplies, entity_id: data.entity.id, entity: data.entity.description });
+                $("#info_entities").append(
+                  `<div class="col-lg-4 shadow-sm padding-b-3" id="entity_${data.entity.id}" data-name="${data.entity.description}">
+                    <div class="widget-head-color-box bg-primary p-lg text-center">
+                      <div class="m-b-md">
+                        <h2 class="font-bold no-margins">${data.entity.description}</h2>
+                        <hr/>
+                        <h3 class="font-bold bg-dark-op-5">
+                          <label class="gray-light">${"<%= t('app.dashboards.main_dashboard.card_info.total_cost') %>"}</label>
+                          <br>
+                          <label class="format_number total_cost">${total}</label>
+                        </h3>
+                      </div>
+                    </div>
+                    <div class="widget-text-box height-300">
+                      <h4 class="font-bold">${"<%= t('app.dashboards.main_dashboard.card_info.disaggregated_cost') %>"}</h4>
+                      <div class="row">
+                        <div class="col-md-6">
+                          <h5><span>${"<%= t('app.analysis_tables.common.human_resource') %>"}</span></h5>
+                          <h5 class="no-margins"><label class="format_number total_human_resource">${human_resource}</label></h5>
+                        </div>
+                        <div class="col-md-6">
+                          <h4><small class="pull-right badge badge-success">${(human_resource/total*100).toFixed(2)}%</small></h4>
+                          <br/>
+                          <div class="progress progress-small">
+                            <div style="width: ${human_resource/total*100}%;" class="progress-bar bg-human-resource"></div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-6">
+                          <h5><span>${"<%= t('app.analysis_tables.common.overheads') %>"}</span></h5>
+                          <h5 class="no-margins"><label class="format_number total_overheads">${overheads}</label></h5>
+                        </div>
+                        <div class="col-md-6">
+                          <h4><small class="pull-right badge badge-success">${(overheads/total*100).toFixed(2)}%</small></h4>
+                          <br/>
+                          <div class="progress progress-small">
+                            <div style="width: ${overheads/total*100}%;" class="progress-bar bg-overheads"></div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-6">
+                          <h5><span>${"<%= t('app.analysis_tables.common.supplies') %>"}</span></h5>
+                          <h5 class="no-margins"><label class="format_number total_supplies">${supplies}</label></h5>
+                        </div>
+                        <div class="col-md-6">
+                          <h4><small class="pull-right badge badge-success">${(supplies/total*100).toFixed(2)}%</small></h4>
+                          <br/>
+                          <div class="progress progress-small">
+                            <div style="width: ${supplies/total*100}%;" class="progress-bar bg-supplies"></div>
+                          </div>
+                        </div>
+                      </div>
+                      <hr/>
+                      <div class="no-margins no-paddings" id="entity_${data.entity.id}_function_centers">
+                        <h4>${"<%= t('app.dashboards.main_dashboard.card_info.cost_by_service') %>"}</h4>
+                        <div class="sk-spinner sk-spinner-double-bounce">
+                          <div class="sk-double-bounce1"></div>
+                          <div class="sk-double-bounce2"></div>
+                        </div>
+                      </div>
+                    </div>
+                    <hr/>
+                    <h4 class="font-bold">${"<%= CostCenter.model_name.human(count: 2) %>"}</h4>
+                    <select id="cost_centers_entity_${data.entity.id}" data-entity="${data.entity.id}" class="cost_center_analysis"></select>
+                    <div class="margin-top-10 widget-text-box height-300" id="analysis_center_entity_${data.entity.id}">
+                    </div>
+                  </div>`
+                );
+                $('#entity_' + data.entity.id + ' .format_number').number(true, 0);
+                get_cost_per_function_service(data.entity.id, total);
+              } else {
+                $('#dashboards_entity_ids').multiSelect('deselect', values[0]);
+              }
+            }).fail(function(xhr, error, text) {
+              console.log(xhr);
+            });
+          }
+        },
+        afterDeselect: function(values) {
+          this.qs1.cache();
+          this.qs2.cache();
+          $.when($("#info_entities #entity_" + values[0]).remove()).done(function() {
+            update_summary_delete_entity();
+          });
+        }
+      });
+    });
+
+    function draw_costs_per_function_service(entity, costs, total_entity) {
+      var new_html = '',
+          functions = [
+            "<%= t('app.dashboards.main_dashboard.card_info.function_Services.administrative_support') %>",
+            "<%= t('app.dashboards.main_dashboard.card_info.function_Services.logistical_support') %>",
+            "<%= t('app.dashboards.main_dashboard.card_info.function_Services.care_support') %>",
+            "<%= t('app.dashboards.main_dashboard.card_info.function_Services.final') %>"
+          ];
+      $(costs).each(function(index, val) {
+        new_html += `
+          <div class="row">
+            <div class="col-md-6">
+              <h5><span>${functions[val.function]}</span></h5>
+              <h5 class="no-margins"><label class="format_number">${val.total}</label></h5>
+            </div>
+            <div class="col-md-6">
+              <h4><small class="pull-right badge badge-success">${(parseFloat(val.total)/total_entity*100).toFixed(2)}%</small></h4>
+              <br/>
+              <div class="progress progress-small">
+                <div style="width: ${parseFloat(val.total)/total_entity*100}%;" class="progress-bar bg-human-resource"></div>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+      $('#entity_' + entity + ' #entity_' + entity + '_function_centers .sk-spinner').remove();
+      $('#entity_' + entity + ' #entity_' + entity + '_function_centers').append(new_html);
+      $('#entity_' + entity + ' #entity_' + entity + '_function_centers .format_number').number(true, 0);
+    }
+
+    function draw_list_cost_centers(entity, cost_centers) {
+      var new_html = '<option value=""></option>';
+      $(cost_centers).each(function(index, el) {
+        new_html += `<option value="${el.id}">${el.description}</option>`;
+      });
+
+      $('#entity_' + entity + ' #cost_centers_entity_' + entity).html(new_html).select2({ allowClear: true });
+    }
+    
+    function get_cost_per_function_service(entity, total) {
+      $.ajax({
+        url: '/dashboards/get_cost_per_function_services',
+        type: 'POST',
+        data: {
+          dashboards: {
+            entity_id: entity,
+            date_start: $("#dashboards_date_start").val(),
+            date_end: $("#dashboards_date_end").val()
+          }
+        }
+      })
+      .done(function(data) {
+        draw_costs_per_function_service(entity, data.costs, total);
+        draw_list_cost_centers(entity, data.cost_centers);
+      })
+      .fail(function(xhr, error, text) {
+        console.log(xhr);
+      });
+    }
+
+    function get_analysis_cost_center(element) {
+      var $this = $(element),
+          entity = $this.data('entity'),
+          cost_center = $this.val(),
+          cost_types = [
+            "<%= t('app.dashboards.main_dashboard.card_info.type_costs.hr') %>",
+            "<%= t('app.dashboards.main_dashboard.card_info.type_costs.ov') %>",
+            "<%= t('app.dashboards.main_dashboard.card_info.type_costs.sp') %>"
+          ],
+          colors = ['bg-human-resource', 'bg-overheads', 'bg-supplies'],
+          new_html = '';
+
+      $.ajax({
+        url: '/dashboards/get_info_entity_cost_center',
+        type: 'POST',
+        data: {
+          dashboards: {
+            entity_id: entity,
+            cost_center_id: cost_center,
+            date_start: $("#dashboards_date_start").val(),
+            date_end: $("#dashboards_date_end").val()
+          }
+        }
+      })
+      .done(function(data) {
+        var total = 0;
+        $(data).each(function(index, val) {
+          total += parseFloat(val.total);
+        });
+
+        $(data).each(function(index, val) {
+          new_html += `
+            <div class="row">
+              <div class="col-md-6">
+                <h5><span>${cost_types[val.type]}</span></h5>
+                <h5 class="no-margins"><label class="format_number">${val.total}</label></h5>
+              </div>
+              <div class="col-md-6">
+                <h4><small class="pull-right badge badge-success">${(parseFloat(val.total)/total*100).toFixed(2)}%</small></h4>
+                <br/>
+                <div class="progress progress-small">
+                  <div style="width: ${parseFloat(val.total)/total*100}%;" class="progress-bar ${colors[val.type]}"></div>
+                </div>
+              </div>
+            </div>
+          `;
+        });
+        $("#analysis_center_entity_" + entity).html(new_html);
+        $('#analysis_center_entity_' + entity + ' .format_number').number(true, 0);
+      })
+      .fail(function(xhr, error, text) {
+        console.log(xhr);
+      });
+    }
+
+    function update_summary_min(data) {
+      var current_min_total = clean_number_mask($("#summary_table_min tbody tr:eq(0) td:eq(1) label").html()),
+          current_min_hr = clean_number_mask($("#summary_table_min tbody tr:eq(1) td:eq(1) label").html()),
+          current_min_ov = clean_number_mask($("#summary_table_min tbody tr:eq(2) td:eq(1) label").html()),
+          current_min_sp = clean_number_mask($("#summary_table_min tbody tr:eq(3) td:eq(1) label").html()),
+          new_link_entity = '<a href="#entity_' + data.entity_id + '">' + data.entity + '</a>';
+
+      if (current_min_total > data.total || $("#summary_table_min tbody tr:eq(0) td:eq(2)").html() === "") {
+        $("#summary_table_min tbody tr:eq(0) td:eq(1) label").html(data.total);
+        $("#summary_table_min tbody tr:eq(0) td:eq(2)").html(new_link_entity);
+      }
+
+      if (current_min_hr > data.hr || $("#summary_table_min tbody tr:eq(1) td:eq(2)").html() === "") {
+        $("#summary_table_min tbody tr:eq(1) td:eq(1) label").html(data.hr);
+        $("#summary_table_min tbody tr:eq(1) td:eq(2)").html(new_link_entity);
+      }
+
+      if (current_min_ov > data.ov || $("#summary_table_min tbody tr:eq(2) td:eq(2)").html() === "") {
+        $("#summary_table_min tbody tr:eq(2) td:eq(1) label").html(data.ov);
+        $("#summary_table_min tbody tr:eq(2) td:eq(2)").html(new_link_entity);
+      }
+
+      if (current_min_sp > data.sp || $("#summary_table_min tbody tr:eq(3) td:eq(2)").html() === "") {
+        $("#summary_table_min tbody tr:eq(3) td:eq(1) label").html(data.sp);
+        $("#summary_table_min tbody tr:eq(3) td:eq(2)").html(new_link_entity);
+      }
+
+      $("#summary_table_min tbody .format_number").number(true, 0);
+    }
+
+    function update_summary_max(data) {
+      var current_min_total = clean_number_mask($("#summary_table_max tbody tr:eq(0) td:eq(1) label").html()),
+          current_min_hr = clean_number_mask($("#summary_table_max tbody tr:eq(1) td:eq(1) label").html()),
+          current_min_ov = clean_number_mask($("#summary_table_max tbody tr:eq(2) td:eq(1) label").html()),
+          current_min_sp = clean_number_mask($("#summary_table_max tbody tr:eq(3) td:eq(1) label").html()),
+          new_link_entity = '<a href="#entity_' + data.entity_id + '">' + data.entity + '</a>';
+
+      if (current_min_total < data.total) {
+        $("#summary_table_max tbody tr:eq(0) td:eq(1) label").html(data.total);
+        $("#summary_table_max tbody tr:eq(0) td:eq(2)").html(new_link_entity);
+      }
+
+      if (current_min_hr < data.hr) {
+        $("#summary_table_max tbody tr:eq(1) td:eq(1) label").html(data.hr);
+        $("#summary_table_max tbody tr:eq(1) td:eq(2)").html(new_link_entity);
+      }
+
+      if (current_min_ov < data.ov) {
+        $("#summary_table_max tbody tr:eq(2) td:eq(1) label").html(data.ov);
+        $("#summary_table_max tbody tr:eq(2) td:eq(2)").html(new_link_entity);
+      }
+
+      if (current_min_sp < data.sp) {
+        $("#summary_table_max tbody tr:eq(3) td:eq(1) label").html(data.sp);
+        $("#summary_table_max tbody tr:eq(3) td:eq(2)").html(new_link_entity);
+      }
+
+      $("#summary_table_max tbody .format_number").number(true, 0);
+    }
+
+    function update_summary_delete_entity() {
+      var current_min_val = -1,
+          current_max_val = 0,
+          current_val = 0,
+          current_dom = '',
+          current_min_entity = '',
+          current_max_entity = '';
+
+      $("#info_entities .total_cost").each(function(index, el) {
+        current_dom = $(el).parent().parent().parent().parent();
+        current_val = clean_number_mask($(el).html());
+        if (current_min_val > current_val || current_min_val === -1) {
+          current_min_val = current_val;
+          current_min_entity = '<a href="#' + current_dom.attr('id') + '">' + current_dom.data('name') + '</a>';
+        }
+        if (current_max_val < current_val) {
+          current_max_val = current_val;
+          current_max_entity = '<a href="#' + current_dom.attr('id') + '">' + current_dom.data('name') + '</a>';
+        }
+      });
+      $("#summary_table_min tbody tr:eq(0) td:eq(1) label").html(current_min_val);
+      $("#summary_table_min tbody tr:eq(0) td:eq(2)").html(current_min_entity);
+      $("#summary_table_max tbody tr:eq(0) td:eq(1) label").html(current_max_val);
+      $("#summary_table_max tbody tr:eq(0) td:eq(2)").html(current_max_entity);
+      
+      current_min_val = -1;
+      current_max_val = 0;
+      $("#info_entities .total_human_resource").each(function(index, el) {
+        current_dom = $(el).parent().parent().parent().parent().parent();
+        current_val = clean_number_mask($(el).html());
+        if (current_min_val > current_val || current_min_val === -1) {
+          current_min_val = current_val;
+          current_min_entity = '<a href="#' + current_dom.attr('id') + '">' + current_dom.data('name') + '</a>';
+        }
+        if (current_max_val < current_val) {
+          current_max_val = current_val;
+          current_max_entity = '<a href="#' + current_dom.attr('id') + '">' + current_dom.data('name') + '</a>';
+        }
+      });
+      $("#summary_table_min tbody tr:eq(1) td:eq(1) label").html(current_min_val);
+      $("#summary_table_min tbody tr:eq(1) td:eq(2)").html(current_min_entity);
+      $("#summary_table_max tbody tr:eq(1) td:eq(1) label").html(current_max_val);
+      $("#summary_table_max tbody tr:eq(1) td:eq(2)").html(current_max_entity);
+
+      current_min_val = -1;
+      current_max_val = 0;
+      $("#info_entities .total_overheads").each(function(index, el) {
+        current_dom = $(el).parent().parent().parent().parent().parent();
+        current_val = clean_number_mask($(el).html());
+        if (current_min_val > current_val || current_min_val === -1) {
+          current_min_val = current_val;
+          current_min_entity = '<a href="#' + current_dom.attr('id') + '">' + current_dom.data('name') + '</a>';
+        }
+        if (current_max_val < current_val) {
+          current_max_val = current_val;
+          current_max_entity = '<a href="#' + current_dom.attr('id') + '">' + current_dom.data('name') + '</a>';
+        }
+      });
+      $("#summary_table_min tbody tr:eq(2) td:eq(1) label").html(current_min_val);
+      $("#summary_table_min tbody tr:eq(2) td:eq(2)").html(current_min_entity);
+      $("#summary_table_max tbody tr:eq(2) td:eq(1) label").html(current_max_val);
+      $("#summary_table_max tbody tr:eq(2) td:eq(2)").html(current_max_entity);
+
+      current_min_val = -1;
+      current_max_val = 0;
+      $("#info_entities .total_supplies").each(function(index, el) {
+        current_dom = $(el).parent().parent().parent().parent().parent();
+        current_val = clean_number_mask($(el).html());
+        if (current_min_val > current_val || current_min_val === -1) {
+          current_min_val = current_val;
+          current_min_entity = '<a href="#' + current_dom.attr('id') + '">' + current_dom.data('name') + '</a>';
+        }
+        if (current_max_val < current_val) {
+          current_max_val = current_val;
+          current_max_entity = '<a href="#' + current_dom.attr('id') + '">' + current_dom.data('name') + '</a>';
+        }
+      });
+      $("#summary_table_min tbody tr:eq(3) td:eq(1) label").html(current_min_val);
+      $("#summary_table_min tbody tr:eq(3) td:eq(2)").html(current_min_entity);
+      $("#summary_table_max tbody tr:eq(3) td:eq(1) label").html(current_max_val);
+      $("#summary_table_max tbody tr:eq(3) td:eq(2)").html(current_max_entity);
+
+      $("#summary_table_min tbody .format_number").number(true, 0);
+      $("#summary_table_max tbody .format_number").number(true, 0);
+    }
+
+    function clean_number_mask(number) {
+      return parseFloat(String(number).replace(/,/g, ""));
+    }
+  </script>
+<% end %>

@@ -7,15 +7,34 @@ es:
     analysis_graphs:
       management:
         number_one:
-          title: producción, costos y eficiencia
+          title: Producción, costos y eficiencia
         table_four:
-          title: cuadro 4
+          title: Cuadro 4
         number_two:
-          title: rendimiento
+          title: Rendimiento recurso humano
         spc_consumtion:
-          title: consumos cpa
+          title: Consumos CPA
         month_selection:
-          title: seleccione meses
+          title: Seleccione Meses
+        performance_beeds:
+          title: Rendimiento camas hospitalarias
+          total: Costo Total
+          production:
+            one:
+              prod: "Producción # 1"
+              cost: "Costo prod # 1"
+            two:
+              prod: "Producción # 2"
+              cost: "Costo prod # 2"
+            beeds:
+              prod: "Nº camas"
+              cost: "Costo promedio cama"
+            average_day_stay: Promedio día estancia
+            twist_bed: Giro cama
+            days_beds_available: Días camas disponibles
+            days_occupied_beds: Días camas ocupados
+            percentage_of_occupation: Porcentaje de ocupación
+            replacement_interval: Intervalo de sustitución
       details:
         cost_production_center: costos por centro de producción - detallado
         efficiency: eficiencia - detallado
@@ -193,6 +212,39 @@ es:
         '10': Plan De Atención Basica
         '11': Otros Servicios
         '12': Administracion
+    dashboards:
+      title: Tableros de Análisis
+      main_dashboard:
+        title: Principal
+        analysis_entities: Análisis de las Instituciones
+        analysis_summary:
+          title: Resumen del análisis
+          min: Valores Mínimos
+          max: Valores Máximos
+        card_info:
+          total_cost: Costo total
+          cost_by_service: Costo por función de los servicios
+          disaggregated_cost: Costo desagregado
+          function_Services:
+            administrative_support: Apoyo Administrativo
+            logistical_support: Apoyo Logistico
+            care_support: Apoyo Asistencial
+            final: Finales
+          type_costs:
+            hr: Recurso Humnano
+            ov: Gastos generales
+            sp: Insumos
+        table_summary:
+          headers:
+            item: Item
+            value: Valor
+            percentage: Porcentaje
+            entity: Institución
+          column:
+            total: Total
+            hr: Recurso Humano
+            ov: Gastos Generales
+            sp: Insumos
     dual_select:
       multi_select:
         non_selected_list_label: elementos disponibles
@@ -235,6 +287,7 @@ es:
           main: análisis red
           filter_analysis: filtrar entidades
       cost_tool: costos
+      dashboards: Dashboard
       local_parametrization: parametrización local
       menu_multiple_months_analysis: multiples meses
       multiple_months_analysis: análisis múltiples meses

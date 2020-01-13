@@ -58,7 +58,7 @@ en:
           op_material: Osteosynthesis and Prosthesis Material
           hospitalization: Hospitalization
           intensive_care_unit: Intensive Care Unit
-          quirofanos: Quirofanos
+          quirofanos: Operating Rooms
           emergencies: Emergencies
           consultation: Consultation
           extramural_services: Extramural Services
@@ -193,6 +193,10 @@ en:
         '10': Basic Attention Plan
         '11': Other Services
         '12': Administration
+    dashboards:
+      title: Tableros de Análisis
+      main_dashboard:
+        title: Main Dashboard
     dual_select:
       multi_select:
         non_selected_list_label: Available Items
@@ -235,6 +239,7 @@ en:
           main: Analysis Network
           filter_analysis: Filter Entities
       cost_tool: Costs
+      dashboards: Dashboard
       local_parametrization: Local Parameterization
       menu_multiple_months_analysis: Multiple Months
       multiple_months_analysis: Multiple Months Analysis

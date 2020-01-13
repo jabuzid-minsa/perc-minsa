@@ -1,6 +1,6 @@
 class AnalysisGraphsController < ApplicationController
   before_action :set_entity, only: [ :management_number_one, :detail_report_cost_production_center, 
-                                      :management_number_two, :consumption_centers_support, :compare_information ]
+                                      :management_number_two, :consumption_centers_support, :compare_information, :performance_beeds ]
   def management_number_one
     @income = Income.where(year: session[:year], month: session[:month], entity_id: session[:entity_id]).sum(:value)
     @cost_centers = CostCenter.joins(:entity_cost_centers)
@@ -182,6 +182,20 @@ class AnalysisGraphsController < ApplicationController
     respond_to do |format|
       format.json { render :json => data }
     end
+  end
+
+  def performance_beeds
+    @cost_centers = @entity.cost_centers.have_beeds.order_priority.order(:code).select(:id, :code, :description, :function)
+  end
+
+  def total_cost_performance_beeds
+    costs = ActiveRecord::Base.connection.select_all("CALL hscalc_total_centers(#{session[:year]},#{session[:year]},#{session[:month]},#{session[:month]},'#{session[:entity_id]}')").to_hash
+    ActiveRecord::Base.clear_active_connections!
+
+    production = ActiveRecord::Base.connection.select_all("CALL hs_calc_production_unit(#{session[:year]},#{session[:year]},#{session[:month]},#{session[:month]},'#{session[:entity_id]}')").to_hash
+    ActiveRecord::Base.clear_active_connections!
+
+    render json: { costs: costs, production: production }
   end
 
   private

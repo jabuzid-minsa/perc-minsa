@@ -12,5 +12,7 @@ es:
         state: Estado
         created_at: Fecha Creación
         updated_at: Ultima Actualización
+        entity_ids: Instituciones Asociadas
+        user_ids: Usuarios Asociados
   change_network: Red cambiada con exito
   located_in: Ubicada en

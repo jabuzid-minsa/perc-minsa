@@ -1,7 +1,18 @@
 require 'sidekiq/web'
 
 Rails.application.routes.draw do
-	mount Sidekiq::Web => '/sidekiq'
+  get 'dashboards/main_dashboard'
+
+	authenticate :user, lambda { |u| u.global_administrator? } do
+		mount Sidekiq::Web => '/sidekiq'
+	end
+
+	scope 'dashboards' do
+		post 'get_info_entity_cost_center', to: 'dashboards#get_info_cost_center', as: 'get_info_cost_center_dashboards'
+		post 'get_cost_per_function_services', to: 'dashboards#get_cost_per_function_services', as: 'cost_per_function_services_dashboards'
+		post 'get_information_entity', to: 'dashboards#get_basic_info_entity', as: 'basic_information_entity_dashboards'
+		get 'main_dashboard', to: 'dashboards#main_dashboard', as: 'main_dashboard_dashboards'
+	end
 
 	scope 'analysis_network' do
 		get '/network/human_resource', to: 'analysis_networks#get_human_resource', as: 'get_human_resource_analysis_networks'
@@ -23,6 +34,9 @@ Rails.application.routes.draw do
 	end
 	#
 	scope 'multiple_months', prefix: 'multiple_months' do
+		post 'analysis/total_cost_performance_beeds', to: 'multiple_analysis#total_cost_performance_beeds', as: 'multiple_total_cost_performance_beeds'
+		get 'analysis/performance_beeds', to: 'multiple_analysis#performance_beeds', as: 'multiple_performance_beeds'
+
 		post 'analysis/consumption_centers_support', to: 'multiple_analysis#data_consumption', as: 'multiple_data_consumption'
 		get 'analysis/consumption_centers_support', to: 'multiple_analysis#consumption_centers_support', as: 'multiple_consumption_support'
 
@@ -45,6 +59,9 @@ Rails.application.routes.draw do
 	end
   #
   scope 'graphics', prefix: 'graphics' do
+  	post 'analysis_graphs/total_cost_performance_beeds'
+		get 'analysis_graphs/performance_beeds'
+
 		#
 		get 'analysis_graphs/management_number_one'
 		get 'analysis_graphs/detail_report_cost_production_center'
@@ -67,50 +84,50 @@ Rails.application.routes.draw do
   scope 'asynchronous_requests', prefix: 'asynchronous_requests' do
   	#
   	post 'supplies/info_supply', to: 'distribution_supplies#info_supply', as: 'info_supply_entity'
-	#
-	get 'production_cost_centers/save_production_cost_centers' => 'production_cost_centers#save_production_cost_centers', as: 'save_production_cost_centers'
-	#
-	get 'cost_centers/next_code' => 'cost_centers#ajax_next_code', as: 'cost_centers_next_code'
-	#
-	get 'staffs/next_code' => 'staffs#ajax_next_code', as: 'staffs_next_code'
-	#
-	get 'supplies/next_code' => 'supplies#ajax_next_code', as: 'supplies_next_code'
-	#
-	get 'entities/search_entities_for_country' => 'entities#get_entity_for_country', as: 'search_entities_for_country'
-	#
-	get 'networks/search_networks_for_country' => 'networks#get_network_for_country', as: 'search_networks_for_country'
-	#
-	get 'incomes/save_incomes' => 'incomes#save_incomes', as: 'save_incomes'
-	#
-	get 'distribution_costs/save_distribution_costs' => 'distribution_costs#save_distribution_costs', as: 'save_distribution_costs'
-	#
-	get 'distribution_overheads/update_general_values' => 'distribution_overheads#update_general_values', as: 'update_general_values'
-	#
-	get 'distribution_overheads/update_type_distributions' => 'distribution_overheads#update_type_distributions', as: 'update_type_distributions'
-	#
-	get 'distribution_overheads/save_distribution_overheads' => 'distribution_overheads#save_distribution_overheads', as: 'save_distribution_overheads'
-	#
-	get 'distribution_supplies/save_distribution_supplies' => 'distribution_supplies#save_distribution_supplies', as: 'save_distribution_supplies'
-	#
-	get 'programming_hours/save_programming_hours' => 'programming_hours#save_programming_hours', as: 'save_programming_hours'
-	#
-	get 'distribution_areas/save_meters' => 'distribution_areas#save_meters', as: 'save_meters_areas'
-	#
-	get 'entities/belongs_to_location/network' => 'entities#belongs_to_location', as: 'entities_belongs_to_location'
-	#
-	get 'entities/cost_centers_available' => 'cost_centers#search_available_cost_centers_to_relate', as: 'cost_centers_available_to_relate'
-	#
-	get 'entities/destroy_associations' => 'entities#destroy_associations', as: 'destroy_entity_association'
-	#
-	get 'entities/create_associations' => 'entities#create_associations', as: 'create_entity_association'
-	# Path that allows to change the date
-	get 'change_date' => 'application#change_of_date_for_costs', as: 'change_of_date_for_costs_ajax'
-	# Path that allows to change the entity
-	get 'entities/change_entity' => 'entities#change_entity', as: 'change_entity_ajax'
-	# Path that allows to change the network
-	get 'networks/change_network' => 'networks#change_network', as: 'change_network_ajax'
-	# Path that allows to change the country
-	get 'geographies/change_country' => 'geographies#change_country', as: 'change_country_ajax'
+		#
+		get 'production_cost_centers/save_production_cost_centers' => 'production_cost_centers#save_production_cost_centers', as: 'save_production_cost_centers'
+		#
+		get 'cost_centers/next_code' => 'cost_centers#ajax_next_code', as: 'cost_centers_next_code'
+		#
+		get 'staffs/next_code' => 'staffs#ajax_next_code', as: 'staffs_next_code'
+		#
+		get 'supplies/next_code' => 'supplies#ajax_next_code', as: 'supplies_next_code'
+		#
+		get 'entities/search_entities_for_country' => 'entities#get_entity_for_country', as: 'search_entities_for_country'
+		#
+		get 'networks/search_networks_for_country' => 'networks#get_network_for_country', as: 'search_networks_for_country'
+		#
+		get 'incomes/save_incomes' => 'incomes#save_incomes', as: 'save_incomes'
+		#
+		get 'distribution_costs/save_distribution_costs' => 'distribution_costs#save_distribution_costs', as: 'save_distribution_costs'
+		#
+		get 'distribution_overheads/update_general_values' => 'distribution_overheads#update_general_values', as: 'update_general_values'
+		#
+		get 'distribution_overheads/update_type_distributions' => 'distribution_overheads#update_type_distributions', as: 'update_type_distributions'
+		#
+		get 'distribution_overheads/save_distribution_overheads' => 'distribution_overheads#save_distribution_overheads', as: 'save_distribution_overheads'
+		#
+		get 'distribution_supplies/save_distribution_supplies' => 'distribution_supplies#save_distribution_supplies', as: 'save_distribution_supplies'
+		#
+		get 'programming_hours/save_programming_hours' => 'programming_hours#save_programming_hours', as: 'save_programming_hours'
+		#
+		get 'distribution_areas/save_meters' => 'distribution_areas#save_meters', as: 'save_meters_areas'
+		#
+		get 'entities/belongs_to_location/network' => 'entities#belongs_to_location', as: 'entities_belongs_to_location'
+		#
+		get 'entities/cost_centers_available' => 'cost_centers#search_available_cost_centers_to_relate', as: 'cost_centers_available_to_relate'
+		#
+		get 'entities/destroy_associations' => 'entities#destroy_associations', as: 'destroy_entity_association'
+		#
+		get 'entities/create_associations' => 'entities#create_associations', as: 'create_entity_association'
+		# Path that allows to change the date
+		get 'change_date' => 'application#change_of_date_for_costs', as: 'change_of_date_for_costs_ajax'
+		# Path that allows to change the entity
+		get 'entities/change_entity' => 'entities#change_entity', as: 'change_entity_ajax'
+		# Path that allows to change the network
+		get 'networks/change_network' => 'networks#change_network', as: 'change_network_ajax'
+		# Path that allows to change the country
+		get 'geographies/change_country' => 'geographies#change_country', as: 'change_country_ajax'
   end
 
   scope 'cost_tool', prefix: 'cost_tool' do
@@ -148,22 +165,22 @@ Rails.application.routes.draw do
   end
 
   scope 'local_parametrization', prefix: 'local_parametrization' do
-	# Routes scaffold for Income Definitions
-	resources :income_definitions, except: [:show, :new]
-	# Routes scaffold for Salary Components
-	resources :salary_components, except: [:show, :destroy]
-	# Routes scaffold for Networks
-	resources :networks, except: [:show, :destroy]
-	# Routes scaffold for Labor Laws
-	resources :labor_laws, except: [:show, :destroy] do
-		collection { get :standard_configuration }
-	end
-	# Route for associations models per Entities
-	get 'entities/:id/associations' => 'entities#associations', as: 'entity_associations'
-	# Routes scaffold for Entities
-	resources :entities, except: [:show, :destroy] do
-		collection { post :generate_historic }
-	end
+		# Routes scaffold for Income Definitions
+		resources :income_definitions, except: [:show, :new]
+		# Routes scaffold for Salary Components
+		resources :salary_components, except: [:show, :destroy]
+		# Routes scaffold for Networks
+		resources :networks, except: [:show, :destroy]
+		# Routes scaffold for Labor Laws
+		resources :labor_laws, except: [:show, :destroy] do
+			collection { get :standard_configuration }
+		end
+		# Route for associations models per Entities
+		get 'entities/:id/associations' => 'entities#associations', as: 'entity_associations'
+		# Routes scaffold for Entities
+		resources :entities, except: [:show, :destroy] do
+			collection { post :generate_historic }
+		end
   end
 
   # Parametrization paths for the app.

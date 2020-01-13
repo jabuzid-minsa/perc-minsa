@@ -25,12 +25,35 @@
  *= require jasny/jasny-bootstrap.min.css
  */
 
+.bg-dark-op-5 {
+  background-color: rgba(0,0,0,.4);
+  padding: 20px 0 20px 0;
+  border-radius: 10px 10px 0 0;
+}
 .bg-light-blue {
   background-color: rgb(220,245,255) !important;
+}
+.bg-human-resource {
+  background-color: #52B3D9 !important;
+}
+.bg-overheads {
+  background-color: #F2A516 !important;
+}
+.bg-supplies {
+  background-color: #024059 !important;
+}
+
+.gray-light {
+  color: #c7cad5;
 }
 
 .display-none {
   display: none;
+}
+
+.height-300 {
+  max-height: 300px !important;
+  overflow-y: scroll; 
 }
 
 .img-background {
@@ -66,6 +89,10 @@ input.search-input{
   margin: 0px !important;
 }
 
+.padding-b-3 {
+  padding-bottom: 10px;
+} 
+
 .padding-side-15 {
   padding-left: 15px;
   padding-right: 15px;
@@ -78,6 +105,10 @@ input.search-input{
 
 .pos_abs {
   position: absolute;
+}
+
+.shadow-sm {
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, .7) !important;
 }
 
 .size-120 {
@@ -153,3 +184,4 @@ tr.row_supplies:nth-child(even) {
 .DTFC_LeftBodyLiner {
   overflow-x: hidden !important;
 }
+

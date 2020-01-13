@@ -88,6 +88,6 @@ class NetworksController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def network_params
-      params.require(:network).permit(:code, :description, :geography_id, :state, :entity_ids => [])
+      params.require(:network).permit(:code, :description, :geography_id, :state, :entity_ids => [], :user_ids => [])
     end
 end

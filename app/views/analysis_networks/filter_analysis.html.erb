@@ -23,7 +23,7 @@
           <%= form_tag(analysis_entities_analysis_networks_url, method: 'post', html: { class: 'p-w-md' }) do  %>
             <div class="row">
               <div class="col-md-8 col-md-offset-2 text-center">
-                <h2 class="font-noraml"><%= t('app.analysis_tables.multiple_months.selection_months.selection_range') %></h2>
+                <h2 class="font-normal"><%= t('app.analysis_tables.multiple_months.selection_months.selection_range') %></h2>
                 <div class="input-daterange input-group margin-auto" id="datepicker">
                   <input type="text" class="input-sm form-control" name="analysis_networks[date_start]" required="required" autocomplete="off" />
                   <span class="input-group-addon"><%= t('app.analysis_tables.multiple_months.selection_months.to') %></span>
