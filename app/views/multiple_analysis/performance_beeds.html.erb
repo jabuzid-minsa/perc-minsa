@@ -10,7 +10,7 @@
 <div class="wrapper wrapper-content animated fadeInRight">
   <div class="row">
     <div class="col-lg-12">
-      <%= render 'analysis_graphs/title' %>
+      <%= render 'multiple_analysis/title' %>
       
       <div class="ibox float-e-margins">
         <div class="ibox-title">
@@ -22,32 +22,53 @@
           </div>
         </div>
         <div class="ibox-content">
+          <% header_centers = header_cost_centers(@cost_centers) %>
           <h2 class="text-center">
-            <%= "#{@entity.description} (#{session[:year]} / #{session[:month]})" %>
+            <%= "#{@entity.description} (#{session[:date_start]} - #{session[:date_end]})" %>
           </h2>
-          <table class="table table-bordered dataTable no-footer fixed_table" cellspacing="0" id="performance_beeds">
+          <h3>Producción</h3>
+          <table class="table table-bordered dataTable no-footer fixed_table" cellspacing="0" id="performance_beeds_production">
             <thead>
-              <tr id="head_cost_centers">
+              <tr class="head_cost_centers">
                 <td></td>
-                <% @cost_centers.each do |cost_center| %>
-                    <td data-cost-center="<%= cost_center.id %>" data-function="<%= cost_center.function %>">
-                      <label for=""><%= cost_center.description %></label>
-                    </td>
-                <% end %>
+                <%= header_centers.html_safe %>
               </tr>
             </thead>
-            <tbody>
-              <tr id="total_cost"><td><%= t('app.analysis_graphs.management.performance_beeds.total') %></td></tr>
+            <tbody class="clone_cols_header">
               <tr id="production_1"><td><%= t('app.analysis_graphs.management.performance_beeds.production.one.prod') %></td></tr>
-              <tr id="average_cost_1"><td><%= t('app.analysis_graphs.management.performance_beeds.production.one.cost') %></td></tr>
               <tr id="production_2"><td><%= t('app.analysis_graphs.management.performance_beeds.production.two.prod') %></td></tr>
-              <tr id="average_cost_2"><td><%= t('app.analysis_graphs.management.performance_beeds.production.two.cost') %></td></tr>
               <tr id="production_6"><td><%= t('app.analysis_graphs.management.performance_beeds.production.beeds.prod') %></td></tr>
+            </tbody>
+          </table>
+          <hr>
+          <h3>Costo Total y Costo unitario producción</h3>
+          <table class="table table-bordered dataTable no-footer fixed_table" cellspacing="0" id="performance_beeds_average_costs">
+            <thead>
+              <tr class="head_cost_centers">
+                <td></td>
+                <%= header_centers.html_safe %>
+              </tr>
+            </thead>
+            <tbody class="clone_cols_header">
+              <tr id="total_cost"><td><%= t('app.analysis_graphs.management.performance_beeds.total') %></td></tr>
+              <tr id="average_cost_1"><td><%= t('app.analysis_graphs.management.performance_beeds.production.one.cost') %></td></tr>
+              <tr id="average_cost_2"><td><%= t('app.analysis_graphs.management.performance_beeds.production.two.cost') %></td></tr>
               <tr id="average_cost_6"><td><%= t('app.analysis_graphs.management.performance_beeds.production.beeds.cost') %></td></tr>
+            </tbody>
+          </table>
+          <hr>
+          <h3>Análisis comportamiento camas</h3>
+          <table class="table table-bordered dataTable no-footer fixed_table" cellspacing="0" id="performance_beeds_beds_analysis">
+            <thead>
+              <tr class="head_cost_centers">
+                <td></td>
+                <%= header_centers.html_safe %>
+              </tr>
+            </thead>
+            <tbody class="clone_cols_header">
               <tr id="average_day_stay"><td><%= t('app.analysis_graphs.management.performance_beeds.production.average_day_stay') %></td></tr>
               <tr id="twist_bed"><td><%= t('app.analysis_graphs.management.performance_beeds.production.twist_bed') %></td></tr>
               <tr id="days_beds_available"><td><%= t('app.analysis_graphs.management.performance_beeds.production.days_beds_available') %></td></tr>
-              <tr id="days_occupied_beds"><td><%= t('app.analysis_graphs.management.performance_beeds.production.days_occupied_beds') %></td></tr>
               <tr id="percentage_of_occupation"><td><%= t('app.analysis_graphs.management.performance_beeds.production.percentage_of_occupation') %></td></tr>
               <tr id="replacement_interval"><td><%= t('app.analysis_graphs.management.performance_beeds.production.replacement_interval') %></td></tr>
             </tbody>
@@ -61,71 +82,38 @@
 <% content_for :javascript do %>
   <%= javascript_include_tag 'datatable', 'data-turbolinks-track' => true %>
   <script type="text/javascript">
-    function replacement_interval(argument) {
-      var calc = 0, pos = 0;
+    $(document).ready(function() {
+      clone_centers_header();
+      get_information();
+    });
 
-      $('#performance_beeds tbody tr#days_occupied_beds td:not(:first)').each(function(index, el) {
-        pos = index + 1;
-        calc = (parseFloat($('label', el).html()) - parseFloat($('#performance_beeds tbody tr#production_2 td:eq(' + pos + ') label').html())) / parseFloat($('#performance_beeds tbody tr#production_1 td:eq(' + pos + ') label').html());
+    function clone_centers_header() {
+      var centers = $('#performance_beeds_production thead tr:first td:not(:first)').clone().addClass('text-right').html('<label class="integer_numbers">0</label>');
 
-        $('#performance_beeds tbody tr#replacement_interval td:eq(' + pos + ')').html("<label class='decimal_numbers'>" + calc + "</label>");
+      $('.clone_cols_header tr').each(function(index, el) {
+        $(el).append($(centers).clone());
       });
     }
 
-    function percentage_of_occupation(argument) {
-      var calc = 0, pos = 0;
-
-      $('#performance_beeds tbody tr#days_occupied_beds td:not(:first)').each(function(index, el) {
-        pos = index + 1;
-        calc = (parseFloat($('label', el).html()) / parseFloat($('#performance_beeds tbody tr#days_beds_available td:eq(' + pos + ') label').html()));
-
-        $('#performance_beeds tbody tr#percentage_of_occupation td:eq(' + pos + ')').html("<label class='decimal_numbers'>" + calc + "</label>");
+    function get_information() {
+      $.ajax({
+        url: "<%= multiple_total_cost_performance_beeds_path %>",
+        method: 'POST'
+      }).done(function(data) {
+        update_total_cost(data.costs);
+        set_production(data.production);
+        average_day_stay();
+        twist_bed();
+        days_beds_available();
+        percentage_of_occupation();
+        replacement_interval();
+        initiate_plugins();
       });
     }
 
-    function days_occupied_beds(argument) {
-      var calc = 0, pos = 0;
-
-      $('#performance_beeds tbody tr#days_beds_available td:not(:first)').each(function(index, el) {
-        pos = index + 1;
-        calc = parseFloat($('#performance_beeds tbody tr#production_2 td:eq(' + pos + ') label').html()) / parseFloat($('label', el).html());
-
-        $('#performance_beeds tbody tr#days_occupied_beds td:eq(' + pos + ')').html("<label class='decimal_numbers'>" + calc + "</label>");
-      });
-    }
-
-    function days_beds_available(argument) {
-      var calc = 0,
-          year = parseInt("<%= session[:year] %>"),
-          month = parseInt("<%= session[:month] %>"), 
-          pos = 0;
-
-      $('#performance_beeds tbody tr#production_6 td:not(:first)').each(function(index, el) {
-        pos = index + 1;
-        calc = parseFloat($('label', el).html()) * parseFloat(new Date(year, month, 0).getDate());
-
-        $('#performance_beeds tbody tr#days_beds_available td:eq(' + pos + ')').html("<label class='decimal_numbers'>" + calc + "</label>");
-      });
-    }
-
-    function twist_bed() {
-      var calc = 0, pos = 0;
-
-      $('#performance_beeds tbody tr#production_1 td:not(:first)').each(function(index, el) {
-        pos = index + 1;
-        calc = parseFloat($('label', el).html()) / parseFloat($('#performance_beeds tbody tr#production_6 td:eq(' + pos + ') label').html());
-
-        $('#performance_beeds tbody tr#twist_bed td:eq(' + pos + ')').html("<label class='decimal_numbers'>" + calc + "</label>");
-      });
-    }
-
-    function average_day_stay() {
-      var calc = 0;
-
-      $('#performance_beeds tbody tr#production_2 td:not(:first)').each(function(index, el) {
-        calc = parseFloat($('label', el).html()) / parseFloat($('#performance_beeds tbody tr#production_1 td:eq(' + (index + 1) + ') label').html());
-        
-        $('#performance_beeds tbody tr#average_day_stay td:eq(' + (index + 1) + ')').html("<label class='decimal_numbers'>" + calc + "</label>");
+    function update_total_cost(costs) {
+      $(costs).each(function(index, el) {
+        $('#performance_beeds_average_costs tbody tr:first td[data-cost-center="' + el.id + '"] label').html(el.total);
       });
     }
 
@@ -134,93 +122,100 @@
 
       $(production).each(function(index, el) {
         if (el.production_units < 3 || el.production_units > 5) {
-          total_center = parseFloat($('#performance_beeds tbody tr:first td[data-cost-center="' + el.cost_center_id + '"] label').html());
+          total_center = parseFloat($('#performance_beeds_average_costs tbody tr:first td[data-cost-center="' + el.cost_center_id + '"] label').html());
 
-          $('#performance_beeds tbody tr#production_' + el.production_units + ' td[data-cost-center="' + el.cost_center_id + '"] label').html(
+          $('#performance_beeds_production tbody tr#production_' + el.production_units + ' td[data-cost-center="' + el.cost_center_id + '"] label').html(
             el.convert_value
           );
-          $('#performance_beeds tbody tr#average_cost_' + el.production_units + ' td[data-cost-center="' + el.cost_center_id + '"] label').html(
+
+          $('#performance_beeds_average_costs tbody tr#average_cost_' + el.production_units + ' td[data-cost-center="' + el.cost_center_id + '"] label').html(
             total_center / el.total_center
           );
         }
       });
     }
 
-    function update_total_cost(costs) {
-      $(costs).each(function(index, el) {
-        $('#performance_beeds tbody tr:first td[data-cost-center="' + el.id + '"] label').html(el.total);
+    function average_day_stay() {
+      var calc = 0;
+
+      $('#performance_beeds_production tbody tr#production_2 td:not(:first)').each(function(index, el) {
+        calc = parseFloat($('label', el).html()) / parseFloat($('#performance_beeds_production tbody tr#production_1 td:eq(' + (index + 1) + ') label').html());
+        
+        $('#performance_beeds_beds_analysis tbody tr#average_day_stay td:eq(' + (index + 1) + ')').html("<label class='decimal_numbers'>" + calc + "</label>");
       });
     }
 
-    function get_information() {
-      $.ajax({
-        url: "<%= analysis_graphs_total_cost_performance_beeds_path %>",
-        method: 'POST'
-      }).done(function(data) {
-        update_total_cost(data.costs);
-        set_production(data.production);
-        average_day_stay();
-        twist_bed();
-        days_beds_available();
-        days_occupied_beds();
-        percentage_of_occupation();
-        replacement_interval();
-        $('.decimal_numbers').number(true, 2);
-        $('.integer_numbers').number(true, 0);
-        $('#performance_beeds').DataTable({
-          bInfo:          false,
-          searching:      false,
-          bSort:          false,
-          paging:         false,
-          scrollY:        "500px",
-          scrollX:        true,
-          scrollCollapse: true,
-          fixedColumns:   {
-            leftColumns: 1
-          },
-          dom: 'Bfrtip',
-          buttons: [{
-            extend: 'excelHtml5',
-            exportOptions: {
-              columns: ':visible',
-              format: {
-                body: function(data, row, column, node) {
-                  var local_data = $(data).html().replace(/,/g, '');
-                  if ( $.isNumeric(local_data) ) {
-                    return parseFloat(local_data);
-                  } else {
-                    return $(data).html();
-                  }
-                }
-              }
-            },
-            action: function(e, dt, node, config) {
-              var $thisbtn = this;
-              $.when($('.integer_numbers').number(true, 0, '.', '')).done(function() {
-                $.when($('.decimal_numbers').number(true, 2, '.', '')).done(function() {
-                  $.when($.fn.DataTable.ext.buttons.excelHtml5.action.call($thisbtn, e, dt, node, config)).done(function() {
-                    $('.integer_numbers').number( true, 0 );
-                    $('.decimal_numbers').number( true, 2 );
-                  });
-                });
-              });
-            }
-          }]
-        });
+    function twist_bed() {
+      var calc = 0, pos = 0;
+
+      $('#performance_beeds_production tbody tr#production_1 td:not(:first)').each(function(index, el) {
+        pos = index + 1;
+        calc = parseFloat($('label', el).html()) / parseFloat($('#performance_beeds_production tbody tr#production_6 td:eq(' + pos + ') label').html());
+
+        $('#performance_beeds_beds_analysis tbody tr#twist_bed td:eq(' + pos + ')').html("<label class='decimal_numbers'>" + calc + "</label>");
       });
     }
 
-    function clone_centers_header() {
-      var centers = $('#performance_beeds thead tr#head_cost_centers td:not(:first)').clone().addClass('text-right').html('<label class="integer_numbers">0</label>');
+    function days_beds_available(argument) {
+      var calc = 0,
+          date_start = moment("1/<%= session[:date_start] %>", "DD/MM/YYYY"),
+          date_end = moment(last_day_month("<%= session[:date_end] %>")+"/<%= session[:date_end] %>", "DD/MM/YYYY"), 
+          pos = 0,
+          number_of_days = date_end.diff(date_start, 'days') + 1;
 
-      $('#performance_beeds tbody tr').each(function(index, el) {
-        $(el).append($(centers).clone());
+      $('#performance_beeds_production tbody tr#production_6 td:not(:first)').each(function(index, el) {
+        pos = index + 1;
+        calc = parseFloat($('label', el).html()) * number_of_days;
+
+        $('#performance_beeds_beds_analysis tbody tr#days_beds_available td:eq(' + pos + ')').html("<label class='decimal_numbers'>" + calc + "</label>");
       });
     }
 
-    $(document).ready(function() {
-      clone_centers_header();
-      get_information();
-    });
+    function percentage_of_occupation(argument) {
+      var calc = 0, pos = 0;
+
+      $('#performance_beeds_production tbody tr#production_2 td:not(:first)').each(function(index, el) {
+        pos = index + 1;
+        calc = (parseFloat($('label', el).html()) / parseFloat($('#performance_beeds_beds_analysis tbody tr#days_beds_available td:eq(' + pos + ') label').html()));
+
+        $('#performance_beeds_beds_analysis tbody tr#percentage_of_occupation td:eq(' + pos + ')').html("<label>" + (calc * 100).toFixed(2) + "%</label>");
+      });
+    }
+
+    function replacement_interval(argument) {
+      var calc = 0, pos = 0;
+
+      $('#performance_beeds_beds_analysis tbody tr#days_beds_available td:not(:first)').each(function(index, el) {
+        pos = index + 1;
+        calc = (parseFloat($('label', el).html()) - parseFloat($('#performance_beeds_production tbody tr#production_2 td:eq(' + pos + ') label').html())) / parseFloat($('#performance_beeds_production tbody tr#production_1 td:eq(' + pos + ') label').html());
+
+        $('#performance_beeds_beds_analysis tbody tr#replacement_interval td:eq(' + pos + ')').html("<label class='decimal_numbers'>" + calc + "</label>");
+      });
+    }
+
+    function initiate_plugins() {
+      $('.decimal_numbers').number(true, 2);
+      $('.integer_numbers').number(true, 0);
+      $('.dataTable').DataTable({
+        bInfo:          false,
+        searching:      false,
+        bSort:          false,
+        paging:         false,
+        scrollY:        "500px",
+        scrollX:        true,
+        scrollCollapse: true,
+        fixedColumns:   {
+          leftColumns: 1
+        },
+        dom: 'Bfrtip'
+      });
+    }
+
+    function last_day_month(date_string) {
+      var year = date_string.split("/")[1],
+          month = date_string.split("/")[0];
+
+      return  new Date(year, month, 0).getDate();
+    }
   </script>
 <% end %>

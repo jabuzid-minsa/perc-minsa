@@ -21,11 +21,11 @@ es:
           total: Costo Total
           production:
             one:
-              prod: "Producción # 1"
-              cost: "Costo prod # 1"
+              prod: "Egresos"
+              cost: "Costo Egreso"
             two:
-              prod: "Producción # 2"
-              cost: "Costo prod # 2"
+              prod: "DCO"
+              cost: "Costo DCO"
             beeds:
               prod: "Nº camas"
               cost: "Costo promedio cama"

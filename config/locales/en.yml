@@ -21,16 +21,16 @@ en:
           total: Total Cost
           production:
             one:
-              prod: "Production # 1"
-              cost: "Prod. Cost # 1"
+              prod: "Egress"
+              cost: "Cost Egress"
             two:
-              prod: "Production # 2"
-              cost: "Prod. Cost # 2"
+              prod: "Busy day bed"
+              cost: "Cost Busy day bed"
             beeds:
               prod: "No. beds"
               cost: "Average cost bed"
             average_day_stay: Average day stay
-            twist_bed: Giro cama
+            twist_bed: Bed Turnover Rate
             days_beds_available: Days beds available
             days_occupied_beds: Days occupied beds
             percentage_of_occupation: Percentage of occupation
@@ -213,9 +213,44 @@ en:
         '11': Other Services
         '12': Administration
     dashboards:
-      title: Tableros de Análisis
+      title: Dashboard
       main_dashboard:
-        title: Main Dashboard
+        title: Main
+        analysis_entities: Analysis of the Institutions
+        analysis_summary:
+          title: Summary of the analysis
+          min: Minimum Values
+          max: Maximum Values
+        card_info:
+          total_cost: Total cost
+          cost_by_service: Cost per service function
+          disaggregated_cost: Disaggregated cost
+          function_Services:
+            administrative_support: Administrative Support
+            logistical_support: Logistic Support
+            care_support: Assistance Support
+            final: Finals
+          type_costs:
+            hr: Humnano Resource
+            ov: General expenses
+            sp: Inputs
+          production:
+            header:
+              product: Product
+              total_produced: Production
+              unit_cost: Unit Cost
+            beds: "No Beds"
+        table_summary:
+          headers:
+            item: Item
+            value: Value
+            percentage: Percentage
+            entity: Institution
+          column:
+            Total: Total
+            hr: Human Resource
+            ov: General Expenses
+            sp: Inputs
     dual_select:
       multi_select:
         non_selected_list_label: Available Items

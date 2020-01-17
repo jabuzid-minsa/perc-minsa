@@ -23,6 +23,7 @@
 //= require ladda/spin.min.js
 //= require ladda/ladda.min.js
 //= require ladda/ladda.jquery.min.js
+//= require moment/moment.min.js
 //
 // Modules Javascript files
 //= require moduls/alert.modul.js

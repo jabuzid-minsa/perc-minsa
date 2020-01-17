@@ -209,10 +209,10 @@ class MultipleAnalysisController < ApplicationController
   def total_cost_performance_beeds
     settings = "#{session[:date_start].split('/')[1]},#{session[:date_end].split('/')[1]},#{session[:date_start].split('/')[0]},#{session[:date_end].split('/')[0]},'#{session[:entity_id]}'"
 
-    costs = ActiveRecord::Base.connection.select_all("CALL hscalc_total_centers(#{settings}')").to_hash
+    costs = ActiveRecord::Base.connection.select_all("CALL hscalc_total_centers(#{settings})").to_hash
     ActiveRecord::Base.clear_active_connections!
 
-    production = ActiveRecord::Base.connection.select_all("CALL hs_calc_production_unit(#{settings}')").to_hash
+    production = ActiveRecord::Base.connection.select_all("CALL hs_calc_production_unit(#{settings})").to_hash
     ActiveRecord::Base.clear_active_connections!
 
     render json: { costs: costs, production: production }
