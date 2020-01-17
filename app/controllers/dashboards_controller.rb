@@ -38,7 +38,10 @@ class DashboardsController < ApplicationController
     costs = ActiveRecord::Base.connection.select_all("CALL hs_info_entity_cost_center(#{range_start[1]},#{range_end[1]},#{range_start[0]},#{range_end[0]},#{params[:dashboards][:cost_center_id]},#{params[:dashboards][:entity_id]})").to_hash
     ActiveRecord::Base.clear_active_connections!
 
-    render json: costs
+    production = ActiveRecord::Base.connection.select_all("CALL hs_info_entity_cost_center_prod(#{range_start[1]},#{range_end[1]},#{range_start[0]},#{range_end[0]},#{params[:dashboards][:cost_center_id]},#{params[:dashboards][:entity_id]})").to_hash
+    ActiveRecord::Base.clear_active_connections!
+
+    render json: { costs: costs, production: production }
   end
 
   private

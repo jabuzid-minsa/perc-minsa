@@ -16,6 +16,25 @@ en:
           title: SPC Consumtion
         month_selection:
           title: Month Selection
+        performance_beeds:
+          title: Hospital Bed Utilization
+          total: Total Cost
+          production:
+            one:
+              prod: "Production # 1"
+              cost: "Prod. Cost # 1"
+            two:
+              prod: "Production # 2"
+              cost: "Prod. Cost # 2"
+            beeds:
+              prod: "No. beds"
+              cost: "Average cost bed"
+            average_day_stay: Average day stay
+            twist_bed: Giro cama
+            days_beds_available: Days beds available
+            days_occupied_beds: Days occupied beds
+            percentage_of_occupation: Percentage of occupation
+            replacement_interval: Replacement interval
       details:
         cost_production_center: Costs per production center - Detailed
         efficiency: Efficiency - Detailed

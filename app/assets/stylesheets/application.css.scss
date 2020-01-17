@@ -43,6 +43,11 @@
   background-color: #024059 !important;
 }
 
+.bb-1 {
+  border-bottom: 1px solid;
+  margin-bottom: 10px;
+}
+
 .gray-light {
   color: #c7cad5;
 }
@@ -87,6 +92,14 @@ input.search-input{
 
 .no-margin {
   margin: 0px !important;
+}
+
+.no-padding {
+  padding: 0px !important;
+}
+
+.padding-card {
+  padding: 5px 30px 5px 30px !important;
 }
 
 .padding-b-3 {

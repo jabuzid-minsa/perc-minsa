@@ -178,13 +178,18 @@
               var human_resource = parseFloat(data.human_resource[0].total),
                   overheads = parseFloat(data.overheads[0].total),
                   supplies = parseFloat(data.supplies[0].total),
-                  total = human_resource + overheads + supplies;
+                  total = human_resource + overheads + supplies,
+                  total_columns = $("#info_entities .col-lg-4").length;
               if (total > 0){
                 update_summary_min({ total: total, hr: human_resource, ov: overheads, sp: supplies, entity_id: data.entity.id, entity: data.entity.description });
                 update_summary_max({ total: total, hr: human_resource, ov: overheads, sp: supplies, entity_id: data.entity.id, entity: data.entity.description });
+
+                if (total_columns > 1 && total_columns % 3 === 0) {
+                  $("#info_entities").append('<div class="clearfix"></div>');
+                }
                 $("#info_entities").append(
                   `<div class="col-lg-4 shadow-sm padding-b-3" id="entity_${data.entity.id}" data-name="${data.entity.description}">
-                    <div class="widget-head-color-box bg-primary p-lg text-center">
+                    <div class="widget-head-color-box bg-primary text-center padding-card">
                       <div class="m-b-md">
                         <h2 class="font-bold no-margins">${data.entity.description}</h2>
                         <hr/>
@@ -195,7 +200,7 @@
                         </h3>
                       </div>
                     </div>
-                    <div class="widget-text-box height-300">
+                    <div class="widget-text-box">
                       <h4 class="font-bold">${"<%= t('app.dashboards.main_dashboard.card_info.disaggregated_cost') %>"}</h4>
                       <div class="row">
                         <div class="col-md-6">
@@ -248,7 +253,7 @@
                     <hr/>
                     <h4 class="font-bold">${"<%= CostCenter.model_name.human(count: 2) %>"}</h4>
                     <select id="cost_centers_entity_${data.entity.id}" data-entity="${data.entity.id}" class="cost_center_analysis"></select>
-                    <div class="margin-top-10 widget-text-box height-300" id="analysis_center_entity_${data.entity.id}">
+                    <div class="margin-top-10 widget-text-box" id="analysis_center_entity_${data.entity.id}">
                     </div>
                   </div>`
                 );
@@ -358,11 +363,11 @@
       })
       .done(function(data) {
         var total = 0;
-        $(data).each(function(index, val) {
+        $(data.costs).each(function(index, val) {
           total += parseFloat(val.total);
         });
 
-        $(data).each(function(index, val) {
+        $(data.costs).each(function(index, val) {
           new_html += `
             <div class="row">
               <div class="col-md-6">
@@ -380,6 +385,25 @@
           `;
         });
         $("#analysis_center_entity_" + entity).html(new_html);
+        new_html = "<hr/><div class='row bb-1'><div class='col-md-4'><%= t 'app.dashboards.main_dashboard.card_info.production.header.product' %></div><div class='col-md-4'><%= t 'app.dashboards.main_dashboard.card_info.production.header.total_produced' %></div><div class='col-md-4'><%= t 'app.dashboards.main_dashboard.card_info.production.header.unit_cost' %></div></div>";
+        $(data.production).each(function(index, val) {
+          new_html += `
+            <div class="row">
+              <div class="col-md-4">
+                <h5><span>"${ val.production_units == 6 ? "<%= t 'app.dashboards.main_dashboard.card_info.production.beds' %>" : 'Prod. No ' + val.production_units }"</span></h5>
+              </div>
+              <div class="col-md-4">
+                <h5 class="text-right"><label class="format_number text-right">${val.convert_value}</label></h5>
+              </div>
+              <div class="col-md-4">
+                <h5 class="text-right">
+                  <label class="format_number">${(total/parseFloat(val.total_center)).toFixed(2)}</label>
+                </h5>
+              </div>
+            </div>
+          `;
+        });
+        $("#analysis_center_entity_" + entity).append(new_html);
         $('#analysis_center_entity_' + entity + ' .format_number').number(true, 0);
       })
       .fail(function(xhr, error, text) {

@@ -16,4 +16,13 @@ module CostCentersHelper
         CostCenter.active.selectable.available_for_country(country_ids).associated_cost_centers(entity_id, function)
   end
 
+  def header_cost_centers(cost_centers)
+    html = ""
+    cost_centers.each do |cost_center|
+      html += "<td data-cost-center='#{cost_center.id}' data-function='#{cost_center.function}'><label>#{cost_center.description}</label></td>"
+    end
+
+    html
+  end
+
 end

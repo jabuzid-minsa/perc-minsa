@@ -213,7 +213,7 @@ es:
         '11': Otros Servicios
         '12': Administracion
     dashboards:
-      title: Tableros de Análisis
+      title: Tablero de Análisis
       main_dashboard:
         title: Principal
         analysis_entities: Análisis de las Instituciones
@@ -234,6 +234,12 @@ es:
             hr: Recurso Humnano
             ov: Gastos generales
             sp: Insumos
+          production:
+            header:
+              product: Producto
+              total_produced: Producción
+              unit_cost: Costo Unitario
+            beds: "No Camas"
         table_summary:
           headers:
             item: Item
