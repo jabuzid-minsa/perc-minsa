@@ -107,8 +107,8 @@ class MultipleAnalysisController < ApplicationController
     settings = session[:entity_id] + ',' + session[:date_start].split('/')[1] + ',' + session[:date_start].split('/')[0] + ',' + session[:date_end].split('/')[1] + ',' + session[:date_end].split('/')[0]
 
     @cost_centers = CostCenter.joins(:entity_cost_centers).where(:entity_cost_centers => { entity_id: session[:entity_id] }).order_priority.order(:code)
-    @supplies = Supply.joins(:entities).where(:entities_supplies => { entity_id: session[:entity_id] } ).where('supplies.supplies_category_id = ?', '1')
-    @overheads = Supply.joins(:entities).where(:entities_supplies => { entity_id: session[:entity_id] } ).where('supplies.supplies_category_id = ?', '2')
+    @supplies = Supply.joins(:entities).where(:entities_supplies => { entity_id: session[:entity_id] } ).where('supplies.supplies_category_id = ?', '1').order(:code)
+    @overheads = Supply.joins(:entities).where(:entities_supplies => { entity_id: session[:entity_id] } ).where('supplies.supplies_category_id = ?', '2').order(:code)
     # Indirect Costs
     @production_cost_centers = CostCenter.for_entity(session[:entity_id]).where.not(function: 3).order_distribution
   end
