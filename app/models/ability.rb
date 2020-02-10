@@ -124,6 +124,8 @@ class Ability
       can :access_multiple_analysis, User
       can :manage, :analysis_network
       can :generate_historic, Entity
+      can :access_dashborads, User
+      can :view_main_dashboard, User
     elsif user.is_level_two_manager?
       can :change_language, Language
       can :change_network, Network
