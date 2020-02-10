@@ -5,7 +5,9 @@
 	<%= image_tag("logo_universal_health.png", class: "img-responsive pos_abs img-background") %>
 	<div class="">
 		<div class="text-left">
-			<h1 class="logo-name no-margins"><%= t('app.name') %></h1>
+			<h1 class="logo-name no-margins text-center" style="width: 630px; margin-left: -115px !important;">
+        <%= t('app.name').upcase + ' 2.0' %>
+      </h1>
 		</div>
 		<h3><%= t('.forgot_your_password') %></h3>
 		<%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post, :class => 'm-t' }) do |f| %>
@@ -32,12 +34,9 @@
 		<p class="m-t"> <small><%= t('app.copytigth.ops') %></small> </p>
 		<p class="m-t"> <small><%= t('app.copytigth.incubo') %></small> </p>
 		<div class="row">
-			<div class="col-md-6">
-				<%= image_tag("es_logo_paho.png", class: "img-responsive") %>
-			</div>
-			<div class="col-md-6">
-				<%= image_tag("es_logo_who.png", class: "img-responsive") %>
-			</div>
+			<div class="col-md-12 text-center">
+        <%= image_tag("logos-organizations.#{I18n.locale}.png", class: "img-responsive") %>
+      </div>
 		</div>
 	</div>
 </div>
