@@ -100,10 +100,10 @@ es:
           title: costos consolidados
           title_graph: estructura porcentual de gastos
         third_panel:
-          title: costo total de conceptos del gasto por centros de costo
+          title: Costo total de conceptos del gasto por centros de producción
           button_detail: detallado
         fourth_panel:
-          title: peso ponderado del costo por concepto de gasto y por centros de costos
+          title: peso ponderado del costo por concepto de gasto y por centros de producción
         fifth_panel:
           title: costos operativos y costos indirectos
           title_table: peso porcentual

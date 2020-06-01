@@ -19,15 +19,14 @@ class Ability
       can :create_associations, Entity
       can :destroy_associations, Entity
       can :access_cost_tool, User
-      can :read, DistributionArea
-      can :read, Payroll
-      can :validate_dates_for_entity, Payroll
-      can :read, ProgrammingHour
-      can :read, DistributionSupply
-      can :read, DistributionOverhead
-      can :read, ProductionCostCenter
-      can :read, DistributionCost
-      can :read, Income
+      can :manage, DistributionArea
+      can :manage, Payroll
+      can :manage, ProgrammingHour
+      can :manage, DistributionSupply
+      can :manage, DistributionOverhead
+      can :manage, ProductionCostCenter
+      can :manage, DistributionCost
+      can :manage, Income
       can :access_analysis_and_graphs, User
       can :view_management_number_one, User
       can :view_management_number_two, User
@@ -134,15 +133,15 @@ class Ability
       can :access_cost_tool, User
       can :access_analysis_and_graphs, User
       can :change_date, User
-      can :manage, DistributionArea
-      can :manage, Payroll
+      can :read, DistributionArea
+      can :read, Payroll
       can :validate_dates_for_entity, Payroll
-      can :manage, ProgrammingHour
-      can :manage, DistributionSupply
-      can :manage, DistributionOverhead
-      can :manage, ProductionCostCenter
-      can :manage, DistributionCost
-      can :manage, Income
+      can :read, ProgrammingHour
+      can :read, DistributionSupply
+      can :read, DistributionOverhead
+      can :read, ProductionCostCenter
+      can :read, DistributionCost
+      can :read, Income
       can :access_analysis_and_graphs, User
       can :view_management_number_one, User
       can :view_management_number_two, User
