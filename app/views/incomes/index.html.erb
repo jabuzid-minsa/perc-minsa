@@ -20,10 +20,35 @@
           </div>
         </div>
         <div class="ibox-content">
+          <div class="row">
+            <div class="col-md-5">
+              <div class="form-group">
+                <%= link_to "Excel", incomes_path(format: "xls") %> |
+                <%= link_to "Formato Excel", incomes_path(format: "xls_empty") %>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <%= form_tag import_incomes_path, multipart: true, class: 'form-inline' do %>
+                  <div class="checkbox m-r-xs">
+                    <input type="checkbox" id='empty_format' name='empty_format'>
+                    <label for="empty_format">
+                      Vaciar Antes
+                    </label>
+                  </div>
+                  <div class="form-group">
+                    <%= file_field_tag :file, accept: '.xlsx' %>
+                  </div>
+                  <div class="form-group">
+                    <%= submit_tag "Importar", class: 'btn btn-default' %>
+                  </div>
+              <% end %>
+            </div>
+          </div>
           <table class="table table-bordered dataTable no-footer" id="fixed_table" cellspacing="0">
             <thead>
             <tr>
-              <td><%= Income.human_attribute_name(:cost_center_id) %></td>
+              <td></td>
+              <td>Total <%= Income.model_name.human(count: 2) %></td>
               <% @cost_centers.each do |cost_center| %>
                   <td data-service="<%= cost_center.id %>"><%= cost_center.description %></td>
               <% end %>
@@ -31,12 +56,10 @@
             </thead>
             <tbody>
             <tr>
-              <td><%= Income.human_attribute_name(:value) %></td>
+              <td><%= Income.model_name.human %></td>
+              <td class="text-right"><%= Income.total_charged(session[:year], session[:month], session[:entity_id]) %></td>
               <% @cost_centers.each do |cost_center| %>
-                  <td><%= text_field_tag 'data_service', nil, step: 2, class: 'form-control size-100 decimal_numbers_2 ajax_values',
-                                         data: {cost_center: cost_center.id},
-                                         value: acces_attribute_incomes(@incomes.find_by_cost_center_id(cost_center.id), 'value') %>
-                  </td>
+                <td class="text-right"><%= @incomes.select { |i| i.cost_center_id == cost_center.id }.map(&:value).inject(0, :+).to_f %></td>
               <% end %>
             </tr>
             </tbody>
@@ -52,13 +75,7 @@
 
     <script type="text/javascript">
       $(function() {
-        var ajax_parameters = {
-              year: <%= session[:year] %>,
-              month: <%= session[:month] %>,
-              cost_center: 0,
-              value: 0,
-            },
-            table = $('#fixed_table').DataTable({
+        var table = $('#fixed_table').DataTable({
               bInfo: 					false,
               searching: 			false,
               bSort: 					false,
@@ -67,42 +84,9 @@
               scrollCollapse: true,
               paging:         false,
               fixedColumns:   {
-                leftColumns: 1
+                leftColumns: 2
               }
-            }),
-            current_meters = 0;
-
-        $('.ajax_values').focusin(function () {
-          current_meters = $(this).val();
-        });
-
-        $('.ajax_values').focusout(function () {
-          if (current_meters != $(this).val()) {
-            ajax_parameters.cost_center = $(this).data('cost-center');
-            ajax_parameters.value = $(this).val();
-            ajax_request(ajax_parameters);
-          }
-        });
-
+            });
       });
-
-      function ajax_request(parameters) {
-        $.ajax({
-          url: '<%= save_incomes_path %>',
-          type: "GET",
-          dataType: "json",
-          data: parameters,
-          contentType: "script",
-          success: function(data) {
-            //
-          },
-          error: function(xhr,exception,status) {
-            console.log('entra al error');
-            console.log(xhr);
-            console.log(exception);
-            console.log(status);
-          }
-        });
-      }
     </script>
 <% end %>

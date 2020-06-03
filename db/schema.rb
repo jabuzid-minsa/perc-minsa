@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180819153610) do
+ActiveRecord::Schema.define(version: 20200603193118) do
 
   create_table "audits", force: :cascade do |t|
     t.integer  "auditable_id",    limit: 4
@@ -86,6 +86,7 @@ ActiveRecord::Schema.define(version: 20180819153610) do
     t.decimal  "tertiary_equivalent_to_primary",                 precision: 42, scale: 10, default: 0.0
     t.decimal  "quaternary_equivalent_to_primary",               precision: 42, scale: 10, default: 0.0
     t.decimal  "quinary_equivalent_to_primary",                  precision: 42, scale: 10, default: 0.0
+    t.integer  "type_group",                       limit: 2,                               default: 0
   end
 
   add_index "cost_centers", ["code", "geography_id"], name: "index_cost_centers_on_code_and_geography_id", unique: true, using: :btree
@@ -111,6 +112,10 @@ ActiveRecord::Schema.define(version: 20180819153610) do
   add_index "cost_distributions", ["geography_id"], name: "index_cost_distributions_on_geography_id", using: :btree
   add_index "cost_distributions", ["language_id"], name: "index_cost_distributions_on_language_id", using: :btree
 
+  create_table "delete_payrolls_duplicates", id: false, force: :cascade do |t|
+    t.integer "id", limit: 4, default: 0, null: false
+  end
+
   create_table "distribution_areas", force: :cascade do |t|
     t.integer  "year",           limit: 2
     t.integer  "month",          limit: 1
@@ -125,6 +130,17 @@ ActiveRecord::Schema.define(version: 20180819153610) do
   add_index "distribution_areas", ["entity_id"], name: "index_distribution_areas_on_entity_id", using: :btree
   add_index "distribution_areas", ["year", "month", "entity_id", "cost_center_id"], name: "uk_distribution_areas", unique: true, using: :btree
 
+  create_table "distribution_areas_bck", id: false, force: :cascade do |t|
+    t.integer  "id",             limit: 4,                           default: 0,   null: false
+    t.integer  "year",           limit: 2
+    t.integer  "month",          limit: 1
+    t.decimal  "meters",                   precision: 42, scale: 10, default: 0.0
+    t.integer  "entity_id",      limit: 4
+    t.integer  "cost_center_id", limit: 4
+    t.datetime "created_at",                                                       null: false
+    t.datetime "updated_at",                                                       null: false
+  end
+
   create_table "distribution_costs", force: :cascade do |t|
     t.integer  "year",                     limit: 2
     t.integer  "month",                    limit: 1
@@ -138,8 +154,22 @@ ActiveRecord::Schema.define(version: 20180819153610) do
   end
 
   add_index "distribution_costs", ["cost_center_id"], name: "index_distribution_costs_on_cost_center_id", using: :btree
+  add_index "distribution_costs", ["entity_id", "year", "month"], name: "dcs_search_fields", using: :btree
   add_index "distribution_costs", ["entity_id"], name: "index_distribution_costs_on_entity_id", using: :btree
   add_index "distribution_costs", ["year", "month", "entity_id", "supported_cost_center_id", "cost_center_id", "production_units"], name: "uk_distribution_costs", unique: true, using: :btree
+
+  create_table "distribution_costs_bck", id: false, force: :cascade do |t|
+    t.integer  "id",                       limit: 4,                           default: 0,   null: false
+    t.integer  "year",                     limit: 2
+    t.integer  "month",                    limit: 1
+    t.decimal  "value",                              precision: 42, scale: 10, default: 0.0
+    t.integer  "cost_center_id",           limit: 4
+    t.integer  "supported_cost_center_id", limit: 4
+    t.integer  "entity_id",                limit: 4
+    t.datetime "created_at",                                                                 null: false
+    t.datetime "updated_at",                                                                 null: false
+    t.integer  "production_units",         limit: 4
+  end
 
   create_table "distribution_overheads", force: :cascade do |t|
     t.integer  "year",                 limit: 2
@@ -155,10 +185,25 @@ ActiveRecord::Schema.define(version: 20180819153610) do
   end
 
   add_index "distribution_overheads", ["cost_center_id"], name: "index_distribution_overheads_on_cost_center_id", using: :btree
+  add_index "distribution_overheads", ["entity_id", "year", "month"], name: "dov_search_fields", using: :btree
   add_index "distribution_overheads", ["entity_id"], name: "index_distribution_overheads_on_entity_id", using: :btree
   add_index "distribution_overheads", ["supply_id"], name: "index_distribution_overheads_on_supply_id", using: :btree
   add_index "distribution_overheads", ["type_distribution_id"], name: "index_distribution_overheads_on_type_distribution_id", using: :btree
   add_index "distribution_overheads", ["year", "month", "entity_id", "supply_id", "cost_center_id"], name: "uk_distribution_overheads", unique: true, using: :btree
+
+  create_table "distribution_overheads_bck", id: false, force: :cascade do |t|
+    t.integer  "id",                   limit: 4,                           default: 0,   null: false
+    t.integer  "year",                 limit: 2
+    t.integer  "month",                limit: 1
+    t.decimal  "general_value",                  precision: 42, scale: 10, default: 0.0
+    t.decimal  "value",                          precision: 42, scale: 10, default: 0.0
+    t.integer  "type_distribution_id", limit: 4
+    t.integer  "cost_center_id",       limit: 4
+    t.integer  "supply_id",            limit: 4
+    t.integer  "entity_id",            limit: 4
+    t.datetime "created_at",                                                             null: false
+    t.datetime "updated_at",                                                             null: false
+  end
 
   create_table "distribution_supplies", force: :cascade do |t|
     t.integer  "year",           limit: 2
@@ -172,9 +217,22 @@ ActiveRecord::Schema.define(version: 20180819153610) do
   end
 
   add_index "distribution_supplies", ["cost_center_id"], name: "index_distribution_supplies_on_cost_center_id", using: :btree
+  add_index "distribution_supplies", ["entity_id", "year", "month"], name: "dsp_search_fields", using: :btree
   add_index "distribution_supplies", ["entity_id"], name: "index_distribution_supplies_on_entity_id", using: :btree
   add_index "distribution_supplies", ["supply_id"], name: "index_distribution_supplies_on_supply_id", using: :btree
   add_index "distribution_supplies", ["year", "month", "entity_id", "supply_id", "cost_center_id"], name: "uk_distribution_supplies", unique: true, using: :btree
+
+  create_table "distribution_supplies_bck", id: false, force: :cascade do |t|
+    t.integer  "id",             limit: 4,                           default: 0,   null: false
+    t.integer  "year",           limit: 2
+    t.integer  "month",          limit: 1
+    t.decimal  "value",                    precision: 42, scale: 10, default: 0.0
+    t.integer  "supply_id",      limit: 4
+    t.integer  "cost_center_id", limit: 4
+    t.integer  "entity_id",      limit: 4
+    t.datetime "created_at",                                                       null: false
+    t.datetime "updated_at",                                                       null: false
+  end
 
   create_table "entities", force: :cascade do |t|
     t.string   "code",          limit: 255, default: ""
@@ -261,6 +319,126 @@ ActiveRecord::Schema.define(version: 20180819153610) do
     t.string "new_code", limit: 10, null: false
   end
 
+  create_table "hs_distribution_costs", id: false, force: :cascade do |t|
+    t.integer "entity_id",                     limit: 4
+    t.integer "year",                          limit: 2
+    t.integer "month",                         limit: 1
+    t.boolean "function"
+    t.integer "cost_center_id",                limit: 4
+    t.decimal "total_support",                               precision: 28, scale: 6, default: 0.0
+    t.text    "supported_cost_centers",        limit: 65535
+    t.text    "supported_cost_centers_values", limit: 65535
+  end
+
+  add_index "hs_distribution_costs", ["cost_center_id"], name: "idx_cost_center", using: :btree
+  add_index "hs_distribution_costs", ["entity_id"], name: "idx_entity", using: :btree
+  add_index "hs_distribution_costs", ["month"], name: "idx_month", using: :btree
+  add_index "hs_distribution_costs", ["year"], name: "idx_year", using: :btree
+
+  create_table "hs_human_resource", id: false, force: :cascade do |t|
+    t.integer "entity_id",      limit: 4
+    t.integer "year",           limit: 2
+    t.integer "month",          limit: 1
+    t.integer "cost_center_id", limit: 4
+    t.string  "code",           limit: 255,                          default: ""
+    t.decimal "salary",                     precision: 28, scale: 6, default: 0.0
+    t.decimal "bonuses",                    precision: 28, scale: 6, default: 0.0
+    t.decimal "benefits",                   precision: 28, scale: 6, default: 0.0
+  end
+
+  add_index "hs_human_resource", ["cost_center_id"], name: "idx_cost_center", using: :btree
+  add_index "hs_human_resource", ["entity_id", "year", "month", "cost_center_id"], name: "uk_hs_human_resource", unique: true, using: :btree
+  add_index "hs_human_resource", ["entity_id"], name: "idx_entity", using: :btree
+  add_index "hs_human_resource", ["month"], name: "idx_month", using: :btree
+  add_index "hs_human_resource", ["year"], name: "idx_year", using: :btree
+
+  create_table "hs_indirect_costs", id: false, force: :cascade do |t|
+    t.integer "entity_id",         limit: 4
+    t.integer "year",              limit: 2
+    t.integer "month",             limit: 1
+    t.integer "support_center_id", limit: 4
+    t.integer "cost_center_id",    limit: 4
+    t.decimal "value_support",               precision: 28, scale: 6, default: 0.0
+  end
+
+  add_index "hs_indirect_costs", ["entity_id"], name: "idx_entity", using: :btree
+  add_index "hs_indirect_costs", ["month"], name: "idx_month", using: :btree
+  add_index "hs_indirect_costs", ["year"], name: "idx_year", using: :btree
+
+  create_table "hs_indirect_remnants", id: false, force: :cascade do |t|
+    t.integer "entity_id",      limit: 4
+    t.integer "year",           limit: 2
+    t.integer "month",          limit: 1
+    t.integer "cost_center_id", limit: 4
+    t.decimal "value_remnant",            precision: 28, scale: 6, default: 0.0
+  end
+
+  add_index "hs_indirect_remnants", ["entity_id", "year", "month", "cost_center_id"], name: "uk_ind_remannt", unique: true, using: :btree
+  add_index "hs_indirect_remnants", ["entity_id"], name: "idx_entity", using: :btree
+  add_index "hs_indirect_remnants", ["month"], name: "idx_month", using: :btree
+  add_index "hs_indirect_remnants", ["year"], name: "idx_year", using: :btree
+
+  create_table "hs_other_totals", id: false, force: :cascade do |t|
+    t.integer "entity_id",  limit: 4
+    t.integer "year",       limit: 2
+    t.integer "month",      limit: 1
+    t.string  "type_total", limit: 1,                          default: "b"
+    t.decimal "total",                precision: 28, scale: 6, default: 0.0
+  end
+
+  add_index "hs_other_totals", ["entity_id"], name: "idx_entity", using: :btree
+  add_index "hs_other_totals", ["month"], name: "idx_month", using: :btree
+  add_index "hs_other_totals", ["year"], name: "idx_year", using: :btree
+
+  create_table "hs_overheads", id: false, force: :cascade do |t|
+    t.integer "entity_id",      limit: 4
+    t.integer "year",           limit: 2
+    t.integer "month",          limit: 1
+    t.integer "cost_center_id", limit: 4
+    t.integer "supply_id",      limit: 4
+    t.decimal "value",                    precision: 28, scale: 6, default: 0.0
+  end
+
+  add_index "hs_overheads", ["cost_center_id"], name: "idx_cost_center", using: :btree
+  add_index "hs_overheads", ["entity_id", "year", "month", "cost_center_id", "supply_id"], name: "uk_hs_overheads", unique: true, using: :btree
+  add_index "hs_overheads", ["entity_id"], name: "idx_entity", using: :btree
+  add_index "hs_overheads", ["month"], name: "idx_month", using: :btree
+  add_index "hs_overheads", ["supply_id"], name: "idx_supply", using: :btree
+  add_index "hs_overheads", ["year"], name: "idx_year", using: :btree
+
+  create_table "hs_supplies", id: false, force: :cascade do |t|
+    t.integer "entity_id",      limit: 4
+    t.integer "year",           limit: 2
+    t.integer "month",          limit: 1
+    t.integer "cost_center_id", limit: 4
+    t.integer "supply_id",      limit: 4
+    t.decimal "value",                    precision: 28, scale: 6, default: 0.0
+  end
+
+  add_index "hs_supplies", ["cost_center_id"], name: "idx_cost_center", using: :btree
+  add_index "hs_supplies", ["entity_id", "year", "month", "cost_center_id", "supply_id"], name: "uk_hs_supplies", unique: true, using: :btree
+  add_index "hs_supplies", ["entity_id"], name: "idx_entity", using: :btree
+  add_index "hs_supplies", ["month"], name: "idx_month", using: :btree
+  add_index "hs_supplies", ["supply_id"], name: "idx_supply", using: :btree
+  add_index "hs_supplies", ["year"], name: "idx_year", using: :btree
+
+  create_table "hs_unit_costs", id: false, force: :cascade do |t|
+    t.integer "entity_id",        limit: 4
+    t.integer "year",             limit: 2
+    t.integer "month",            limit: 1
+    t.integer "cost_center_id",   limit: 4,                           null: false
+    t.integer "production_units", limit: 4,                           null: false
+    t.decimal "value",                      precision: 42, scale: 10, null: false
+    t.decimal "equivalence",                precision: 42, scale: 10, null: false
+    t.decimal "convert_value",              precision: 42, scale: 10, null: false
+    t.decimal "total_center",               precision: 42, scale: 10, null: false
+  end
+
+  add_index "hs_unit_costs", ["cost_center_id"], name: "idx_cost_center", using: :btree
+  add_index "hs_unit_costs", ["entity_id"], name: "idx_entity", using: :btree
+  add_index "hs_unit_costs", ["month"], name: "idx_month", using: :btree
+  add_index "hs_unit_costs", ["year"], name: "idx_year", using: :btree
+
   create_table "income_definitions", force: :cascade do |t|
     t.boolean  "invoice",                  default: true
     t.integer  "cost_center_id", limit: 4
@@ -281,6 +459,7 @@ ActiveRecord::Schema.define(version: 20180819153610) do
     t.integer  "cost_center_id", limit: 4
     t.datetime "created_at",                                                       null: false
     t.datetime "updated_at",                                                       null: false
+    t.decimal  "total_revenue",            precision: 28, scale: 6,  default: 0.0
   end
 
   add_index "incomes", ["cost_center_id"], name: "index_incomes_on_cost_center_id", using: :btree
@@ -311,6 +490,8 @@ ActiveRecord::Schema.define(version: 20180819153610) do
     t.integer "salary_component_id", limit: 4, null: false
   end
 
+  add_index "labor_laws_salary_components", ["labor_law_id", "salary_component_id"], name: "labor_law_id", using: :btree
+
   create_table "labor_standards", force: :cascade do |t|
     t.string   "code",         limit: 255, default: ""
     t.string   "description",  limit: 255, default: ""
@@ -335,12 +516,11 @@ ActiveRecord::Schema.define(version: 20180819153610) do
   add_index "languages", ["user_id"], name: "index_languages_on_user_id", using: :btree
 
   create_table "migrations_perc", id: false, force: :cascade do |t|
-    t.string  "user",       limit: 50,                  null: false
-    t.integer "year",       limit: 4,                   null: false
-    t.integer "month",      limit: 4,                   null: false
-    t.integer "entity",     limit: 4,                   null: false
-    t.string  "status",     limit: 1,     default: "N", null: false
-    t.text    "mess_error", limit: 65535,               null: false
+    t.string  "user",   limit: 50,               null: false
+    t.integer "year",   limit: 4,                null: false
+    t.integer "month",  limit: 4,                null: false
+    t.integer "entity", limit: 4,                null: false
+    t.string  "status", limit: 1,  default: "N"
   end
 
   create_table "networks", force: :cascade do |t|
@@ -374,8 +554,31 @@ ActiveRecord::Schema.define(version: 20180819153610) do
     t.decimal  "benefits",                 precision: 42, scale: 10, default: 0.0
   end
 
+  add_index "payrolls", ["entity_id", "year", "month"], name: "prs_search_fields", using: :btree
   add_index "payrolls", ["entity_id"], name: "index_payrolls_on_entity_id", using: :btree
   add_index "payrolls", ["labor_law_id"], name: "index_payrolls_on_labor_law_id", using: :btree
+
+  create_table "payrolls_bck", id: false, force: :cascade do |t|
+    t.integer  "id",           limit: 4,                             default: 0,   null: false
+    t.string   "dni",          limit: 255,                           default: ""
+    t.string   "name",         limit: 255,                           default: ""
+    t.decimal  "salary",                   precision: 42, scale: 10, default: 0.0
+    t.integer  "labor_law_id", limit: 4
+    t.integer  "entity_id",    limit: 4
+    t.datetime "created_at",                                                       null: false
+    t.datetime "updated_at",                                                       null: false
+    t.integer  "year",         limit: 2
+    t.integer  "month",        limit: 1
+    t.decimal  "bonuses",                  precision: 42, scale: 10, default: 0.0
+    t.decimal  "benefits",                 precision: 42, scale: 10, default: 0.0
+  end
+
+  create_table "payrolls_duplicates", id: false, force: :cascade do |t|
+    t.integer "entity_id", limit: 4
+    t.integer "year",      limit: 2
+    t.integer "month",     limit: 1
+    t.string  "dni",       limit: 255, default: ""
+  end
 
   create_table "production_cost_centers", force: :cascade do |t|
     t.integer  "year",             limit: 2
@@ -389,7 +592,20 @@ ActiveRecord::Schema.define(version: 20180819153610) do
   end
 
   add_index "production_cost_centers", ["cost_center_id"], name: "index_production_cost_centers_on_cost_center_id", using: :btree
+  add_index "production_cost_centers", ["entity_id", "year", "month"], name: "pcc_search_fields", using: :btree
   add_index "production_cost_centers", ["entity_id"], name: "index_production_cost_centers_on_entity_id", using: :btree
+
+  create_table "production_cost_centers_bck", id: false, force: :cascade do |t|
+    t.integer  "id",               limit: 4,                           default: 0,   null: false
+    t.integer  "year",             limit: 2
+    t.integer  "month",            limit: 1
+    t.decimal  "value",                      precision: 42, scale: 10, default: 0.0
+    t.integer  "production_units", limit: 1
+    t.integer  "cost_center_id",   limit: 4
+    t.integer  "entity_id",        limit: 4
+    t.datetime "created_at",                                                         null: false
+    t.datetime "updated_at",                                                         null: false
+  end
 
   create_table "production_units", force: :cascade do |t|
     t.string   "code",         limit: 255,   default: ""
@@ -423,10 +639,26 @@ ActiveRecord::Schema.define(version: 20180819153610) do
   end
 
   add_index "programming_hours", ["cost_center_id"], name: "index_programming_hours_on_cost_center_id", using: :btree
+  add_index "programming_hours", ["entity_id", "year", "month"], name: "phs_search_fields", using: :btree
   add_index "programming_hours", ["entity_id"], name: "index_programming_hours_on_entity_id", using: :btree
   add_index "programming_hours", ["payroll_id"], name: "index_programming_hours_on_payroll_id", using: :btree
   add_index "programming_hours", ["salary_component_id"], name: "index_programming_hours_on_salary_component_id", using: :btree
   add_index "programming_hours", ["year", "month", "entity_id", "cost_center_id", "payroll_id", "salary_component_id"], name: "uk_programming_hours", unique: true, using: :btree
+
+  create_table "programming_hours_bck", id: false, force: :cascade do |t|
+    t.integer  "id",                  limit: 4,                           default: 0,   null: false
+    t.integer  "year",                limit: 2
+    t.integer  "month",               limit: 1
+    t.integer  "total",               limit: 4,                           default: 0
+    t.decimal  "paid",                          precision: 42, scale: 10, default: 0.0
+    t.decimal  "hours",                         precision: 42, scale: 10, default: 0.0
+    t.integer  "entity_id",           limit: 4
+    t.integer  "cost_center_id",      limit: 4
+    t.integer  "payroll_id",          limit: 4
+    t.integer  "salary_component_id", limit: 4
+    t.datetime "created_at",                                                            null: false
+    t.datetime "updated_at",                                                            null: false
+  end
 
   create_table "salary_components", force: :cascade do |t|
     t.string   "code",         limit: 255,                           default: ""
@@ -495,6 +727,11 @@ ActiveRecord::Schema.define(version: 20180819153610) do
   add_index "supplies_categories", ["geography_id"], name: "index_supplies_categories_on_geography_id", using: :btree
   add_index "supplies_categories", ["language_id"], name: "index_supplies_categories_on_language_id", using: :btree
   add_index "supplies_categories", ["user_id"], name: "index_supplies_categories_on_user_id", using: :btree
+
+  create_table "temporal_a", id: false, force: :cascade do |t|
+    t.string "usuario", limit: 500
+    t.string "codigo",  limit: 50
+  end
 
   create_table "type_distributions", force: :cascade do |t|
     t.string   "code",         limit: 255, default: ""

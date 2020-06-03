@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+          xmlns:o="urn:schemas-microsoft-com:office:office"
+          xmlns:x="urn:schemas-microsoft-com:office:excel"
+          xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+          xmlns:html="http://www.w3.org/TR/REC-html40">
+  <Worksheet ss:Name="<%= DistributionSupply.model_name.human %>">
+    <Table>
+      <Row>
+        <Cell><Data ss:Type="String"></Data></Cell>
+        <Cell><Data ss:Type="String">Total</Data></Cell>
+        <% @cost_centers.each do |cost_center| %>
+          <Cell><Data ss:Type="String"><%= "#{cost_center.id}-#{cost_center.description}" %></Data></Cell>
+        <% end %>
+      </Row>
+      <Row>
+        <Cell><Data ss:Type="String"><%= Income.model_name.human %></Data></Cell>
+        <Cell><Data ss:Type="Number"><%= Income.total_charged(session[:year], session[:month], session[:entity_id]) %></Data></Cell>
+        <% @cost_centers.each do |cost_center| %>
+          <Cell><Data ss:Type="Number"><%= @incomes.select { |i| i.cost_center_id == cost_center.id }.map(&:value).inject(0, :+).to_f %></Data></Cell>
+        <% end %>
+      </Row>
+    </Table>
+  </Worksheet>
+</Workbook>

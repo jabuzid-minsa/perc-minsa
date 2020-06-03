@@ -136,7 +136,9 @@ Rails.application.routes.draw do
 			collection { post :import }
 		end
 		# Routes scaffold for Incomes
-		resources :incomes
+		resources :incomes do
+			collection { post :import }
+		end
 		# Routes scaffold for Distributions Costs per Cost Centers
 		resources :distribution_costs, only: [:index] do
 		  collection { post :import }
