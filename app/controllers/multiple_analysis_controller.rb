@@ -28,7 +28,9 @@ class MultipleAnalysisController < ApplicationController
 
     @income = Income.where(entity_id: session[:entity_id])
                     .where("CAST(CONCAT(year, '-', month, '-1') AS DATE) BETWEEN CAST('#{star_date}' AS DATE) AND CAST('#{end_date}' AS DATE)")
-                    .sum(:value)
+                    .select("incomes.year, incomes.month, MIN(incomes.total_revenue) total_revenue")
+                    .group("incomes.year, incomes.month")
+                    .map(&:total_revenue).inject(0, :+).to_f
   end
 
   ### Production, Costs and Efficiency
