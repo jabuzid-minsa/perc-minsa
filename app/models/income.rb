@@ -42,7 +42,7 @@ class Income < ActiveRecord::Base
       end
     end
     
-    if spreadsheet.row(2).length > 2
+    if Income.where(year: year, month: month, entity_id: entity).count > 0
       if spreadsheet.row(2)[1].to_f > 0
         Income.where(year: year, month: month, entity_id: entity).update_all(total_revenue: spreadsheet.row(2)[1].to_f)
       else
@@ -59,11 +59,12 @@ class Income < ActiveRecord::Base
       unless income.save
         raise "Error con el archivo, revisar que los datos sean correctos."
       end
+      Income.where(year: year, month: month, entity_id: entity).update_all(total_revenue: spreadsheet.row(2)[1].to_f)
     end
 
     return "Archivo Importado."
-  rescue Exception => e
-    return e.message
+  #rescue Exception => e
+  #  return e.message
   end
   
   def self.open_spreadsheet(file)
