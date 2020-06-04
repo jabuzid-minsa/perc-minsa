@@ -42,11 +42,23 @@ class Income < ActiveRecord::Base
       end
     end
     
-    if spreadsheet.row(2)[1].to_f > 0
-      Income.where(year: year, month: month, entity_id: entity).update_all(total_revenue: spreadsheet.row(2)[1].to_f)
-    else
-      incomes = Income.where(year: year, month: month, entity_id: entity)
-      incomes.update_all(total_revenue: incomes.sum(:value).to_f)
+    if spreadsheet.row(2).length > 2
+      if spreadsheet.row(2)[1].to_f > 0
+        Income.where(year: year, month: month, entity_id: entity).update_all(total_revenue: spreadsheet.row(2)[1].to_f)
+      else
+        incomes = Income.where(year: year, month: month, entity_id: entity)
+        incomes.update_all(total_revenue: incomes.sum(:value).to_f)
+      end
+    elsif spreadsheet.row(2)[1].to_f > 0
+      cost_center = header[2].split('-')[0]
+      income = Income.where(year: year, month: month, entity_id: entity, cost_center_id: cost_center).first_or_initialize do |income|
+        income.value = 0
+        income.total_revenue = spreadsheet.row(2)[1].to_f
+      end
+
+      unless income.save
+        raise "Error con el archivo, revisar que los datos sean correctos."
+      end
     end
 
     return "Archivo Importado."
