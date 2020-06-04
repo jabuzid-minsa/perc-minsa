@@ -68,7 +68,7 @@
                         <label for="">Centros de producción - función <%= t("app.cost_centers.abbreviated_functions.final") %></label>
                         <%= f.select(:cost_center_ids,
                                      get_selectable_cost_centers_per_function(@entity.id, CostCenter.functions[:final], get_country_for_element(@entity)).collect {
-                                         |p| [ "#{p.code} - #{p.description.capitalize}", p.id, {'data-function' => CostCenter.functions[:final]} ]
+                                         |p| [ "(#{p.geography.description}) #{p.code} - #{p.description.capitalize}", p.id, {'data-function' => CostCenter.functions[:final]} ]
                                      }, {},
                                      {class: 'form-control multi-select', id: "function_#{CostCenter.functions[:final]}", data: {url: '/cost_centers/final'}, multiple: 'true'}) %>
                       </div>
@@ -80,7 +80,7 @@
                         <label for="">Centros de producción - función <%= t("app.cost_centers.functions.care_support") %></label>
                         <%= f.select(:cost_center_ids,
                                      get_selectable_cost_centers_per_function(@entity.id, CostCenter.functions[:care_support], get_country_for_element(@entity)).collect {
-                                         |p| [ "#{p.code} - #{p.description.capitalize}", p.id, {'data-function' => CostCenter.functions[:care_support]} ]
+                                         |p| [ "(#{p.geography.description}) #{p.code} - #{p.description.capitalize}", p.id, {'data-function' => CostCenter.functions[:care_support]} ]
                                      }, {},
                                      {class: 'form-control multi-select', id: "function_#{CostCenter.functions[:care_support]}", data: {url: '/cost_centers/care_support'}, multiple: 'true'}) %>
                       </div>
@@ -92,7 +92,7 @@
                         <label for="">Centros de producción - función <%= t("app.cost_centers.functions.logistical_support") %></label>
                         <%= f.select(:cost_center_ids,
                                      get_selectable_cost_centers_per_function(@entity.id, CostCenter.functions[:logistical_support], get_country_for_element(@entity)).collect {
-                                         |p| [ "#{p.code} - #{p.description.capitalize}", p.id, {'data-function' => CostCenter.functions[:logistical_support]} ]
+                                         |p| [ "(#{p.geography.description}) #{p.code} - #{p.description.capitalize}", p.id, {'data-function' => CostCenter.functions[:logistical_support]} ]
                                      }, {},
                                      {class: 'form-control multi-select', id: "function_#{CostCenter.functions[:logistical_support]}", multiple: 'true'}) %>
                       </div>
@@ -104,7 +104,7 @@
                         <label for="">Centros de producción - función <%= t("app.cost_centers.functions.administrative_support") %></label>
                         <%= f.select(:cost_center_ids,
                                      get_selectable_cost_centers_per_function(@entity.id, CostCenter.functions[:administrative_support], get_country_for_element(@entity)).collect {
-                                         |p| [ "#{p.code} - #{p.description.capitalize}", p.id, {'data-function' => CostCenter.functions[:administrative_support]} ]
+                                         |p| [ "(#{p.geography.description}) #{p.code} - #{p.description.capitalize}", p.id, {'data-function' => CostCenter.functions[:administrative_support]} ]
                                      }, {},
                                      {class: 'form-control multi-select', id: "function_#{CostCenter.functions[:administrative_support]}", multiple: 'true'}) %>
                       </div>
@@ -114,7 +114,7 @@
                     <div class="panel-body">
                       <div class="form-group">
                         <label for=""><%= Supply.model_name.human(:count => 2) %></label>
-                        <%= f.select(:supply_ids, Supply.active.selectable.available_for_country(get_available_country(@entity)).collect {|p| [ "#{p.code} - #{p.description.capitalize}", p.id ] }, {},
+                        <%= f.select(:supply_ids, Supply.active.selectable.available_for_country(get_available_country(@entity)).collect {|p| [ "(#{p.supplies_category.description}) #{p.code} - #{p.description.capitalize}", p.id ] }, {},
                                      {class: 'form-control multi-select', id: 'supplies', multiple: 'true'}) %>
                       </div>
                     </div>
