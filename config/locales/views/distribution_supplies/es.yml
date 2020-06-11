@@ -2,8 +2,8 @@ es:
   activerecord:
     models:
       distribution_supply:
-        one: Distribución Suministro
-        other: Distribución Suministros
+        one: Distribución Insumo
+        other: Distribución Insumos
     attributes:
       distribution_supply:
         year: Año
