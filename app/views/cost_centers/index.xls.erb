@@ -13,8 +13,9 @@
         <Cell><Data ss:Type="String"><%= CostCenter.human_attribute_name('description') %></Data></Cell>
         <Cell><Data ss:Type="String"><%= CostCenter.human_attribute_name('function') %></Data></Cell>
         <Cell><Data ss:Type="String"><%= CostCenter.human_attribute_name('function') %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= CostCenter.human_attribute_name('language_id') %></Data></Cell>
       </Row>
-      <% CostCenter.includes(:geography).active.where(geography_id: [1, session[:country_id].to_i]).where.not(cost_center_id: nil).order_priority.order(:code).each do |cost_center| %>
+      <% CostCenter.includes(:geography).active.where(geography_id: [1, session[:country_id].to_i]).where.not(cost_center_id: nil).order(:geography_id).order_priority.order(:code).each do |cost_center| %>
         <Row>
           <Cell><Data ss:Type="String"><%= cost_center.geography.description %></Data></Cell>
           <Cell><Data ss:Type="Number"><%= cost_center.id %></Data></Cell>
@@ -22,6 +23,7 @@
           <Cell><Data ss:Type="String"><%= cost_center.description %></Data></Cell>
           <Cell><Data ss:Type="Number"><%= CostCenter.functions[cost_center.function] %></Data></Cell>
           <Cell><Data ss:Type="String"><%= cost_center.function_humanize %></Data></Cell>
+          <Cell><Data ss:Type="Number"><%= cost_center.language_id %></Data></Cell>
         </Row>
       <% end %>
     </Table>
