@@ -27,6 +27,7 @@ class Ability
       can :manage, ProductionCostCenter
       can :manage, DistributionCost
       can :manage, Income
+      can :view_main_dashboard, User
       can :access_analysis_and_graphs, User
       can :view_management_number_one, User
       can :view_management_number_two, User
@@ -59,6 +60,7 @@ class Ability
       can :manage, ProductionCostCenter
       can :manage, DistributionCost
       can :manage, Income
+      can :view_main_dashboard, User
       can :access_analysis_and_graphs, User
       can :view_management_number_one, User
       can :view_management_number_two, User
@@ -93,6 +95,7 @@ class Ability
       can :read, ProductionCostCenter
       can :read, DistributionCost
       can :read, Income
+      can :view_main_dashboard, User
       can :access_analysis_and_graphs, User
       can :view_management_number_one, User
       can :view_management_number_two, User
@@ -116,6 +119,7 @@ class Ability
       can :manage, ProductionCostCenter
       can :manage, DistributionCost
       can :manage, Income
+      can :view_main_dashboard, User
       can :access_analysis_and_graphs, User
       can :view_management_number_one, User
       can :view_management_number_two, User
@@ -142,6 +146,7 @@ class Ability
       can :read, ProductionCostCenter
       can :read, DistributionCost
       can :read, Income
+      can :view_main_dashboard, User
       can :access_analysis_and_graphs, User
       can :view_management_number_one, User
       can :view_management_number_two, User
@@ -155,6 +160,7 @@ class Ability
       can :change_entity, Entity
       can :change_network, Network
       can :select_date, User
+      can :view_main_dashboard, User
       can :access_analysis_and_graphs, User
       can :view_management_number_one, User
       can :view_management_number_two, User
@@ -180,6 +186,7 @@ class Ability
       can :manage, ProductionCostCenter
       can :manage, DistributionCost
       can :manage, Income
+      can :view_main_dashboard, User
       can :view_management_number_one, User
       can :view_management_number_two, User
       can :view_comparative_graphs, User
@@ -201,6 +208,7 @@ class Ability
       can :manage, ProductionCostCenter
       can :manage, DistributionCost
       can :manage, Income
+      can :view_main_dashboard, User
       can :access_analysis_and_graphs, User
       can :view_management_number_one, User
       can :view_management_number_two, User

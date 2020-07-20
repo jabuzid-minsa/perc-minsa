@@ -26,6 +26,9 @@
                 <i class="fa fa-plus"></i>
               </button>
             </a>
+            <div class="form-group">
+              <%= link_to "Excel", cost_centers_path(format: "xls") %> |
+            </div>
           </div>
           <%= render :layout =>  'layouts/commons/list_element', locals: {
               :table_titles => columns_model_translated(CostCenter, ['geography_id', 'cost_center_id', 'description', 'code', 'definition', 'state']), :view_actions => false} do %>

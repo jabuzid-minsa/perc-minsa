@@ -67,4 +67,16 @@ class CostCenter < ActiveRecord::Base
   def self.order_distribution
     order('CASE WHEN cost_centers.function = 3 THEN 4 WHEN cost_centers.function = 2 THEN 3 WHEN cost_centers.function = 1 THEN 1 WHEN cost_centers.function = 0 THEN 2 END, cost_centers.code DESC')
   end
+
+  def function_humanize
+    if self.function == 3
+      I18n.t('app.cost_centers.functions.final')
+    elsif self.function == 2
+      I18n.t('app.cost_centers.functions.care_support')
+    elsif self.function == 1
+      I18n.t('app.cost_centers.functions.logistical_support')
+    else
+      I18n.t('app.cost_centers.functions.administrative_support')
+    end
+  end
 end

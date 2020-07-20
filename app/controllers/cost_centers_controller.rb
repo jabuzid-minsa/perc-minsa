@@ -11,6 +11,11 @@ class CostCentersController < ApplicationController
   # GET /cost_centers.json
   def index
     @cost_centers = get_model_by_country_allowed(CostCenter).idiom(get_current_idiom)
+
+    respond_to do |format|
+      format.html
+      format.xls { headers["Content-Disposition"] = "attachment; filename=\"#{CostCenter.model_name.human}.xls\"" }
+    end
   end
 
   # GET /cost_centers/1
