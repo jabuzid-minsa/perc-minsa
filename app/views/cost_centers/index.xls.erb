@@ -4,19 +4,22 @@
           xmlns:x="urn:schemas-microsoft-com:office:excel"
           xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
           xmlns:html="http://www.w3.org/TR/REC-html40">
-  <Worksheet ss:Name="<%= DistributionArea.model_name.human %>">
+  <Worksheet ss:Name="<%= CostCenter.model_name.human %>">
     <Table>
       <Row>
-        <Cell><Data ss:Type="String"><%= DistributionArea.human_attribute_name('cost_center_id') %></Data></Cell>
-        <Cell><Data ss:Type="String"><%= DistributionArea.human_attribute_name('meters') %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= CostCenter.human_attribute_name('id') %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= CostCenter.human_attribute_name('code') %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= CostCenter.human_attribute_name('description') %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= CostCenter.human_attribute_name('function') %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= CostCenter.human_attribute_name('function') %></Data></Cell>
       </Row>
-      <% CostCenter.active.where(geography_id: [1, session[:country_id].to_i]).order_priority.order(:code).each do |cost_center| %>
+      <% CostCenter.active.where(geography_id: [1, session[:country_id].to_i]).where.not(cost_center_id: nil).order_priority.order(:code).each do |cost_center| %>
         <Row>         
           <Cell><Data ss:Type="Number"><%= cost_center.id %></Data></Cell>
           <Cell><Data ss:Type="String"><%= cost_center.code %></Data></Cell>
           <Cell><Data ss:Type="String"><%= cost_center.description %></Data></Cell>
-          <Cell><Data ss:Type="Number"><%= cost_center.function %></Data></Cell>
-          <Cell><Data ss:Type="Number"><%= cost_center.function_humanize %></Data></Cell>
+          <Cell><Data ss:Type="Number"><%= cost_center.function.to_i %></Data></Cell>
+          <Cell><Data ss:Type="String"><%= cost_center.function_humanize %></Data></Cell>
         </Row>
       <% end %>
     </Table>

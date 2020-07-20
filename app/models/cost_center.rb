@@ -69,11 +69,11 @@ class CostCenter < ActiveRecord::Base
   end
 
   def function_humanize
-    if self.function == 3
+    if self.function.to_i == 3
       I18n.t('app.cost_centers.functions.final')
-    elsif self.function == 2
+    elsif self.function.to_i == 2
       I18n.t('app.cost_centers.functions.care_support')
-    elsif self.function == 1
+    elsif self.function.to_i == 1
       I18n.t('app.cost_centers.functions.logistical_support')
     else
       I18n.t('app.cost_centers.functions.administrative_support')
