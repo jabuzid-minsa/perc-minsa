@@ -458,7 +458,7 @@ es:
     '9': Septiembre
     '10': Octubre
     '11': Noviembre
-    '12': Dicimebre
+    '12': Diciembre
     to: ' a '
   # additional translations for devise
   views_devise:
