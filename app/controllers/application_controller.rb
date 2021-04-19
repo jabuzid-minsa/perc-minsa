@@ -52,7 +52,8 @@ class ApplicationController < ActionController::Base
 
   protected
     def check_not_banned
-      logger.error "#{current_user.state}"
-      sign_out(current_user) if current_user.state == 0
+      if current_user.present?
+        sign_out(current_user) if current_user.state == 0
+      end
     end
 end
