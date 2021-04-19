@@ -53,7 +53,7 @@ class ApplicationController < ActionController::Base
   protected
     def check_not_banned
       if current_user.present?
-        sign_out(current_user) if current_user.state == 0
+        sign_out(current_user) unless current_user.state
       end
     end
 end
