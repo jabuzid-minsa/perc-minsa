@@ -4,7 +4,7 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
 
   # Validation for auth users.
-  before_action :authenticate_user!, :detect_idiom_browser
+  before_action :authenticate_user!, :detect_idiom_browser, :check_not_banned
 
   rescue_from CanCan::AccessDenied do |exception|
     respond_to do |format|
@@ -50,4 +50,8 @@ class ApplicationController < ActionController::Base
     render :json => t('app.change_date').to_json, :status => 200
   end
 
+  protected
+    def check_not_banned
+      sign_out(current_user) if current_user.state == 0
+    end
 end
