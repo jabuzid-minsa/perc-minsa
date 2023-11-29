@@ -19,7 +19,7 @@ gem 'best_in_place', '~> 3.0.1'
 gem 'paperclip', '~> 5.1'
 
 ## Gem that database
-gem 'mysql2', '~> 0.4.4'
+gem 'mysql2', '~> 0.4.10'
 #gem 'pg', '~> 0.18'
 
 ## Gem's for Authentication and Manage users
